@@ -7,6 +7,15 @@
     padding: 20px;
 }
 
+#lamps {
+    height: 100%;
+    font-size: 84px;
+    text-align: center;
+    margin: auto;
+    margin-top: 15%;
+    padding: 20px;
+}
+
 #huebridge {
     text-align: center;
     margin: auto;

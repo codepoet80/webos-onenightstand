@@ -110,6 +110,7 @@ PreferencesAssistant.prototype.setup = function() {
     this.appMenuModel = {
         label: "Settings",
         items: [
+            { label: "Go Back", command: 'do-goBack' },
             { label: "Reset Settings", command: 'do-resetSettings' },
             { label: "About Night Stand", command: 'do-myAbout' }
         ]
@@ -131,13 +132,13 @@ PreferencesAssistant.prototype.setup = function() {
     Mojo.Event.listen(this.controller.get("toggleMute"), Mojo.Event.propertyChange, this.handleValueChange);
     Mojo.Event.listen(this.controller.get("btnLinkHue"), Mojo.Event.tap, this.linkHueClick.bind(this));
     Mojo.Event.listen(this.controller.get("hueLightList"), Mojo.Event.listTap, this.handListTap.bind(this));
-    this.controller.setupWidget(Mojo.Menu.appMenu, this.appMenuAttributes, this.appMenuModel);
 };
 
 PreferencesAssistant.prototype.activate = function(event) {
     /* put in event handlers here that should only be in effect when this scene is active. For
        example, key handlers that are observing the document */
     this.repaintLightList();
+    //TODO: we could do this on a timer so we know when lights turn on and off from other apps
 };
 
 PreferencesAssistant.prototype.repaintLightList = function() {
@@ -191,8 +192,11 @@ PreferencesAssistant.prototype.handleValueChange = function(event) {
 PreferencesAssistant.prototype.handleCommand = function(event) {
     if (event.type == Mojo.Event.command) {
         switch (event.command) {
+            case 'do-goBack':
+                Mojo.Controller.stageController.popScene();
+                break;
             case 'do-myAbout':
-                Mojo.Additions.ShowDialogBox("Night Stand", "Copyright 2020, Jonathan Wise. Available under an MIT License. Source code available at: https://github.com/codepoet80/webos-nightstand");
+                Mojo.Additions.ShowDialogBox("One Night Stand", "Copyright 2020, Jonathan Wise. Available under an MIT License. Source code available at: https://github.com/codepoet80/webos-onenightstand");
                 break;
             case 'do-resetSettings':
                 appModel.ResetSettings();

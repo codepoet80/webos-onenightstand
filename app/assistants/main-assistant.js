@@ -10,7 +10,6 @@ MainAssistant.prototype.setup = function() {
     /* use Mojo.View.render to render view templates and add them to the scene, if needed */
 
     /* setup widgets here */
-
     // Setup command buttons (menu)
     this.cmdMenuAttributes = {
         menuClass: 'black-command-menu'
@@ -54,9 +53,6 @@ MainAssistant.prototype.setup = function() {
 
     /* add event handlers to listen to events from widgets */
     this.controller.listen("clock", Mojo.Event.tap, this.handleClockTap.bind(this));
-
-    Mojo.Log.info("== height: " + window.screen.height);
-    Mojo.Log.info("== width:  " + window.screen.width);
 };
 
 MainAssistant.prototype.activate = function(event) {
@@ -69,7 +65,7 @@ MainAssistant.prototype.activate = function(event) {
     // Setup the clock face
     this.controller.get("clock").style.color = appModel.AppSettingsCurrent["clockColor"];
     this.controller.get("clock").style.fontSize = (appModel.AppSettingsCurrent["clockSize"] + "px");
-    this.controller.get("clock").style.marginTop = ((window.screen.width) - (appModel.AppSettingsCurrent["clockSize"] * 2.2) + "px");
+    this.controller.get("clock").style.marginTop = this.calculateClockPosition(appModel.AppSettingsCurrent["clockSize"], true) + "px";
     this.showClock();
     this.clockInt = setInterval(this.showClock.bind(this), 6000);
 
@@ -84,6 +80,26 @@ MainAssistant.prototype.activate = function(event) {
     }
 };
 
+MainAssistant.prototype.calculateClockPosition = function(fontSize, isLandscape) {
+    fontSize = Math.round(fontSize);
+    var screenWidth;
+    var screenHeight;
+    if (isLandscape) {
+        //Since we're forcing landscape, screen width is actually our height
+        screenWidth = window.screen.height;
+        screenHeight = window.screen.width;
+    } else {
+        screenWidth = window.screen.width;
+        screenHeight = window.screen.height;
+    }
+    //Mojo.Log.info("== height: " + screenHeight);
+    //Mojo.Log.info("== width:  " + screenWidth);
+    //Mojo.Log.info("== font: " + fontSize);
+    var useTop = (screenHeight / 2) - Math.round(fontSize / 1.2);
+    //Mojo.Log.info("=== useTop: " + useTop);
+    return useTop;
+}
+
 MainAssistant.prototype.handleClockTap = function() {
     clearTimeout(this.hideMenuTimeout);
     if (!this.menuOn) {
@@ -93,8 +109,6 @@ MainAssistant.prototype.handleClockTap = function() {
 }
 
 MainAssistant.prototype.showClock = function() {
-    //Mojo.Log.info("Updating time");
-
     var time = new Date();
     hour = time.getHours();
     min = time.getMinutes();
