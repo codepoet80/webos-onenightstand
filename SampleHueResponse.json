@@ -1,0 +1,866 @@
+{
+    "1": {
+        "state": {
+            "on": true,
+            "bri": 80,
+            "alert": "none",
+            "mode": "homeautomation",
+            "reachable": true
+        },
+        "swupdate": {
+            "state": "noupdates",
+            "lastinstall": "2020-03-11T18:38:07"
+        },
+        "type": "Dimmable light",
+        "name": "Living Room Lamp 2",
+        "modelid": "LWB006",
+        "manufacturername": "Signify Netherlands B.V.",
+        "productname": "Hue white lamp",
+        "capabilities": {
+            "certified": true,
+            "control": {
+                "mindimlevel": 2000,
+                "maxlumen": 800
+            },
+            "streaming": {
+                "renderer": false,
+                "proxy": false
+            }
+        },
+        "config": {
+            "archetype": "classicbulb",
+            "function": "functional",
+            "direction": "omnidirectional",
+            "startup": {
+                "mode": "safety",
+                "configured": true
+            }
+        },
+        "uniqueid": "00:17:88:01:10:43:53:23-0b",
+        "swversion": "5.130.1.30000"
+    },
+    "2": {
+        "state": {
+            "on": true,
+            "bri": 144,
+            "alert": "select",
+            "mode": "homeautomation",
+            "reachable": true
+        },
+        "swupdate": {
+            "state": "noupdates",
+            "lastinstall": "2020-03-11T18:39:31"
+        },
+        "type": "Dimmable light",
+        "name": "Bedroom 2",
+        "modelid": "LWB006",
+        "manufacturername": "Signify Netherlands B.V.",
+        "productname": "Hue white lamp",
+        "capabilities": {
+            "certified": true,
+            "control": {
+                "mindimlevel": 2000,
+                "maxlumen": 800
+            },
+            "streaming": {
+                "renderer": false,
+                "proxy": false
+            }
+        },
+        "config": {
+            "archetype": "classicbulb",
+            "function": "functional",
+            "direction": "omnidirectional",
+            "startup": {
+                "mode": "powerfail",
+                "configured": true
+            }
+        },
+        "uniqueid": "00:17:88:01:10:46:f2:20-0b",
+        "swversion": "5.130.1.30000"
+    },
+    "3": {
+        "state": {
+            "on": false,
+            "bri": 144,
+            "hue": 13524,
+            "sat": 200,
+            "effect": "none",
+            "xy": [
+                0.5017,
+                0.4152
+            ],
+            "ct": 443,
+            "alert": "select",
+            "colormode": "xy",
+            "mode": "homeautomation",
+            "reachable": true
+        },
+        "swupdate": {
+            "state": "noupdates",
+            "lastinstall": "2018-12-13T11:40:52"
+        },
+        "type": "Extended color light",
+        "name": "Bedroom 1",
+        "modelid": "LCT001",
+        "manufacturername": "Signify Netherlands B.V.",
+        "productname": "Hue color lamp",
+        "capabilities": {
+            "certified": true,
+            "control": {
+                "mindimlevel": 5000,
+                "maxlumen": 600,
+                "colorgamuttype": "B",
+                "colorgamut": [
+                    [
+                        0.675,
+                        0.322
+                    ],
+                    [
+                        0.409,
+                        0.518
+                    ],
+                    [
+                        0.167,
+                        0.04
+                    ]
+                ],
+                "ct": {
+                    "min": 153,
+                    "max": 500
+                }
+            },
+            "streaming": {
+                "renderer": true,
+                "proxy": false
+            }
+        },
+        "config": {
+            "archetype": "sultanbulb",
+            "function": "mixed",
+            "direction": "omnidirectional",
+            "startup": {
+                "mode": "powerfail",
+                "configured": true
+            }
+        },
+        "uniqueid": "00:17:88:01:00:b8:8b:cb-0b",
+        "swversion": "5.127.1.26581"
+    },
+    "4": {
+        "state": {
+            "on": true,
+            "bri": 254,
+            "hue": 13028,
+            "sat": 204,
+            "effect": "none",
+            "xy": [
+                0.5083,
+                0.4129
+            ],
+            "ct": 459,
+            "alert": "none",
+            "colormode": "xy",
+            "mode": "homeautomation",
+            "reachable": true
+        },
+        "swupdate": {
+            "state": "noupdates",
+            "lastinstall": "2018-12-13T11:40:49"
+        },
+        "type": "Extended color light",
+        "name": "Living Room Lamp 1",
+        "modelid": "LCT001",
+        "manufacturername": "Signify Netherlands B.V.",
+        "productname": "Hue color lamp",
+        "capabilities": {
+            "certified": true,
+            "control": {
+                "mindimlevel": 5000,
+                "maxlumen": 600,
+                "colorgamuttype": "B",
+                "colorgamut": [
+                    [
+                        0.675,
+                        0.322
+                    ],
+                    [
+                        0.409,
+                        0.518
+                    ],
+                    [
+                        0.167,
+                        0.04
+                    ]
+                ],
+                "ct": {
+                    "min": 153,
+                    "max": 500
+                }
+            },
+            "streaming": {
+                "renderer": true,
+                "proxy": false
+            }
+        },
+        "config": {
+            "archetype": "sultanbulb",
+            "function": "mixed",
+            "direction": "omnidirectional",
+            "startup": {
+                "mode": "safety",
+                "configured": true
+            }
+        },
+        "uniqueid": "00:17:88:01:00:b8:89:80-0b",
+        "swversion": "5.127.1.26581"
+    },
+    "5": {
+        "state": {
+            "on": false,
+            "bri": 76,
+            "hue": 12649,
+            "sat": 223,
+            "effect": "none",
+            "xy": [
+                0.5236,
+                0.4137
+            ],
+            "ct": 493,
+            "alert": "select",
+            "colormode": "xy",
+            "mode": "homeautomation",
+            "reachable": true
+        },
+        "swupdate": {
+            "state": "noupdates",
+            "lastinstall": "2018-12-13T11:40:19"
+        },
+        "type": "Extended color light",
+        "name": "Theater Bulb",
+        "modelid": "LCT001",
+        "manufacturername": "Signify Netherlands B.V.",
+        "productname": "Hue color lamp",
+        "capabilities": {
+            "certified": true,
+            "control": {
+                "mindimlevel": 5000,
+                "maxlumen": 600,
+                "colorgamuttype": "B",
+                "colorgamut": [
+                    [
+                        0.675,
+                        0.322
+                    ],
+                    [
+                        0.409,
+                        0.518
+                    ],
+                    [
+                        0.167,
+                        0.04
+                    ]
+                ],
+                "ct": {
+                    "min": 153,
+                    "max": 500
+                }
+            },
+            "streaming": {
+                "renderer": true,
+                "proxy": false
+            }
+        },
+        "config": {
+            "archetype": "sultanbulb",
+            "function": "mixed",
+            "direction": "omnidirectional",
+            "startup": {
+                "mode": "safety",
+                "configured": true
+            }
+        },
+        "uniqueid": "00:17:88:01:00:b8:79:25-0b",
+        "swversion": "5.127.1.26581"
+    },
+    "6": {
+        "state": {
+            "on": false,
+            "bri": 23,
+            "hue": 12649,
+            "sat": 223,
+            "effect": "none",
+            "xy": [
+                0.5236,
+                0.4137
+            ],
+            "ct": 493,
+            "alert": "select",
+            "colormode": "xy",
+            "mode": "homeautomation",
+            "reachable": true
+        },
+        "swupdate": {
+            "state": "noupdates",
+            "lastinstall": "2020-03-11T18:39:11"
+        },
+        "type": "Extended color light",
+        "name": "Theater Flood 1",
+        "modelid": "LCT002",
+        "manufacturername": "Signify Netherlands B.V.",
+        "productname": "Hue color downlight",
+        "capabilities": {
+            "certified": true,
+            "control": {
+                "mindimlevel": 2000,
+                "maxlumen": 630,
+                "colorgamuttype": "B",
+                "colorgamut": [
+                    [
+                        0.675,
+                        0.322
+                    ],
+                    [
+                        0.409,
+                        0.518
+                    ],
+                    [
+                        0.167,
+                        0.04
+                    ]
+                ],
+                "ct": {
+                    "min": 153,
+                    "max": 500
+                }
+            },
+            "streaming": {
+                "renderer": true,
+                "proxy": true
+            }
+        },
+        "config": {
+            "archetype": "floodbulb",
+            "function": "mixed",
+            "direction": "downwards",
+            "startup": {
+                "mode": "safety",
+                "configured": true
+            }
+        },
+        "uniqueid": "00:17:88:01:02:36:bf:42-0b",
+        "swversion": "5.130.1.30000"
+    },
+    "7": {
+        "state": {
+            "on": false,
+            "bri": 41,
+            "hue": 12649,
+            "sat": 223,
+            "effect": "none",
+            "xy": [
+                0.5236,
+                0.4137
+            ],
+            "ct": 493,
+            "alert": "select",
+            "colormode": "xy",
+            "mode": "homeautomation",
+            "reachable": true
+        },
+        "swupdate": {
+            "state": "noupdates",
+            "lastinstall": "2020-03-11T18:39:08"
+        },
+        "type": "Extended color light",
+        "name": "Theater Flood 2",
+        "modelid": "LCT002",
+        "manufacturername": "Signify Netherlands B.V.",
+        "productname": "Hue color downlight",
+        "capabilities": {
+            "certified": true,
+            "control": {
+                "mindimlevel": 2000,
+                "maxlumen": 630,
+                "colorgamuttype": "B",
+                "colorgamut": [
+                    [
+                        0.675,
+                        0.322
+                    ],
+                    [
+                        0.409,
+                        0.518
+                    ],
+                    [
+                        0.167,
+                        0.04
+                    ]
+                ],
+                "ct": {
+                    "min": 153,
+                    "max": 500
+                }
+            },
+            "streaming": {
+                "renderer": true,
+                "proxy": true
+            }
+        },
+        "config": {
+            "archetype": "floodbulb",
+            "function": "mixed",
+            "direction": "downwards",
+            "startup": {
+                "mode": "safety",
+                "configured": true
+            }
+        },
+        "uniqueid": "00:17:88:01:02:38:da:e9-0b",
+        "swversion": "5.130.1.30000"
+    },
+    "8": {
+        "state": {
+            "on": false,
+            "bri": 126,
+            "ct": 366,
+            "alert": "none",
+            "colormode": "ct",
+            "mode": "homeautomation",
+            "reachable": false
+        },
+        "swupdate": {
+            "state": "noupdates",
+            "lastinstall": "2020-03-17T17:54:59"
+        },
+        "type": "Color temperature light",
+        "name": "Living Room Flood 1",
+        "modelid": "LTW011",
+        "manufacturername": "Signify Netherlands B.V.",
+        "productname": "Hue ambiance downlight",
+        "capabilities": {
+            "certified": true,
+            "control": {
+                "mindimlevel": 1000,
+                "maxlumen": 680,
+                "ct": {
+                    "min": 153,
+                    "max": 454
+                }
+            },
+            "streaming": {
+                "renderer": false,
+                "proxy": false
+            }
+        },
+        "config": {
+            "archetype": "floodbulb",
+            "function": "functional",
+            "direction": "downwards",
+            "startup": {
+                "mode": "safety",
+                "configured": true
+            }
+        },
+        "uniqueid": "00:17:88:01:02:f3:e3:35-0b",
+        "swversion": "1.50.2_r30933",
+        "swconfigid": "190673FE",
+        "productid": "Philips-LTW011-1-BR30CTv1"
+    },
+    "9": {
+        "state": {
+            "on": false,
+            "bri": 126,
+            "ct": 366,
+            "alert": "none",
+            "colormode": "ct",
+            "mode": "homeautomation",
+            "reachable": false
+        },
+        "swupdate": {
+            "state": "noupdates",
+            "lastinstall": "2020-03-17T17:55:05"
+        },
+        "type": "Color temperature light",
+        "name": "Living Room Flood 2",
+        "modelid": "LTW011",
+        "manufacturername": "Signify Netherlands B.V.",
+        "productname": "Hue ambiance downlight",
+        "capabilities": {
+            "certified": true,
+            "control": {
+                "mindimlevel": 1000,
+                "maxlumen": 680,
+                "ct": {
+                    "min": 153,
+                    "max": 454
+                }
+            },
+            "streaming": {
+                "renderer": false,
+                "proxy": false
+            }
+        },
+        "config": {
+            "archetype": "floodbulb",
+            "function": "functional",
+            "direction": "downwards",
+            "startup": {
+                "mode": "safety",
+                "configured": true
+            }
+        },
+        "uniqueid": "00:17:88:01:02:f3:4d:e0-0b",
+        "swversion": "1.50.2_r30933",
+        "swconfigid": "190673FE",
+        "productid": "Philips-LTW011-1-BR30CTv1"
+    },
+    "10": {
+        "state": {
+            "on": true,
+            "bri": 204,
+            "ct": 366,
+            "alert": "none",
+            "colormode": "ct",
+            "mode": "homeautomation",
+            "reachable": true
+        },
+        "swupdate": {
+            "state": "noupdates",
+            "lastinstall": "2020-03-11T18:38:41"
+        },
+        "type": "Color temperature light",
+        "name": "Kitchen Sink",
+        "modelid": "LTW011",
+        "manufacturername": "Signify Netherlands B.V.",
+        "productname": "Hue ambiance downlight",
+        "capabilities": {
+            "certified": true,
+            "control": {
+                "mindimlevel": 1000,
+                "maxlumen": 680,
+                "ct": {
+                    "min": 153,
+                    "max": 454
+                }
+            },
+            "streaming": {
+                "renderer": false,
+                "proxy": false
+            }
+        },
+        "config": {
+            "archetype": "floodbulb",
+            "function": "functional",
+            "direction": "downwards",
+            "startup": {
+                "mode": "safety",
+                "configured": true
+            }
+        },
+        "uniqueid": "00:17:88:01:02:f3:4e:2f-0b",
+        "swversion": "1.50.2_r30933",
+        "swconfigid": "190673FE",
+        "productid": "Philips-LTW011-1-BR30CTv1"
+    },
+    "11": {
+        "state": {
+            "on": false,
+            "bri": 1,
+            "ct": 325,
+            "alert": "select",
+            "colormode": "ct",
+            "mode": "homeautomation",
+            "reachable": true
+        },
+        "swupdate": {
+            "state": "noupdates",
+            "lastinstall": "2020-03-11T18:38:44"
+        },
+        "type": "Color temperature light",
+        "name": "Basement Stairs 1",
+        "modelid": "LTW011",
+        "manufacturername": "Signify Netherlands B.V.",
+        "productname": "Hue ambiance downlight",
+        "capabilities": {
+            "certified": true,
+            "control": {
+                "mindimlevel": 1000,
+                "maxlumen": 680,
+                "ct": {
+                    "min": 153,
+                    "max": 454
+                }
+            },
+            "streaming": {
+                "renderer": false,
+                "proxy": false
+            }
+        },
+        "config": {
+            "archetype": "floodbulb",
+            "function": "functional",
+            "direction": "downwards",
+            "startup": {
+                "mode": "safety",
+                "configured": true
+            }
+        },
+        "uniqueid": "00:17:88:01:02:f3:4d:e1-0b",
+        "swversion": "1.50.2_r30933",
+        "swconfigid": "190673FE",
+        "productid": "Philips-LTW011-1-BR30CTv1"
+    },
+    "12": {
+        "state": {
+            "on": false,
+            "bri": 254,
+            "alert": "none",
+            "mode": "homeautomation",
+            "reachable": true
+        },
+        "swupdate": {
+            "state": "noupdates",
+            "lastinstall": "2020-03-11T18:38:56"
+        },
+        "type": "Dimmable light",
+        "name": "Basement White 1",
+        "modelid": "LWB014",
+        "manufacturername": "Signify Netherlands B.V.",
+        "productname": "Hue white lamp",
+        "capabilities": {
+            "certified": true,
+            "control": {
+                "mindimlevel": 2000,
+                "maxlumen": 840
+            },
+            "streaming": {
+                "renderer": false,
+                "proxy": false
+            }
+        },
+        "config": {
+            "archetype": "classicbulb",
+            "function": "functional",
+            "direction": "omnidirectional",
+            "startup": {
+                "mode": "safety",
+                "configured": true
+            }
+        },
+        "uniqueid": "00:17:88:01:03:b7:dc:0d-0b",
+        "swversion": "1.50.2_r30933",
+        "swconfigid": "2AAED91D",
+        "productid": "Philips-LWB014-1-A19DLv4"
+    },
+    "13": {
+        "state": {
+            "on": false,
+            "bri": 254,
+            "alert": "none",
+            "mode": "homeautomation",
+            "reachable": true
+        },
+        "swupdate": {
+            "state": "noupdates",
+            "lastinstall": "2020-03-11T18:39:02"
+        },
+        "type": "Dimmable light",
+        "name": "Basement White 2",
+        "modelid": "LWB014",
+        "manufacturername": "Signify Netherlands B.V.",
+        "productname": "Hue white lamp",
+        "capabilities": {
+            "certified": true,
+            "control": {
+                "mindimlevel": 2000,
+                "maxlumen": 840
+            },
+            "streaming": {
+                "renderer": false,
+                "proxy": false
+            }
+        },
+        "config": {
+            "archetype": "classicbulb",
+            "function": "functional",
+            "direction": "omnidirectional",
+            "startup": {
+                "mode": "safety",
+                "configured": true
+            }
+        },
+        "uniqueid": "00:17:88:01:03:c2:4a:fe-0b",
+        "swversion": "1.50.2_r30933",
+        "swconfigid": "2AAED91D",
+        "productid": "Philips-LWB014-1-A19DLv4"
+    },
+    "14": {
+        "state": {
+            "on": false,
+            "bri": 254,
+            "alert": "select",
+            "mode": "homeautomation",
+            "reachable": true
+        },
+        "swupdate": {
+            "state": "noupdates",
+            "lastinstall": "2020-03-11T18:38:51"
+        },
+        "type": "Dimmable light",
+        "name": "Laserdisc Lamp",
+        "modelid": "LWB014",
+        "manufacturername": "Signify Netherlands B.V.",
+        "productname": "Hue white lamp",
+        "capabilities": {
+            "certified": true,
+            "control": {
+                "mindimlevel": 2000,
+                "maxlumen": 840
+            },
+            "streaming": {
+                "renderer": false,
+                "proxy": false
+            }
+        },
+        "config": {
+            "archetype": "tableshade",
+            "function": "functional",
+            "direction": "omnidirectional",
+            "startup": {
+                "mode": "safety",
+                "configured": true
+            }
+        },
+        "uniqueid": "00:17:88:01:03:c2:3e:fd-0b",
+        "swversion": "1.50.2_r30933",
+        "swconfigid": "2AAED91D",
+        "productid": "Philips-LWB014-1-A19DLv4"
+    },
+    "16": {
+        "state": {
+            "on": false,
+            "bri": 1,
+            "alert": "select",
+            "mode": "homeautomation",
+            "reachable": true
+        },
+        "swupdate": {
+            "state": "noupdates",
+            "lastinstall": "2020-03-11T18:39:36"
+        },
+        "type": "Dimmable light",
+        "name": "Basement White 5",
+        "modelid": "LWB014",
+        "manufacturername": "Signify Netherlands B.V.",
+        "productname": "Hue white lamp",
+        "capabilities": {
+            "certified": true,
+            "control": {
+                "mindimlevel": 2000,
+                "maxlumen": 840
+            },
+            "streaming": {
+                "renderer": false,
+                "proxy": false
+            }
+        },
+        "config": {
+            "archetype": "classicbulb",
+            "function": "functional",
+            "direction": "omnidirectional",
+            "startup": {
+                "mode": "safety",
+                "configured": true
+            }
+        },
+        "uniqueid": "00:17:88:01:03:0f:70:75-0b",
+        "swversion": "1.50.2_r30933",
+        "swconfigid": "2AAED91D",
+        "productid": "Philips-LWB014-1-A19DLv4"
+    },
+    "17": {
+        "state": {
+            "on": false,
+            "bri": 1,
+            "alert": "select",
+            "mode": "homeautomation",
+            "reachable": true
+        },
+        "swupdate": {
+            "state": "noupdates",
+            "lastinstall": "2020-08-21T18:21:02"
+        },
+        "type": "Dimmable light",
+        "name": "Basement Flood 1",
+        "modelid": "LWB022",
+        "manufacturername": "Signify Netherlands B.V.",
+        "productname": "Hue white downlight",
+        "capabilities": {
+            "certified": true,
+            "control": {
+                "mindimlevel": 2000,
+                "maxlumen": 800
+            },
+            "streaming": {
+                "renderer": false,
+                "proxy": false
+            }
+        },
+        "config": {
+            "archetype": "floodbulb",
+            "function": "functional",
+            "direction": "downwards",
+            "startup": {
+                "mode": "safety",
+                "configured": true
+            }
+        },
+        "uniqueid": "00:17:88:01:06:5f:f2:48-0b",
+        "swversion": "1.65.9_hB3217DF",
+        "swconfigid": "5C93411D",
+        "productid": "Philips-LWB022-1-BR30DLv1"
+    },
+    "18": {
+        "state": {
+            "on": false,
+            "bri": 1,
+            "alert": "select",
+            "mode": "homeautomation",
+            "reachable": true
+        },
+        "swupdate": {
+            "state": "noupdates",
+            "lastinstall": "2020-08-21T18:20:57"
+        },
+        "type": "Dimmable light",
+        "name": "Basement Flood 2",
+        "modelid": "LWB022",
+        "manufacturername": "Signify Netherlands B.V.",
+        "productname": "Hue white downlight",
+        "capabilities": {
+            "certified": true,
+            "control": {
+                "mindimlevel": 2000,
+                "maxlumen": 800
+            },
+            "streaming": {
+                "renderer": false,
+                "proxy": false
+            }
+        },
+        "config": {
+            "archetype": "floodbulb",
+            "function": "functional",
+            "direction": "downwards",
+            "startup": {
+                "mode": "safety",
+                "configured": true
+            }
+        },
+        "uniqueid": "00:17:88:01:06:5f:ec:a3-0b",
+        "swversion": "1.65.9_hB3217DF",
+        "swconfigid": "5C93411D",
+        "productid": "Philips-LWB022-1-BR30DLv1"
+    }
+}

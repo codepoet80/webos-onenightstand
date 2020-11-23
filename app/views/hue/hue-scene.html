@@ -1,0 +1,40 @@
+<div class="palm-dialog-content">
+    <div id="hue-title" class="palm-dialog-title">
+        Connect to Hue
+    </div>
+    <div class="palm-dialog-seperator"></div>
+
+    <div class="textfield-group" x-mojo-focus-highlight="true" id="linkInformation" style="display:block">
+        <div class="title">
+            <div id="txtHueBridgeIP" name="txtHueBridgeIP" x-mojo-element="TextField" title="hueBridgeIP"></div>
+        </div>
+    </div>
+
+    <div class="palm-group" id="linkError" style="display:none" id="showHueLink" name="showHueLink">
+        <div class="palm-group-title"><span style="color:white">Error</span></div>
+        <div class="hueerror">
+            There was no usable response from the Hue before its timeout.
+        </div>
+    </div>
+
+    <div class="palm-group" id="addressError" style="display:none" id="showHueLink" name="showHueLink">
+        <div class="palm-group-title"><span style="color:white">Error</span></div>
+        <div class="hueerror">
+            The entered IP address or host name for the Hue Bridge does not appear to be valid.
+        </div>
+    </div>
+
+    <div class="palm-dialog-buttons">
+        <div x-mojo-element="Button" id="goButton"></div>
+        <div x-mojo-element="Button" id="cancelButton"></div>
+    </div>
+
+    <div class="palm-group" id="linkInstructions" style="display:none">
+        <div class="palm-group-title"><span style="color:white">Awaiting Link...</span></div>
+        <div class="huebridge">
+            <p align="center">
+                <img src="images/HueLink.png" width="64" height="64"><br/> Now press the Link button on your Hue Bridge...
+            </p>
+        </div>
+    </div>
+</div>

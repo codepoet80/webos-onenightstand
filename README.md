@@ -1,2 +1,5 @@
-# webos-onenightstand
-A night table companion app for webOS devices, includes clock and light control features
+# webos-nightstand
+Night table companion app for Palm Pre, with clock and light control features.
+
+Requires Philips Hue bridge and lights for light control feature.
+Currently optimized for Pre (other webOS devices coming soon).

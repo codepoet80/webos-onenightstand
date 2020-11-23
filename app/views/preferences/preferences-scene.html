@@ -1,0 +1,58 @@
+<div class="palm-hasheader" style="margin-bottom:60px">
+    <div id="watchViewTitle" class="palm-header center">
+        Settings
+    </div>
+</div>
+
+<div class="palm-group">
+    <div class="palm-group-title with-icon">
+        <span x-mojo-loc=''>Clock Face</span>
+    </div>
+    <div class="palm-list">
+
+        <div class="palm-row first">
+            <div class="palm-row-wrapper">
+                <div id='lstClockColor' x-mojo-element="ListSelector" class="right" title="clockColor"></div>
+            </div>
+        </div>
+        <div class="palm-row">
+            <div class="palm-row-wrapper">
+                <div class="title" x-mojo-loc=''>Size</div>
+                <div x-mojo-element="Slider" id='slideClockSize' class="palm-slider" title="clockSize"></div>
+            </div>
+        </div>
+
+        <div x-mojo-element="TimePicker" id="timepickerBright" class="timepickerClass" name="timepickerBright" title="wakeTime"></div>
+        <div x-mojo-element="TimePicker" id="timepickerDim" class="timepickerClass" name="timepickerDim" title="darkTime"></div>
+
+        <div class="palm-row" style="margin-top:-40px;">
+
+        </div>
+        <div class="palm-row last" style="padding-top: 6px;padding-bottom: 6px;">
+            <div class="palm-row-wrapper">
+                <div x-mojo-element="ToggleButton" id="toggleMute" title="muteWhileDark"></div>
+                <div class="title"><span x-mojo-loc=''>Mute while Dark</span></div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- Shown if there's no linked Hue Bridge -->
+<div class="palm-group" style="height:40px;display:block" id="showHueLink" name="showHueLink">
+    <div class="palm-group-title"><span x-mojo-loc=''>Hue Setup</span></div>
+    <div x-mojo-element="Button" id="btnLinkHue" class="buttonClass" style="margin-top:-12px;" name="btnLinkHue"></div>
+</div>
+
+<!-- Shown if there's is a linked Hue Bridge -->
+<div class="palm-group" id="fakeLightList" name="fakeLightList">
+    <div class="palm-group-title"><span x-mojo-loc=''>Choose 2 Lights</span></div>
+    <div class="title ">
+        <div class="scanning-spinner" x-mojo-element="Spinner" id="loadingSpinner"></div>
+        <span x-mojo-loc=''>Searching for lights...</span>
+    </div>
+</div>
+
+<div id="showHueLights" name="showHueLights" style="display:none">
+    <div id="hueLightList" x-mojo-element="List"></div>
+</div>

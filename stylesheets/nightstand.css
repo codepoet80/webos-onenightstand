@@ -1,0 +1,55 @@
+#clock {
+    height: 100%;
+    font-size: 84px;
+    text-align: center;
+    margin: auto;
+    margin-top: 15%;
+    padding: 20px;
+}
+
+#huebridge {
+    text-align: center;
+    margin: auto;
+}
+
+.black-command-menu {
+    background-color: black;
+}
+
+.icon.lightbulb {
+    width: 24px;
+    height: 48px;
+    float: right;
+    margin-right: 8px;
+}
+
+.icon.lightbulb.true {
+    background: url(../images/hueColor.png) center left no-repeat;
+}
+
+.icon.lightbulb.false {
+    background: url(../images/hueWhite.png) center left no-repeat;
+}
+
+.checkmark {
+    float: right;
+    height: 48px;
+    display: none;
+}
+
+.checkmark.true {
+    display: inline-block;
+}
+
+.emptydisplay {
+    display: none;
+}
+
+.emptydisplay.true {
+    display: block;
+}
+
+.hueerror {
+    margin-top: -8px;
+    min-height: 55px;
+}

@@ -1,0 +1,10 @@
+{
+    "id": "com.palm.webos.jonandnic.onenightstand",
+    "version": "1.0.0",
+    "vendor": "jonandnic.com",
+    "type": "web",
+    "main": "index.html",
+    "title": "One Night Stand",
+    "icon": "icon.png",
+    "theme": "dark"
+}
