@@ -126,7 +126,6 @@ PreferencesAssistant.prototype.setup = function() {
     /* add event handlers to listen to events from widgets */
     Mojo.Event.listen(this.controller.get("lstClockColor"), Mojo.Event.propertyChange, this.handleValueChange);
     Mojo.Event.listen(this.controller.get("slideClockSize"), Mojo.Event.propertyChange, this.handleValueChange);
-    //TODO: Handle time pickers
     Mojo.Event.listen(this.controller.get("timepickerDim"), Mojo.Event.propertyChange, this.handleValueChange);
     Mojo.Event.listen(this.controller.get("timepickerBright"), Mojo.Event.propertyChange, this.handleValueChange);
     Mojo.Event.listen(this.controller.get("toggleMute"), Mojo.Event.propertyChange, this.handleValueChange);
@@ -177,10 +176,14 @@ PreferencesAssistant.prototype.updateLightList = function() {
 }
 
 PreferencesAssistant.prototype.handleValueChange = function(event) {
+    //Time pickers need special handling
     if (event.srcElement.title == "wakeTime" || event.srcElement.title == "darkTime") {
-        //TODO: Time pickers need special handling
-        var appController = Mojo.Controller.getAppController();
-        appController.showBanner("Not implemented", null, null);
+        Mojo.Log.info(event.srcElement.title + " now: " + event.value);
+        var hour = event.value.getHours();
+        var min = event.value.getMinutes();
+        var timeType = event.srcElement.title.replace("Time", "");
+        appModel.AppSettingsCurrent[timeType + "TimeHour"] = hour;
+        appModel.AppSettingsCurrent[timeType + "TimeMin"] = min;
     } else {
         Mojo.Log.info(event.srcElement.title + " now: " + event.value);
         //We stashed the preference name in the title of the HTML element, so we don't have to use a case statement
@@ -208,10 +211,11 @@ PreferencesAssistant.prototype.handleCommand = function(event) {
 //Handle tap of light list
 PreferencesAssistant.prototype.handListTap = function(event) {
     Mojo.Log.info("a light was tapped: " + event.item.lightNum);
+    //TODO: Temporary home for tester
     this.toggleHueLight(event);
 }
 
-//TODO: use this later
+//TODO: move this to its own scene
 PreferencesAssistant.prototype.toggleHueLight = function(event) {
     Mojo.Log.info("light tapped: " + event.item.lightName + ", selected state: " + event.item.selectedState);
     if (event.item.selectedState) {
@@ -245,7 +249,6 @@ PreferencesAssistant.prototype.linkHueClick = function(event) {
                     this.handleDialogDone(val);
                 }.bind(this)) //since this will be a dialog, not a scene, it must be defined in sources.json without a 'scenes' member
         });
-        //TODO: Update display areas when dialog comes back if there's a username
     }
 }
 

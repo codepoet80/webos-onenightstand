@@ -12,6 +12,24 @@ LampAssistant.prototype.setup = function() {
     /* setup widgets here */
 
     // Setup command buttons (menu)
+    this.cmdMenuAttributes = {
+        menuClass: 'black-command-menu'
+    }
+    this.cmdMenuModel = {
+        visible: true,
+        items: [{
+                items: [
+                    { label: $L('Settings'), iconPath: 'images/Clock.png', command: 'do-clock' }
+                ]
+            },
+            {
+                items: [
+                    { label: $L('Lamp'), iconPath: 'images/SettingsGear.png', command: 'do-settings' }
+                ]
+            }
+        ]
+    };
+    this.controller.setupWidget(Mojo.Menu.commandMenu, this.cmdMenuAttributes, this.cmdMenuModel);
 
     // Remember and set display settings
 
@@ -28,9 +46,33 @@ LampAssistant.prototype.activate = function(event) {
     stageController.setWindowOrientation("left");
 };
 
-MainAssistant.prototype.handleLampTap = function() {
+LampAssistant.prototype.handleLampTap = function() {
 
 }
+
+LampAssistant.prototype.handleCommand = function(event) {
+    Mojo.Log.info("handling command button press for command: " + event.command);
+    var currentScene = Mojo.Controller.stageController.activeScene();
+    var stageController = Mojo.Controller.stageController;
+    if (event.type == Mojo.Event.command) {
+        switch (event.command) {
+            case 'do-settings':
+                {
+                    var stageController = Mojo.Controller.stageController;
+                    stageController.pushScene({ name: "preferences", disableSceneScroller: false });
+                    stageController.setWindowOrientation("free");
+                    break;
+                }
+            case 'do-clock':
+                {
+                    var stageController = Mojo.Controller.stageController;
+                    stageController.pushScene({ name: "main", disableSceneScroller: true });
+                    break;
+                }
+        }
+    }
+    Mojo.Log.info("current scene: " + currentScene.sceneName);
+};
 
 
 LampAssistant.prototype.deactivate = function(event) {

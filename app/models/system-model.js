@@ -267,6 +267,22 @@ SystemModel.prototype.SetSystemBrightness = function(newBrightness) {
     }
 }
 
+//Get the System Brightness
+SystemModel.prototype.GetSystemBrightness = function(callback) {
+    if (Mojo.Controller.appInfo.id.indexOf("com.palm.webos") != -1) {
+        Mojo.Log.info("Getting display state");
+        new Mojo.Service.Request("palm://com.palm.display/control", {
+            method: "getProperty",
+            parameters: { properties: ['timeout', 'maximumBrightness'] },
+            onSuccess: callback,
+            onFailure: callback
+        });
+    } else {
+        Mojo.Log.error("Privileged system services can only be called by apps with an ID that starts with 'com.palm.webos'!");
+        throw ("Privileged system service call not allowed for this App ID!");
+    }
+}
+
 //Get the state of the display ("undefined", "dimmed", "off" or "on") to a callback
 SystemModel.prototype.GetDisplayState = function(callBack) {
     if (Mojo.Controller.appInfo.id.indexOf("com.palm.webos") != -1) {

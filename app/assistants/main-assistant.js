@@ -3,6 +3,10 @@ function MainAssistant() {
        additional parameters (after the scene name) that were passed to pushScene. The reference
        to the scene controller (this.controller) has not be established yet, so any initialization
        that needs the scene controller should be done in the setup function below. */
+    this.clockDimmed = false;
+    this.PreviousBrightness = 20;
+    this.PreviousSystemVolume = 20;
+    this.PreviousRingtoneVolume = 20;
 }
 
 MainAssistant.prototype.setup = function() {
@@ -32,22 +36,22 @@ MainAssistant.prototype.setup = function() {
     this.menuOn = false;
 
     // Remember and set display settings
-    systemModel.GetDisplayState(function(response) {
-        if (response.maximumBrightness != null)
-            appModel.PreviousBrightness = response.maximumBrightness;
-        Mojo.Log.info("Remembering previous brightness as: " + appModel.PreviousBrightness);
+    systemModel.GetSystemBrightness(function(response) {
+        if (response.maximumBrightness != undefined)
+            this.PreviousBrightness = response.maximumBrightness;
+        Mojo.Log.info("Remembering previous brightness as: " + this.PreviousBrightness);
     });
     systemModel.GetSystemVolume(function(response) {
         if (response.returnValue) {
-            appModel.PreviousSystemVolume = response.volume;
+            this.PreviousSystemVolume = response.volume;
         }
-        Mojo.Log.info("Remembering previous system volume as: " + appModel.PreviousSystemVolume);
+        Mojo.Log.info("Remembering previous system volume as: " + this.PreviousSystemVolume);
     });
     systemModel.GetRingtoneVolume(function(response) {
         if (response.returnValue) {
-            appModel.PreviousRingtoneVolume.value = response.volume;
+            this.PreviousRingtoneVolume = response.volume;
         }
-        Mojo.Log.info("Remembering previous ringtone volume as: " + appModel.PreviousRingtoneVolume);
+        Mojo.Log.info("Remembering previous ringtone volume as: " + this.PreviousRingtoneVolume);
     });
     systemModel.PreventDisplaySleep();
 
@@ -66,18 +70,10 @@ MainAssistant.prototype.activate = function(event) {
     this.controller.get("clock").style.color = appModel.AppSettingsCurrent["clockColor"];
     this.controller.get("clock").style.fontSize = (appModel.AppSettingsCurrent["clockSize"] + "px");
     this.controller.get("clock").style.marginTop = this.calculateClockPosition(appModel.AppSettingsCurrent["clockSize"], true) + "px";
-    this.showClock();
-    this.clockInt = setInterval(this.showClock.bind(this), 6000);
+    this.updateClock(true);
+    this.clockInt = setInterval(this.updateClock.bind(this), 6000);
 
     systemModel.PreventDisplaySleep();
-
-    //TODO: this only happens if we're within the time ranges
-    //TODO: also need to change if we move within or without the time ranges later
-    systemModel.SetSystemBrightness(1);
-    if (appModel.AppSettingsCurrent["muteWhileDark"]) {
-        systemModel.SetSystemVolume(0);
-        systemModel.SetRingtoneVolume(0);
-    }
 };
 
 MainAssistant.prototype.calculateClockPosition = function(fontSize, isLandscape) {
@@ -108,11 +104,15 @@ MainAssistant.prototype.handleClockTap = function() {
     this.toggleCommandMenu();
 }
 
-MainAssistant.prototype.showClock = function() {
+MainAssistant.prototype.updateClock = function(skipDim) {
     var time = new Date();
     hour = time.getHours();
     min = time.getMinutes();
     sec = time.getSeconds();
+
+    this.confirmDimSetings(hour, min);
+
+    //TODO: Add support for 24-hour time
     hour = this.confirmTime(hour);
     if (hour > 12)
         hour = hour - 12;
@@ -128,6 +128,36 @@ MainAssistant.prototype.confirmTime = function(str) {
         return str;
     }
 };
+
+MainAssistant.prototype.confirmDimSetings = function(hour, min) {
+    //Change brightness and volume if necessary
+    if (this.clockDimmed && ((hour > appModel.AppSettingsCurrent["wakeTimeHour"] && hour < appModel.AppSettingsCurrent["darkTimeHour"]) ||
+            (hour == appModel.AppSettingsCurrent["wakeTimeHour"] && min >= appModel.AppSettingsCurrent["wakeTimeMin"]))) {
+
+        Mojo.Log.info("Time to brighten the screen");
+        systemModel.SetSystemBrightness(this.PreviousBrightness);
+        if (appModel.AppSettingsCurrent["muteWhileDark"]) {
+            if (this.PreviousSystemVolume > 0)
+                systemModel.SetSystemVolume(this.PreviousSystemVolume);
+            if (this.PreviousRingtoneVolume > 0)
+                systemModel.SetRingtoneVolume(this.PreviousRingtoneVolume);
+        }
+        this.clockDimmed = false;
+    }
+    if (!this.clockDimmed && (hour > appModel.AppSettingsCurrent["darkTimeHour"] ||
+            (hour == appModel.AppSettingsCurrent["darkTimeHour"] && min >= appModel.AppSettingsCurrent["darkTimeMin"]))) {
+
+        Mojo.Log.info("Time to dim the screen");
+        systemModel.SetSystemBrightness(1);
+        if (appModel.AppSettingsCurrent["muteWhileDark"]) {
+            if (this.PreviousSystemVolume > 0)
+                systemModel.SetSystemVolume(0);
+            if (this.PreviousRingtoneVolume > 0)
+                systemModel.SetRingtoneVolume(0);
+        }
+        this.clockDimmed = true;
+    }
+}
 
 MainAssistant.prototype.toggleCommandMenu = function() {
     var stageController = Mojo.Controller.getAppController().getActiveStageController();
@@ -156,6 +186,7 @@ MainAssistant.prototype.handleCommand = function(event) {
         switch (event.command) {
             case 'do-settings':
                 {
+                    this.toggleCommandMenu();
                     clearTimeout(this.hideMenuTimeout);
                     var stageController = Mojo.Controller.stageController;
                     stageController.pushScene({ name: "preferences", disableSceneScroller: false });
@@ -164,7 +195,10 @@ MainAssistant.prototype.handleCommand = function(event) {
                 }
             case 'do-lamps':
                 {
-                    Mojo.Additions.ShowDialogBox("Night Stand", "This is where I would show the lamps scene!");
+                    this.toggleCommandMenu();
+                    clearTimeout(this.hideMenuTimeout);
+                    var stageController = Mojo.Controller.stageController;
+                    stageController.pushScene({ name: "lamp", disableSceneScroller: true });
                     break;
                 }
         }
@@ -175,12 +209,18 @@ MainAssistant.prototype.handleCommand = function(event) {
 MainAssistant.prototype.deactivate = function(event) {
     /* remove any event handlers you added in activate and do any other cleanup that should happen before
        this scene is popped or another scene is pushed on top */
-    Mojo.Event.stopListening(this.sceneAssistant.controller.get("clock"), Mojo.Event.tap, this.handleClockTap.bind(this));
+    clearInterval(this.clockInt);
+    Mojo.Event.stopListening(this.controller.get("clock"), Mojo.Event.tap, this.handleClockTap.bind(this));
 
-    systemModel.SetSystemBrightness(appModel.PreviousBrightness);
-    systemModel.SetSystemVolume(appModel.PreviousSystemVolume);
-    systemModel.SetRingtoneVolume(appModel.PreviousRingtoneVolume);
-    systemModel.AllowDisplaySleep(); //This one fails on exit, but that's ok cause the OS takes care of it
+    if (this.clockDimmed) {
+        this.clockDimmed = false;
+        systemModel.SetSystemBrightness(this.PreviousBrightness);
+        if (this.PreviousSystemVolume > 0)
+            systemModel.SetSystemVolume(this.PreviousSystemVolume);
+        if (this.PreviousRingtoneVolume > 0)
+            systemModel.SetRingtoneVolume(this.PreviousRingtoneVolume);
+        systemModel.AllowDisplaySleep(); //This one fails on exit, but that's ok cause the OS takes care of it
+    }
 };
 
 MainAssistant.prototype.cleanup = function(event) {

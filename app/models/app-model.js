@@ -12,19 +12,17 @@ var AppModel = function() {
     this.DefaultScene = "main";
 
     //Define your app-wide static settings here
-    this.PreviousBrightness = 20;
-    this.PreviousSystemVolume = 20;
-    this.PreviousRingtoneVolume = 20;
 
+    //Define your app preferences (to be saved by OS)
     this.AppSettingsCurrent = null;
     this.AppSettingsDefaults = {
         clockColor: "dimgray",
         clockSize: 120,
         clockMargin: 12,
         darkTimeHour: 21,
-        darkTimeMin: 33,
+        darkTimeMin: 30,
         wakeTimeHour: 6,
-        wakeTimeMin: 36,
+        wakeTimeMin: 30,
         muteWhileDark: true,
         hueBridgeIP: "",
         hueBridgeUsername: ""
