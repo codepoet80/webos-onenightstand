@@ -253,7 +253,17 @@ PreferencesAssistant.prototype.handleDialogDone = function(val) {
 
 PreferencesAssistant.prototype.deactivate = function(event) {
     /* remove any event handlers you added in activate and do any other cleanup that should happen before
-	   this scene is popped or another scene is pushed on top */
+       this scene is popped or another scene is pushed on top */
+
+    Mojo.Event.stopListening(this.controller.get("lstClockColor"), Mojo.Event.propertyChange, this.handleValueChange);
+    Mojo.Event.stopListening(this.controller.get("slideClockSize"), Mojo.Event.propertyChange, this.handleValueChange);
+    //TODO: Unhandle time pickers
+    Mojo.Event.stopListening(this.controller.get("timepickerDim"), Mojo.Event.propertyChange, this.handleValueChange);
+    Mojo.Event.stopListening(this.controller.get("timepickerBright"), Mojo.Event.propertyChange, this.handleValueChange);
+    Mojo.Event.stopListening(this.controller.get("toggleMute"), Mojo.Event.propertyChange, this.handleValueChange);
+    Mojo.Event.stopListening(this.controller.get("btnLinkHue"), Mojo.Event.tap, this.linkHueClick.bind(this));
+    Mojo.Event.stopListening(this.controller.get("hueLightList"), Mojo.Event.listTap, this.handListTap.bind(this));
+
     appModel.SaveSettings();
 };
 

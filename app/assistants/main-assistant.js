@@ -105,8 +105,6 @@ MainAssistant.prototype.showClock = function() {
     min = this.confirmTime(min);
     sec = this.confirmTime(sec);
     this.controller.get("clock").innerHTML = hour + ":" + min;
-
-
 };
 
 MainAssistant.prototype.confirmTime = function(str) {
@@ -162,7 +160,9 @@ MainAssistant.prototype.handleCommand = function(event) {
 
 MainAssistant.prototype.deactivate = function(event) {
     /* remove any event handlers you added in activate and do any other cleanup that should happen before
-	   this scene is popped or another scene is pushed on top */
+       this scene is popped or another scene is pushed on top */
+    Mojo.Event.stopListening(this.sceneAssistant.controller.get("clock"), Mojo.Event.tap, this.handleClockTap.bind(this));
+
     systemModel.SetSystemBrightness(appModel.PreviousBrightness);
     systemModel.SetSystemVolume(appModel.PreviousSystemVolume);
     systemModel.SetRingtoneVolume(appModel.PreviousRingtoneVolume);

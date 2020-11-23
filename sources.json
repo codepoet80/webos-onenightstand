@@ -6,6 +6,10 @@
         "source": "app/assistants/main-assistant.js"
     },
     {
+        "scenes": "lamp",
+        "source": "app/assistants/lamp-assistant.js"
+    },
+    {
         "scenes": "preferences",
         "source": "app/assistants/preferences-assistant.js"
     },
