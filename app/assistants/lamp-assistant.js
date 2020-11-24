@@ -10,6 +10,17 @@ LampAssistant.prototype.setup = function() {
     /* use Mojo.View.render to render view templates and add them to the scene, if needed */
 
     /* setup widgets here */
+    //Slider
+    this.controller.setupWidget("slideBright",
+        this.attributes = {
+            minValue: 1,
+            maxValue: 100
+        },
+        this.model = {
+            value: 50,
+            disabled: false
+        }
+    );
 
     // Setup command buttons (menu)
     this.cmdMenuAttributes = {
@@ -35,7 +46,18 @@ LampAssistant.prototype.setup = function() {
 
     /* add event handlers to listen to events from widgets */
     //this.controller.listen("clock", Mojo.Event.tap, this.handleClockTap.bind(this));
+    //Event handler registration for non-Mojo widgets
+    //$("imgLampOne").addEventListener("click", this.handleLampTap.bind(this));
+    //$("imgLampTwo").addEventListener("click", this.handleLampTap.bind(this));
+    $("tdLampOne").addEventListener("click", this.handleLampTap.bind(this));
+    $("tdLampTwo").addEventListener("click", this.handleLampTap.bind(this));
+    //$("divLampOne").addEventListener("click", this.handleLampTap.bind(this));
+    //$("divLampTwo").addEventListener("click", this.handleLampTap.bind(this));
+    $("txtAllOn").addEventListener("click", this.handleElementTap.bind(this));
+    $("txtAllOff").addEventListener("click", this.handleElementTap.bind(this));
+    $("txtDimmer").addEventListener("click", this.toggleDimmerSlider.bind(this));
 
+    this.TestVal = "Jon is cool";
 };
 
 LampAssistant.prototype.activate = function(event) {
@@ -44,10 +66,56 @@ LampAssistant.prototype.activate = function(event) {
     document.body.style.backgroundColor = "black";
     var stageController = Mojo.Controller.stageController;
     stageController.setWindowOrientation("left");
+    this.toggleDimmerSlider();
 };
 
-LampAssistant.prototype.handleLampTap = function() {
+LampAssistant.prototype.handleLampTap = function(event) {
+    Mojo.Log.info("Received tap from: " + event.srcElement.id + " representing " + event.srcElement.title);
+    var currLampImg = (event.srcElement.title + "").replace("Lamp", "imgLamp");
+    if ($(currLampImg).src.indexOf("-On") != -1) {
+        Mojo.Log.info(event.srcElement.title + " should turn off");
+        $(currLampImg).src = $(currLampImg).src.replace("-On", "-Off");
+        hueModel.TurnLightOff(appModel.AppSettingsCurrent["hueBridgeIP"], appModel.AppSettingsCurrent["hueBridgeUsername"], 3)
+    } else {
+        Mojo.Log.info(event.srcElement.title + " should turn on");
+        $(currLampImg).src = $(currLampImg).src.replace("-Off", "-On");
+        Mojo.Log.info("done!")
+        hueModel.TurnLightOn(appModel.AppSettingsCurrent["hueBridgeIP"], appModel.AppSettingsCurrent["hueBridgeUsername"], 2)
+    }
+}
 
+LampAssistant.prototype.handleElementTap = function(event) {
+    Mojo.Log.info("test val at handleElementTap: " + this.TestVal);
+    if (event.srcElement.id == "txtDimmer") {
+        this.toggleDimmerSlider();
+    }
+}
+
+LampAssistant.prototype.toggleDimmerSlider = function(event) {
+    Mojo.Log.info("test val at toggleDimmerSlider: " + this.TestVal);
+    var dimmer = $("slideBright");
+    Mojo.Log.info("slider currently: " + dimmer.style.display);
+    if (dimmer.style.display == "none")
+        dimmer.style.display = "block";
+    else
+        dimmer.style.display = "none";
+
+    /*  var stageController = Mojo.Controller.getAppController().getActiveStageController();
+        if (stageController) {
+            this.controller = stageController.activeScene();
+
+            var thisWidgetSetup = this.controller.getWidgetSetup(slideBright);
+            var thisWidgetModel = thisWidgetSetup.model;
+            if (this.menuOn) {
+                thisWidgetModel.visible = false;
+                this.menuOn = false;
+            } else {
+                thisWidgetModel.visible = true;
+                this.menuOn = true;
+            }
+            this.controller.modelChanged(thisWidgetModel);
+        }
+    */
 }
 
 LampAssistant.prototype.handleCommand = function(event) {
