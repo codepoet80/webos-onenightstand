@@ -56,8 +56,6 @@ LampAssistant.prototype.setup = function() {
     $("txtAllOn").addEventListener("click", this.handleElementTap.bind(this));
     $("txtAllOff").addEventListener("click", this.handleElementTap.bind(this));
     $("txtDimmer").addEventListener("click", this.toggleDimmerSlider.bind(this));
-
-    this.TestVal = "Jon is cool";
 };
 
 LampAssistant.prototype.activate = function(event) {
@@ -66,28 +64,42 @@ LampAssistant.prototype.activate = function(event) {
     document.body.style.backgroundColor = "black";
     var stageController = Mojo.Controller.stageController;
     stageController.setWindowOrientation("left");
-    this.toggleDimmerSlider();
+    //this.toggleDimmerSlider();
+    //TODO: read lamp state (repeatedly)
 };
 
 LampAssistant.prototype.handleLampTap = function(event) {
     Mojo.Log.info("Received tap from: " + event.srcElement.id + " representing " + event.srcElement.title);
     var currLampImg = (event.srcElement.title + "").replace("Lamp", "imgLamp");
+
+    //TODO: This block takes the place of a proper lamp lookup
+    var lampId;
+    if (event.srcElement.title.indexOf("One") != -1)
+        lampId = 3
+    else
+        lampId = 2;
+
     if ($(currLampImg).src.indexOf("-On") != -1) {
         Mojo.Log.info(event.srcElement.title + " should turn off");
         $(currLampImg).src = $(currLampImg).src.replace("-On", "-Off");
-        hueModel.TurnLightOff(appModel.AppSettingsCurrent["hueBridgeIP"], appModel.AppSettingsCurrent["hueBridgeUsername"], 3)
+        hueModel.TurnLightOff(appModel.AppSettingsCurrent["hueBridgeIP"], appModel.AppSettingsCurrent["hueBridgeUsername"], lampId)
     } else {
         Mojo.Log.info(event.srcElement.title + " should turn on");
         $(currLampImg).src = $(currLampImg).src.replace("-Off", "-On");
         Mojo.Log.info("done!")
-        hueModel.TurnLightOn(appModel.AppSettingsCurrent["hueBridgeIP"], appModel.AppSettingsCurrent["hueBridgeUsername"], 2)
+        hueModel.TurnLightOn(appModel.AppSettingsCurrent["hueBridgeIP"], appModel.AppSettingsCurrent["hueBridgeUsername"], lampId)
     }
 }
 
 LampAssistant.prototype.handleElementTap = function(event) {
-    Mojo.Log.info("test val at handleElementTap: " + this.TestVal);
     if (event.srcElement.id == "txtDimmer") {
         this.toggleDimmerSlider();
+    } else if (event.srcElement.id == "txtAllOn") {
+        hueModel.TurnLightOn(appModel.AppSettingsCurrent["hueBridgeIP"], appModel.AppSettingsCurrent["hueBridgeUsername"], 2)
+        hueModel.TurnLightOn(appModel.AppSettingsCurrent["hueBridgeIP"], appModel.AppSettingsCurrent["hueBridgeUsername"], 3)
+    } else if (event.srcElement.id == "txtAllOff") {
+        hueModel.TurnLightOff(appModel.AppSettingsCurrent["hueBridgeIP"], appModel.AppSettingsCurrent["hueBridgeUsername"], 2)
+        hueModel.TurnLightOff(appModel.AppSettingsCurrent["hueBridgeIP"], appModel.AppSettingsCurrent["hueBridgeUsername"], 3)
     }
 }
 
