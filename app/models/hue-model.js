@@ -51,7 +51,7 @@ HueModel.prototype.LinkWithHue = function(bridgeip, appid, callback) {
 //Returns an array of Simple Light objects
 HueModel.prototype.GetLightList = function(bridgeip, userid, callback) {
     this.bridgeURL = "http://" + bridgeip + "/api/" + userid + "/lights/";
-    Mojo.Log.info("Getting Hue Lights with URL " + this.bridgeURL);
+    //Mojo.Log.info("Getting Hue Lights with URL " + this.bridgeURL);
     this.retVal = "";
 
     // set scope for xmlhttp anonymous function callback
@@ -72,7 +72,7 @@ HueModel.prototype.GetLightList = function(bridgeip, userid, callback) {
                 for (var lightKey in responseObj) {
                     if (typeof lightKey != "undefined") {
                         var thisLight = responseObj[lightKey];
-                        Mojo.Log.info(JSON.stringify(thisLight));
+                        //Mojo.Log.info(JSON.stringify(thisLight));
                         //TODO: Wouldn't it be cool if the light object had on/off methods directly in it? Binding 'this' will be hell though...
                         var simpleLight = {
                             num: lightKey,
@@ -85,7 +85,6 @@ HueModel.prototype.GetLightList = function(bridgeip, userid, callback) {
                             uniqueid: thisLight.uniqueid
                         };
                         //HACK: This is a crude approach to check if the light seems to support color
-                        Mojo.Log.info("color status: " + thisLight.type.toLowerCase());
                         if (thisLight.type.toLowerCase().indexOf("color") != -1)
                             simpleLight.colorcapable = true;
                         lightArray.push(simpleLight);
@@ -102,10 +101,10 @@ HueModel.prototype.GetLightList = function(bridgeip, userid, callback) {
     }.bind(this);
 }
 
-//Returns a Simple Light object
+//Returns an array of Simple Light objects
 HueModel.prototype.GetLight = function(bridgeip, userid, light, callback) {
-    this.bridgeURL = "http://" + bridgeip + "/api/" + userid + "/lights/";
-    Mojo.Log.info("Getting Hue Light with URL " + this.bridgeURL);
+    this.bridgeURL = "http://" + bridgeip + "/api/" + userid + "/lights/" + light;
+    //Mojo.Log.info("Getting Hue Light with URL " + this.bridgeURL);
     this.retVal = "";
 
     // set scope for xmlhttp anonymous function callback
@@ -118,45 +117,27 @@ HueModel.prototype.GetLight = function(bridgeip, userid, light, callback) {
     xmlhttp.send();
     xmlhttp.onreadystatechange = function() {
         if (xmlhttp.readyState == XMLHttpRequest.DONE) {
-            Mojo.Log.info("Hue responded: " + xmlhttp.responseText);
+            //Mojo.Log.info("Hue responded: " + xmlhttp.responseText);
             //crude check to make sure we got a usable response
             if (xmlhttp.responseText.indexOf("state") != -1) {
-                var responseObj = JSON.parse(xmlhttp.responseText);
-                for (var lightKey in responseObj) {
-                    if (typeof this.prototype[lightKey] != "undefined") {
-                        var thisLight = object[key];
-                        //TODO: Wouldn't it be cool if the light object had on/off methods directly in it? Binding 'this' will be hell though...
-                        var simpleLight = {
-                            num: lightKey,
-                            on: thisLight.state.on,
-                            brightness: thisLight.state.bri,
-                            reachable: thisLight.state.reachable,
-                            bulbtype: thisLight.config.archetype,
-                            colorcapable: false,
-                            name: thisLight.name,
-                            uniqueid: thisLight.uniqueid
-                        };
-                        //HACK: This is a crude approach to check if the light seems to support color
-                        Mojo.Log.info("color status: " + thisLight.type.toLowerCase());
-                        if (thisLight.type.toLowerCase().indexOf("color") != -1)
-                            simpleLight.colorcapable = true;
-                        //This query returns the object for only the queried light
-                        //  To support multiple types of queries, we have to detect the query type
-                        //  And compare accordingly.
-                        if (typeof light == Number) {
-                            if (simpleLight.num == light)
-                                this.retVal = thisLight;
-                        }
-                        if (typeof light == String) {
-                            if (simpleLight.uniqueid == light)
-                                this.retVal = thisLight;
-                        }
-                        if (typeof light == Object) {
-                            if (simpleLight.uniqueid == light.uniqueid)
-                                this.retVal = thisLight
-                        }
-                    }
-                };
+                var thisLight = JSON.parse(xmlhttp.responseText);
+                if (typeof thisLight != "undefined") {
+                    //TODO: Wouldn't it be cool if the light object had on/off methods directly in it? Binding 'this' will be hell though...
+                    var simpleLight = {
+                        num: light,
+                        on: thisLight.state.on,
+                        brightness: thisLight.state.bri,
+                        reachable: thisLight.state.reachable,
+                        bulbtype: thisLight.config.archetype,
+                        colorcapable: false,
+                        name: thisLight.name,
+                        uniqueid: thisLight.uniqueid
+                    };
+                    //HACK: This is a crude approach to check if the light seems to support color
+                    if (thisLight.type.toLowerCase().indexOf("color") != -1)
+                        simpleLight.colorcapable = true;
+                }
+                this.retVal = simpleLight;
             } else {
                 Mojo.Log.warn("Hue response did not appear to contain light states!");
                 this.retVal = xmlhttp.responseText;
@@ -180,7 +161,7 @@ HueModel.prototype.TurnLightOff = function(bridgeip, userid, light, callback) {
 
     // set scope for xmlhttp anonymous function callback
     if (callback)
-        this.callBack = callback.bind(this);
+        callback = callback.bind(this);
 
     var xmlhttp = new XMLHttpRequest();
     xmlhttp.open("PUT", this.bridgeURL);
@@ -195,8 +176,10 @@ HueModel.prototype.TurnLightOff = function(bridgeip, userid, light, callback) {
             } else {
                 this.retVal = true;
             }
-            if (this.callBack)
-                this.callBack(this.retVal);
+            if (callback) {
+                Mojo.Log.warn("Executing Hue light state change callback");
+                callback(this.retVal);
+            }
         }
     }.bind(this);
 }
@@ -214,7 +197,7 @@ HueModel.prototype.TurnLightOn = function(bridgeip, userid, light, callback) {
 
     // set scope for xmlhttp anonymous function callback
     if (callback)
-        this.callBack = callback.bind(this);
+        callback = callback.bind(this);
 
     var xmlhttp = new XMLHttpRequest();
     xmlhttp.open("PUT", this.bridgeURL);
@@ -230,14 +213,16 @@ HueModel.prototype.TurnLightOn = function(bridgeip, userid, light, callback) {
             } else {
                 this.retVal = true;
             }
-            if (this.callBack)
-                this.callBack(this.retVal);
+            if (callback) {
+                Mojo.Log.warn("Executing Hue light state change callback");
+                callback(this.retVal);
+            }
         }
     }.bind(this);
 }
 
 //Returns a boolean indicating success
-HueModel.prototype.SetLightBrightness = function(bridgeip, userid, light, percentBright, forceOn, callback) {
+HueModel.prototype.SetLightBrightness = function(bridgeip, userid, light, brightLevel, forceOn, callback) {
     //Handle an object being passed in, instead of a light number
     //TODO: for consistency we should also handle passing in a light uniqueid
     if (typeof light == Object)
@@ -254,9 +239,11 @@ HueModel.prototype.SetLightBrightness = function(bridgeip, userid, light, percen
     var xmlhttp = new XMLHttpRequest();
     xmlhttp.open("PUT", this.bridgeURL);
     xmlhttp.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
-    xmlhttp.send(JSON.stringify({ "bri": percentBright }));
+    var commandToSend = { "bri": brightLevel };
     if (forceOn)
-        xmlhttp.send(JSON.stringify({ "on": true }));
+        commandToSend.on = true;
+    xmlhttp.send(JSON.stringify(commandToSend));
+
     xmlhttp.onreadystatechange = function() {
         if (xmlhttp.readyState == XMLHttpRequest.DONE) {
             Mojo.Log.info("Hue responded: " + xmlhttp.responseText);

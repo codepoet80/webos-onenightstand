@@ -14,11 +14,11 @@ LampAssistant.prototype.setup = function() {
     this.controller.setupWidget("slideBright",
         this.attributes = {
             minValue: 1,
-            maxValue: 100
+            maxValue: 254
         },
         this.model = {
-            value: 50,
-            disabled: false
+            value: 126,
+            disabled: true
         }
     );
 
@@ -42,17 +42,23 @@ LampAssistant.prototype.setup = function() {
     };
     this.controller.setupWidget(Mojo.Menu.commandMenu, this.cmdMenuAttributes, this.cmdMenuModel);
 
-    // Remember and set display settings
+    //Non-Mojo widget data object
+    this.Lamp1 = {
+        num: appModel.AppSettingsCurrent["hueSelectedLights"][0],
+        name: "Lamp 1",
+        on: false
+    };
+    this.Lamp2 = {
+        num: appModel.AppSettingsCurrent["hueSelectedLights"][1],
+        name: "Lamp 2",
+        on: false
+    }
 
     /* add event handlers to listen to events from widgets */
-    //this.controller.listen("clock", Mojo.Event.tap, this.handleClockTap.bind(this));
+    Mojo.Event.listen(this.controller.get("slideBright"), Mojo.Event.propertyChange, this.handleValueChange.bind(this));
     //Event handler registration for non-Mojo widgets
-    //$("imgLampOne").addEventListener("click", this.handleLampTap.bind(this));
-    //$("imgLampTwo").addEventListener("click", this.handleLampTap.bind(this));
     $("tdLampOne").addEventListener("click", this.handleLampTap.bind(this));
     $("tdLampTwo").addEventListener("click", this.handleLampTap.bind(this));
-    //$("divLampOne").addEventListener("click", this.handleLampTap.bind(this));
-    //$("divLampTwo").addEventListener("click", this.handleLampTap.bind(this));
     $("txtAllOn").addEventListener("click", this.handleElementTap.bind(this));
     $("txtAllOff").addEventListener("click", this.handleElementTap.bind(this));
     $("txtDimmer").addEventListener("click", this.toggleDimmerSlider.bind(this));
@@ -61,73 +67,122 @@ LampAssistant.prototype.setup = function() {
 LampAssistant.prototype.activate = function(event) {
     /* put in event handlers here that should only be in effect when this scene is active. For
        example, key handlers that are observing the document */
+
     document.body.style.backgroundColor = "black";
     var stageController = Mojo.Controller.stageController;
     stageController.setWindowOrientation("left");
-    //this.toggleDimmerSlider();
-    //TODO: read lamp state (repeatedly)
+    this.toggleDimmerSlider();
+
+    this.updateLightList();
+    this.updateLightsInt = setInterval(this.updateLightList.bind(this), 6000);
+    this.setTimerToGoBack();
 };
 
+LampAssistant.prototype.updateLightList = function() {
+    hueModel.GetLightList(appModel.AppSettingsCurrent["hueBridgeIP"], appModel.AppSettingsCurrent["hueBridgeUsername"], function(lights) {
+        //Mojo.Log.info("** updating LIGHT state")
+        for (var i = 0; i < lights.length; i++) {
+            var thisLight = lights[i];
+            if (thisLight.num == this.Lamp1.num) {
+                this.Lamp1 = thisLight;
+            }
+            if (thisLight.num == this.Lamp2.num) {
+                this.Lamp2 = thisLight;
+            }
+        }
+        this.updateLampState();
+    }.bind(this));
+}
+
+LampAssistant.prototype.updateLampState = function() {
+    //Mojo.Log.info("*** updating LAMP state");
+    if (this.Lamp1.name != document.getElementById("divLampOne").innerText) {
+        document.getElementById("divLampOne").innerText = this.Lamp1.name;
+    }
+    if (this.Lamp1.on) {
+        document.getElementById("imgLampOne").src = "images/Lamp-On.png";
+    } else {
+        document.getElementById("imgLampOne").src = "images/Lamp-Off.png";
+    }
+
+    if (this.Lamp2.name != document.getElementById("divLampTwo").innerText) {
+        document.getElementById("divLampTwo").innerText = this.Lamp2.name;
+    }
+    if (this.Lamp2.on) {
+        document.getElementById("imgLampTwo").src = "images/Lamp-On.png";
+    } else {
+        document.getElementById("imgLampTwo").src = "images/Lamp-Off.png";
+    }
+}
+
 LampAssistant.prototype.handleLampTap = function(event) {
-    Mojo.Log.info("Received tap from: " + event.srcElement.id + " representing " + event.srcElement.title);
+    this.setTimerToGoBack();
+
     var currLampImg = (event.srcElement.title + "").replace("Lamp", "imgLamp");
+    var lampNum;
+    var newLampStateOn = true;
+    if (event.srcElement.title.indexOf("One") != -1) {
+        lampNum = this.Lamp1.num;
+        if (this.Lamp1.on)
+            newLampStateOn = false;
+        this.Lamp1.on = newLampStateOn;
+    } else {
+        lampNum = this.Lamp2.num;
+        if (this.Lamp2.on)
+            newLampStateOn = false;
+        this.Lamp2.on = newLampStateOn;
+    }
 
-    //TODO: This block takes the place of a proper lamp lookup
-    var lampId;
-    if (event.srcElement.title.indexOf("One") != -1)
-        lampId = 3
-    else
-        lampId = 2;
-
-    if ($(currLampImg).src.indexOf("-On") != -1) {
+    if (!newLampStateOn) {
         Mojo.Log.info(event.srcElement.title + " should turn off");
-        $(currLampImg).src = $(currLampImg).src.replace("-On", "-Off");
-        hueModel.TurnLightOff(appModel.AppSettingsCurrent["hueBridgeIP"], appModel.AppSettingsCurrent["hueBridgeUsername"], lampId)
+        document.getElementById(currLampImg).src = "images/Lamp-Off.png";
+        hueModel.TurnLightOff(appModel.AppSettingsCurrent["hueBridgeIP"], appModel.AppSettingsCurrent["hueBridgeUsername"], lampNum);
     } else {
         Mojo.Log.info(event.srcElement.title + " should turn on");
-        $(currLampImg).src = $(currLampImg).src.replace("-Off", "-On");
-        Mojo.Log.info("done!")
-        hueModel.TurnLightOn(appModel.AppSettingsCurrent["hueBridgeIP"], appModel.AppSettingsCurrent["hueBridgeUsername"], lampId)
+        document.getElementById(currLampImg).src = "images/Lamp-On.png";
+        hueModel.TurnLightOn(appModel.AppSettingsCurrent["hueBridgeIP"], appModel.AppSettingsCurrent["hueBridgeUsername"], lampNum);
     }
+    event.stopPropagation();
 }
 
 LampAssistant.prototype.handleElementTap = function(event) {
+    this.setTimerToGoBack();
+
     if (event.srcElement.id == "txtDimmer") {
         this.toggleDimmerSlider();
     } else if (event.srcElement.id == "txtAllOn") {
-        hueModel.TurnLightOn(appModel.AppSettingsCurrent["hueBridgeIP"], appModel.AppSettingsCurrent["hueBridgeUsername"], 2)
-        hueModel.TurnLightOn(appModel.AppSettingsCurrent["hueBridgeIP"], appModel.AppSettingsCurrent["hueBridgeUsername"], 3)
+        for (var l = 0; l < appModel.AppSettingsCurrent["hueSelectedLights"].length; l++) {
+            hueModel.TurnLightOn(appModel.AppSettingsCurrent["hueBridgeIP"], appModel.AppSettingsCurrent["hueBridgeUsername"], appModel.AppSettingsCurrent["hueSelectedLights"][l]);
+            document.getElementById("imgLampOne").src = "images/Lamp-On.png";
+            document.getElementById("imgLampTwo").src = "images/Lamp-On.png";
+        }
     } else if (event.srcElement.id == "txtAllOff") {
-        hueModel.TurnLightOff(appModel.AppSettingsCurrent["hueBridgeIP"], appModel.AppSettingsCurrent["hueBridgeUsername"], 2)
-        hueModel.TurnLightOff(appModel.AppSettingsCurrent["hueBridgeIP"], appModel.AppSettingsCurrent["hueBridgeUsername"], 3)
+        for (var l = 0; l < appModel.AppSettingsCurrent["hueSelectedLights"].length; l++) {
+            hueModel.TurnLightOff(appModel.AppSettingsCurrent["hueBridgeIP"], appModel.AppSettingsCurrent["hueBridgeUsername"], appModel.AppSettingsCurrent["hueSelectedLights"][l]);
+            document.getElementById("imgLampOne").src = "images/Lamp-Off.png";
+            document.getElementById("imgLampTwo").src = "images/Lamp-Off.png";
+        }
     }
 }
 
-LampAssistant.prototype.toggleDimmerSlider = function(event) {
-    Mojo.Log.info("test val at toggleDimmerSlider: " + this.TestVal);
+LampAssistant.prototype.toggleDimmerSlider = function(show) {
+    this.setTimerToGoBack();
+
     var dimmer = $("slideBright");
-    Mojo.Log.info("slider currently: " + dimmer.style.display);
-    if (dimmer.style.display == "none")
+    if (dimmer.style.display == "none") {
         dimmer.style.display = "block";
-    else
+        var thisWidgetSetup = this.controller.getWidgetSetup("slideBright");
+        var thisWidgetModel = thisWidgetSetup.model;
+        thisWidgetModel.disabled = false;
+        this.controller.modelChanged(thisWidgetModel);
+
+    } else {
         dimmer.style.display = "none";
-
-    /*  var stageController = Mojo.Controller.getAppController().getActiveStageController();
-        if (stageController) {
-            this.controller = stageController.activeScene();
-
-            var thisWidgetSetup = this.controller.getWidgetSetup(slideBright);
-            var thisWidgetModel = thisWidgetSetup.model;
-            if (this.menuOn) {
-                thisWidgetModel.visible = false;
-                this.menuOn = false;
-            } else {
-                thisWidgetModel.visible = true;
-                this.menuOn = true;
-            }
-            this.controller.modelChanged(thisWidgetModel);
-        }
-    */
+        var thisWidgetSetup = this.controller.getWidgetSetup("slideBright");
+        var thisWidgetModel = thisWidgetSetup.model;
+        thisWidgetModel.disabled = true;
+        this.controller.modelChanged(thisWidgetModel);
+    }
 }
 
 LampAssistant.prototype.handleCommand = function(event) {
@@ -154,10 +209,40 @@ LampAssistant.prototype.handleCommand = function(event) {
     Mojo.Log.info("current scene: " + currentScene.sceneName);
 };
 
+LampAssistant.prototype.handleValueChange = function(event) {
+    this.setTimerToGoBack();
+
+    Mojo.Log.info(event.srcElement.title + " now: " + event.value);
+    if (event.srcElement.title == "lightBright") {
+        var newDimVal = Math.round(event.value);
+        for (var l = 0; l < appModel.AppSettingsCurrent["hueSelectedLights"].length; l++) {
+            hueModel.SetLightBrightness(appModel.AppSettingsCurrent["hueBridgeIP"], appModel.AppSettingsCurrent["hueBridgeUsername"], appModel.AppSettingsCurrent["hueSelectedLights"][l], newDimVal, true);
+        }
+    }
+};
+
+LampAssistant.prototype.setTimerToGoBack = function() {
+    clearTimeout(this.goBackTimeout);
+    this.goBackTimeout = setTimeout(function() {
+            var stageController = Mojo.Controller.stageController;
+            stageController.pushScene({ name: "main", disableSceneScroller: false });
+        }, 45000)
+        //TODO: Instead of hard-coding this timeout, we could use the system screen timeout
+}
 
 LampAssistant.prototype.deactivate = function(event) {
     /* remove any event handlers you added in activate and do any other cleanup that should happen before
-	   this scene is popped or another scene is pushed on top */
+       this scene is popped or another scene is pushed on top */
+    clearTimeout(this.goBackTimeout);
+    cleartInterval(updateLampsInt);
+
+    Mojo.Event.stopListening(this.controller.get("slideBright"), Mojo.Event.propertyChange, this.handleValueChange);
+    //Event handler de-registration for non-Mojo widgets
+    $("tdLampOne").removeEventListener("click", this.handleLampTap);
+    $("tdLampTwo").removeEventListener("click", this.handleLampTap);
+    $("txtAllOn").removeEventListener("click", this.handleElementTap);
+    $("txtAllOff").removeEventListener("click", this.handleElementTap);
+    $("txtDimmer").removeEventListener("click", this.toggleDimmerSlider);
 };
 
 LampAssistant.prototype.cleanup = function(event) {

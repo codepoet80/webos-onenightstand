@@ -10,6 +10,7 @@ App Model
 var AppModel = function() {
     //Define your default scene (needed for settings management)
     this.DefaultScene = "main";
+    this.Lamps = [];
 
     //Define your app-wide static settings here
 
@@ -25,7 +26,9 @@ var AppModel = function() {
         wakeTimeMin: 30,
         muteWhileDark: true,
         hueBridgeIP: "",
-        hueBridgeUsername: ""
+        hueBridgeUsername: "",
+        hueSelectedLights: [],
+        hueOverSelectNotice: false
     };
 }
 

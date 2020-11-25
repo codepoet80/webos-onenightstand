@@ -7,6 +7,7 @@ function MainAssistant() {
     this.PreviousBrightness = 20;
     this.PreviousSystemVolume = 20;
     this.PreviousRingtoneVolume = 20;
+    this.Lamps = [];
 }
 
 MainAssistant.prototype.setup = function() {

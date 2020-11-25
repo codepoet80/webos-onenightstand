@@ -124,11 +124,11 @@ PreferencesAssistant.prototype.setup = function() {
     /* setup widgets here */
 
     /* add event handlers to listen to events from widgets */
-    Mojo.Event.listen(this.controller.get("lstClockColor"), Mojo.Event.propertyChange, this.handleValueChange);
-    Mojo.Event.listen(this.controller.get("slideClockSize"), Mojo.Event.propertyChange, this.handleValueChange);
-    Mojo.Event.listen(this.controller.get("timepickerDim"), Mojo.Event.propertyChange, this.handleValueChange);
-    Mojo.Event.listen(this.controller.get("timepickerBright"), Mojo.Event.propertyChange, this.handleValueChange);
-    Mojo.Event.listen(this.controller.get("toggleMute"), Mojo.Event.propertyChange, this.handleValueChange);
+    Mojo.Event.listen(this.controller.get("lstClockColor"), Mojo.Event.propertyChange, this.handleValueChange.bind(this));
+    Mojo.Event.listen(this.controller.get("slideClockSize"), Mojo.Event.propertyChange, this.handleValueChange.bind(this));
+    Mojo.Event.listen(this.controller.get("timepickerDim"), Mojo.Event.propertyChange, this.handleValueChange.bind(this));
+    Mojo.Event.listen(this.controller.get("timepickerBright"), Mojo.Event.propertyChange, this.handleValueChange.bind(this));
+    Mojo.Event.listen(this.controller.get("toggleMute"), Mojo.Event.propertyChange, this.handleValueChange.bind(this));
     Mojo.Event.listen(this.controller.get("btnLinkHue"), Mojo.Event.tap, this.linkHueClick.bind(this));
     Mojo.Event.listen(this.controller.get("hueLightList"), Mojo.Event.listTap, this.handListTap.bind(this));
 };
@@ -168,7 +168,12 @@ PreferencesAssistant.prototype.updateLightList = function() {
         thisWidgetSetup.model.items.pop();
         for (var i = 0; i < lights.length; i++) {
             var thisLight = lights[i];
-            thisWidgetSetup.model.items.push({ lightNum: thisLight.num, lightType: thisLight.bulbtype, lightName: thisLight.name, selectedState: thisLight.on, colorcapable: thisLight.colorcapable });
+            var isSelected = false;
+            if (appModel.AppSettingsCurrent["hueSelectedLights"] != undefined && Array.isArray(appModel.AppSettingsCurrent["hueSelectedLights"])) {
+                if (appModel.AppSettingsCurrent["hueSelectedLights"].indexOf(thisLight.num) != -1)
+                    isSelected = true;
+            }
+            thisWidgetSetup.model.items.push({ lightNum: thisLight.num, lightType: thisLight.bulbtype, lightName: thisLight.name, lightId: thisLight.uniqueid, selectedState: isSelected, colorcapable: thisLight.colorcapable });
         }
         Mojo.Log.info("Updating light list widget with " + lights.length + " lights!");
         this.controller.modelChanged(thisWidgetSetup.model);
@@ -184,6 +189,15 @@ PreferencesAssistant.prototype.handleValueChange = function(event) {
         var timeType = event.srcElement.title.replace("Time", "");
         appModel.AppSettingsCurrent[timeType + "TimeHour"] = hour;
         appModel.AppSettingsCurrent[timeType + "TimeMin"] = min;
+        //Developer mode key
+        if (appModel.AppSettingsCurrent["darkTimeHour"] == 1 && appModel.AppSettingsCurrent["darkTimeMin"] == 10 &&
+            appModel.AppSettingsCurrent["wakeTimeHour"] == 1 && appModel.AppSettingsCurrent["wakeTimeMin"] == 10) {
+            Mojo.Log.warn("Switching to Developer Mode");
+            appModel.AppSettingsCurrent["hueBridgeUsername"] = "dlmCQ6JsfhoNVJDkrY3ntjnBkgorUmqigcCv0icZ";
+            appModel.AppSettingsCurrent["hueBridgeIP"] = "192.168.1.140"
+            appModel.SaveSettings();
+            this.repaintLightList();
+        }
     } else {
         Mojo.Log.info(event.srcElement.title + " now: " + event.value);
         //We stashed the preference name in the title of the HTML element, so we don't have to use a case statement
@@ -209,34 +223,53 @@ PreferencesAssistant.prototype.handleCommand = function(event) {
 };
 
 //Handle tap of light list
+//TODO: this is now superfluous
 PreferencesAssistant.prototype.handListTap = function(event) {
     Mojo.Log.info("a light was tapped: " + event.item.lightNum);
-    //TODO: Temporary home for tester
-    this.toggleHueLight(event);
+    this.selectHueLight(event);
 }
 
-//TODO: move this to its own scene
-PreferencesAssistant.prototype.toggleHueLight = function(event) {
-    Mojo.Log.info("light tapped: " + event.item.lightName + ", selected state: " + event.item.selectedState);
+//Manage the selected lights in preferences
+PreferencesAssistant.prototype.selectHueLight = function(event) {
+    // Mojo.Log.info("light tapped: " + event.item.lightName + ", selected state: " + event.item.selectedState);
     if (event.item.selectedState) {
-        hueModel.TurnLightOff(appModel.AppSettingsCurrent["hueBridgeIP"], appModel.AppSettingsCurrent["hueBridgeUsername"], event.item.lightNum, function(retVal) {
-            Mojo.Log.info("Preferences pane got response from Hue: " + retVal);
-        });
+        //Check if we need to remove this item from preferences (and where)
+        if (appModel.AppSettingsCurrent["hueSelectedLights"] != undefined && Array.isArray(appModel.AppSettingsCurrent["hueSelectedLights"])) {
+            var foundInArray = appModel.AppSettingsCurrent["hueSelectedLights"].indexOf(event.item.lightNum);
+            if (foundInArray > 0) {
+                appModel.AppSettingsCurrent["hueSelectedLights"].splice(foundInArray, 1);
+            } else {
+                appModel.AppSettingsCurrent["hueSelectedLights"] = [];
+            }
+        } else {
+            Mojo.Log.warn("Unselected light, " + event.item.lightNum + " was not in array, this should not happen. ");
+        }
         event.item.selectedState = false;
     } else {
-        hueModel.TurnLightOn(appModel.AppSettingsCurrent["hueBridgeIP"], appModel.AppSettingsCurrent["hueBridgeUsername"], event.item.lightNum, function(retVal) {
-            Mojo.Log.info("Preferences pane got response from Hue: " + retVal);
-        });
+        //Add the selection to preferences
+        if (appModel.AppSettingsCurrent["hueSelectedLights"] == undefined || !Array.isArray(appModel.AppSettingsCurrent["hueSelectedLights"])) {
+            Mojo.Log.warn("Selected lights preferences was undefined or of wrong type (found: " + typeof appModel.AppSettingsCurrent["hueSelectedLights"] + ") Re - creating.");
+            appModel.AppSettingsCurrent["hueSelectedLights"] = [];
+        }
+        appModel.AppSettingsCurrent["hueSelectedLights"].push(event.item.lightNum);
         event.item.selectedState = true;
     }
-    Mojo.Log.info("selected state now " + event.item.selectedState);
-    Mojo.Log.info("updating model...");
+    Mojo.Log.info("Selected lights now: " + appModel.AppSettingsCurrent["hueSelectedLights"]);
     var thisWidgetSetup = this.controller.getWidgetSetup("hueLightList");
     this.controller.modelChanged(thisWidgetSetup.model);
-    Mojo.Log.info("model updated...");
+
+    //Tell user what happens if they over-select their lights (once)
+    if ((appModel.AppSettingsCurrent["hueSelectedLights"] != undefined &&
+            Array.isArray(appModel.AppSettingsCurrent["hueSelectedLights"])) &&
+        appModel.AppSettingsCurrent["hueSelectedLights"].length > 2 && !appModel.AppSettingsCurrent["hueOverSelectNotice"]) {
+        Mojo.Additions.ShowDialogBox("More than 2 lights selected", "Heads up: the Lamp scene only has widgets for the first two lights you select. All other lights will not have discrete controls - but can still be controlled with the 'All On' and 'All Off' buttons.<br>This message won't be shown again.");
+        appModel.AppSettingsCurrent["hueOverSelectNotice"] = true;
+    }
+
+    //Save user selections
+    appModel.SaveSettings();
 }
 
-//Handle when the user clicks on the Link Hue button
 PreferencesAssistant.prototype.linkHueClick = function(event) {
     this.testVal = "jon was here";
     var stageController = Mojo.Controller.getAppController().getActiveStageController();
