@@ -112,7 +112,7 @@ PreferencesAssistant.prototype.setup = function() {
         items: [
             { label: "Go Back", command: 'do-goBack' },
             { label: "Reset Settings", command: 'do-resetSettings' },
-            { label: "About Night Stand", command: 'do-myAbout' }
+            { label: "About...", command: 'do-myAbout' }
         ]
     };
     this.controller.setupWidget(Mojo.Menu.appMenu, this.appMenuAttributes, this.appMenuModel);
@@ -130,7 +130,7 @@ PreferencesAssistant.prototype.setup = function() {
     Mojo.Event.listen(this.controller.get("timepickerBright"), Mojo.Event.propertyChange, this.handleValueChange.bind(this));
     Mojo.Event.listen(this.controller.get("toggleMute"), Mojo.Event.propertyChange, this.handleValueChange.bind(this));
     Mojo.Event.listen(this.controller.get("btnLinkHue"), Mojo.Event.tap, this.linkHueClick.bind(this));
-    Mojo.Event.listen(this.controller.get("hueLightList"), Mojo.Event.listTap, this.handListTap.bind(this));
+    Mojo.Event.listen(this.controller.get("hueLightList"), Mojo.Event.listTap, this.selectHueLight.bind(this));
 };
 
 PreferencesAssistant.prototype.activate = function(event) {
@@ -213,7 +213,7 @@ PreferencesAssistant.prototype.handleCommand = function(event) {
                 Mojo.Controller.stageController.popScene();
                 break;
             case 'do-myAbout':
-                Mojo.Additions.ShowDialogBox("One Night Stand", "Copyright 2020, Jonathan Wise. Available under an MIT License. Source code available at: https://github.com/codepoet80/webos-onenightstand");
+                Mojo.Additions.ShowDialogBox("One Night Stand", "Bed-side clock and Hue light controller. Copyright 2020, Jonathan Wise. Available under an MIT License. Source code available at: https://github.com/codepoet80/webos-onenightstand");
                 break;
             case 'do-resetSettings':
                 appModel.ResetSettings();
@@ -222,21 +222,14 @@ PreferencesAssistant.prototype.handleCommand = function(event) {
     }
 };
 
-//Handle tap of light list
-//TODO: this is now superfluous
-PreferencesAssistant.prototype.handListTap = function(event) {
-    Mojo.Log.info("a light was tapped: " + event.item.lightNum);
-    this.selectHueLight(event);
-}
-
-//Manage the selected lights in preferences
+//Handle light selection from list
 PreferencesAssistant.prototype.selectHueLight = function(event) {
     // Mojo.Log.info("light tapped: " + event.item.lightName + ", selected state: " + event.item.selectedState);
     if (event.item.selectedState) {
         //Check if we need to remove this item from preferences (and where)
         if (appModel.AppSettingsCurrent["hueSelectedLights"] != undefined && Array.isArray(appModel.AppSettingsCurrent["hueSelectedLights"])) {
             var foundInArray = appModel.AppSettingsCurrent["hueSelectedLights"].indexOf(event.item.lightNum);
-            if (foundInArray > 0) {
+            if (foundInArray >= 0) {
                 appModel.AppSettingsCurrent["hueSelectedLights"].splice(foundInArray, 1);
             } else {
                 appModel.AppSettingsCurrent["hueSelectedLights"] = [];
@@ -254,7 +247,11 @@ PreferencesAssistant.prototype.selectHueLight = function(event) {
         appModel.AppSettingsCurrent["hueSelectedLights"].push(event.item.lightNum);
         event.item.selectedState = true;
     }
+    //Save preferences
+    appModel.SaveSettings();
     Mojo.Log.info("Selected lights now: " + appModel.AppSettingsCurrent["hueSelectedLights"]);
+
+    //Update UI
     var thisWidgetSetup = this.controller.getWidgetSetup("hueLightList");
     this.controller.modelChanged(thisWidgetSetup.model);
 
@@ -265,9 +262,6 @@ PreferencesAssistant.prototype.selectHueLight = function(event) {
         Mojo.Additions.ShowDialogBox("More than 2 lights selected", "Heads up: the Lamp scene only has widgets for the first two lights you select. All other lights will not have discrete controls - but can still be controlled with the 'All On' and 'All Off' buttons.<br>This message won't be shown again.");
         appModel.AppSettingsCurrent["hueOverSelectNotice"] = true;
     }
-
-    //Save user selections
-    appModel.SaveSettings();
 }
 
 PreferencesAssistant.prototype.linkHueClick = function(event) {
@@ -302,7 +296,7 @@ PreferencesAssistant.prototype.deactivate = function(event) {
     Mojo.Event.stopListening(this.controller.get("timepickerBright"), Mojo.Event.propertyChange, this.handleValueChange);
     Mojo.Event.stopListening(this.controller.get("toggleMute"), Mojo.Event.propertyChange, this.handleValueChange);
     Mojo.Event.stopListening(this.controller.get("btnLinkHue"), Mojo.Event.tap, this.linkHueClick.bind(this));
-    Mojo.Event.stopListening(this.controller.get("hueLightList"), Mojo.Event.listTap, this.handListTap.bind(this));
+    Mojo.Event.stopListening(this.controller.get("hueLightList"), Mojo.Event.listTap, this.selectHueLight.bind(this));
 
     appModel.SaveSettings();
 };

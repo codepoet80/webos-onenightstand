@@ -19,7 +19,7 @@ AppAssistant.prototype.handleLaunch = function(params) {
 
     //get the proxy for the stage in the event it already exists (eg: app is currently open)
     var mainStage = this.controller.getStageProxy("");
-    Mojo.Log.info("Night Stand App is Launching! Launch params: " + JSON.stringify(params));
+    Mojo.Log.info("One Night Stand is Launching! Launch params: " + JSON.stringify(params));
 
     if (!params || params["action"] == undefined) //If no parameters were passed, this is a normal launch
     {

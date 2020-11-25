@@ -52,7 +52,8 @@ LampAssistant.prototype.setup = function() {
         num: appModel.AppSettingsCurrent["hueSelectedLights"][1],
         name: "Lamp 2",
         on: false
-    }
+    };
+    //TODO: Text-based tap targets are too small
 
     /* add event handlers to listen to events from widgets */
     Mojo.Event.listen(this.controller.get("slideBright"), Mojo.Event.propertyChange, this.handleValueChange.bind(this));
@@ -68,6 +69,7 @@ LampAssistant.prototype.activate = function(event) {
     /* put in event handlers here that should only be in effect when this scene is active. For
        example, key handlers that are observing the document */
 
+    //TODO: Handle a launch when Lamps haven't been configured
     document.body.style.backgroundColor = "black";
     var stageController = Mojo.Controller.stageController;
     stageController.setWindowOrientation("left");
@@ -83,10 +85,10 @@ LampAssistant.prototype.updateLightList = function() {
         //Mojo.Log.info("** updating LIGHT state")
         for (var i = 0; i < lights.length; i++) {
             var thisLight = lights[i];
-            if (thisLight.num == this.Lamp1.num) {
+            if (thisLight.num == appModel.AppSettingsCurrent["hueSelectedLights"][0]) {
                 this.Lamp1 = thisLight;
             }
-            if (thisLight.num == this.Lamp2.num) {
+            if (thisLight.num == appModel.AppSettingsCurrent["hueSelectedLights"][1]) {
                 this.Lamp2 = thisLight;
             }
         }
@@ -234,7 +236,7 @@ LampAssistant.prototype.deactivate = function(event) {
     /* remove any event handlers you added in activate and do any other cleanup that should happen before
        this scene is popped or another scene is pushed on top */
     clearTimeout(this.goBackTimeout);
-    cleartInterval(updateLampsInt);
+    clearInterval(this.updateLampsInt);
 
     Mojo.Event.stopListening(this.controller.get("slideBright"), Mojo.Event.propertyChange, this.handleValueChange);
     //Event handler de-registration for non-Mojo widgets
