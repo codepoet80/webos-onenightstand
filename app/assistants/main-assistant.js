@@ -39,22 +39,23 @@ MainAssistant.prototype.setup = function() {
     // Remember and set display settings
     systemModel.GetSystemBrightness(function(response) {
         if (response.maximumBrightness != undefined)
-            this.PreviousBrightness = response.maximumBrightness;
-        Mojo.Log.info("Remembering previous brightness as: " + this.PreviousBrightness);
+            appModel.PreviousBrightness = response.maximumBrightness;
+        if (response.timeout != null)
+            appModel.DisplayTimeout = response.timeout;
     });
+    systemModel.PreventDisplaySleep();
+
+    // Remember volume settings
     systemModel.GetSystemVolume(function(response) {
         if (response.returnValue) {
             this.PreviousSystemVolume = response.volume;
         }
-        Mojo.Log.info("Remembering previous system volume as: " + this.PreviousSystemVolume);
     });
     systemModel.GetRingtoneVolume(function(response) {
         if (response.returnValue) {
             this.PreviousRingtoneVolume = response.volume;
         }
-        Mojo.Log.info("Remembering previous ringtone volume as: " + this.PreviousRingtoneVolume);
     });
-    systemModel.PreventDisplaySleep();
 
     /* add event handlers to listen to events from widgets */
     this.controller.listen("clock", Mojo.Event.tap, this.handleClockTap.bind(this));
@@ -74,7 +75,7 @@ MainAssistant.prototype.activate = function(event) {
     this.updateClock(true);
     this.clockInt = setInterval(this.updateClock.bind(this), 6000);
 
-    systemModel.PreventDisplaySleep();
+    //systemModel.PreventDisplaySleep();
 };
 
 MainAssistant.prototype.calculateClockPosition = function(fontSize, isLandscape) {
@@ -135,7 +136,7 @@ MainAssistant.prototype.confirmDimSetings = function(hour, min) {
     if (this.clockDimmed && ((hour > appModel.AppSettingsCurrent["wakeTimeHour"] && hour < appModel.AppSettingsCurrent["darkTimeHour"]) ||
             (hour == appModel.AppSettingsCurrent["wakeTimeHour"] && min >= appModel.AppSettingsCurrent["wakeTimeMin"]))) {
 
-        Mojo.Log.info("Time to brighten the screen");
+        //Mojo.Log.info("Time to brighten the screen");
         systemModel.SetSystemBrightness(this.PreviousBrightness);
         if (appModel.AppSettingsCurrent["muteWhileDark"]) {
             if (this.PreviousSystemVolume > 0)
@@ -148,7 +149,7 @@ MainAssistant.prototype.confirmDimSetings = function(hour, min) {
     if (!this.clockDimmed && (hour > appModel.AppSettingsCurrent["darkTimeHour"] ||
             (hour == appModel.AppSettingsCurrent["darkTimeHour"] && min >= appModel.AppSettingsCurrent["darkTimeMin"]))) {
 
-        Mojo.Log.info("Time to dim the screen");
+        //Mojo.Log.info("Time to dim the screen");
         systemModel.SetSystemBrightness(1);
         if (appModel.AppSettingsCurrent["muteWhileDark"]) {
             if (this.PreviousSystemVolume > 0)

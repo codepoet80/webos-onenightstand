@@ -390,7 +390,7 @@ SystemModel.prototype.setWifiEnabled = function(value) {
 }
 
 //Set the Bluetooth radio state
-SystemModel.prototype.setBluetoothEnabled = function(value) {
+SystemModel.prototype.SetBluetoothEnabled = function(value) {
     //var state  = value ? 'enabled':'disabled';
     if (Mojo.Controller.appInfo.id.indexOf("com.palm.webos") != -1) {
         Mojo.Log.info("Setting Bluetooth State to " + value);

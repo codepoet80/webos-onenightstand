@@ -11,6 +11,7 @@ var AppModel = function() {
     //Define your default scene (needed for settings management)
     this.DefaultScene = "main";
     this.Lamps = [];
+    this.DisplayTimeout = 45;
 
     //Define your app-wide static settings here
 

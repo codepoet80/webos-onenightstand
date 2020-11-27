@@ -41,19 +41,9 @@ LampAssistant.prototype.setup = function() {
         ]
     };
     this.controller.setupWidget(Mojo.Menu.commandMenu, this.cmdMenuAttributes, this.cmdMenuModel);
-
-    //Non-Mojo widget data object
-    this.Lamp1 = {
-        num: appModel.AppSettingsCurrent["hueSelectedLights"][0],
-        name: "Lamp 1",
-        on: false
-    };
-    this.Lamp2 = {
-        num: appModel.AppSettingsCurrent["hueSelectedLights"][1],
-        name: "Lamp 2",
-        on: false
-    };
     //TODO: Text-based tap targets are too small
+
+    //Non-Mojo lamp widgets will be setup in the activate function
 
     /* add event handlers to listen to events from widgets */
     Mojo.Event.listen(this.controller.get("slideBright"), Mojo.Event.propertyChange, this.handleValueChange.bind(this));
@@ -72,15 +62,44 @@ LampAssistant.prototype.activate = function(event) {
     /* put in event handlers here that should only be in effect when this scene is active. For
        example, key handlers that are observing the document */
 
-    //TODO: Handle a launch when Lamps haven't been configured
+    //Non-Mojo widget data object
+    this.Lamp1 = {
+        num: -1,
+        name: "Lamp 1",
+        on: false
+    };
+    if (appModel.AppSettingsCurrent["hueSelectedLights"].length > 0) {
+        this.Lamp1 = {
+            num: appModel.AppSettingsCurrent["hueSelectedLights"][0],
+        };
+    }
+    this.Lamp2 = {
+        num: -1,
+        name: "Lamp 2",
+        on: false
+    };
+    if (appModel.AppSettingsCurrent["hueSelectedLights"].length > 1) {
+        $("tdLampTwo").style.display = "block";
+        this.Lamp2 = {
+            num: appModel.AppSettingsCurrent["hueSelectedLights"][1],
+        };
+    } else {
+        $("tdLampTwo").style.display = "none";
+    }
+    this.iconSize = 64;
+
     document.body.style.backgroundColor = "black";
     var stageController = Mojo.Controller.stageController;
     stageController.setWindowOrientation("left");
     this.toggleDimmerSlider();
 
-    this.updateLightList();
-    updateLightsInt = setInterval(this.updateLightList.bind(this), 6000);
-    this.setTimerToGoBack();
+    if (appModel.AppSettingsCurrent["hueSelectedLights"] != undefined && appModel.AppSettingsCurrent["hueSelectedLights"].length > 0) {
+        this.updateLightList();
+        updateLightsInt = setInterval(this.updateLightList.bind(this), 6000);
+        this.setTimerToGoBack();
+    } else {
+        Mojo.Additions.ShowDialogBox("No Lights Configured", "You don't have any lights selected, so this scene can't do anything. Visit Settings to pair with your Hue bridge and select some lights.")
+    }
 };
 
 LampAssistant.prototype.updateLightList = function() {
@@ -100,24 +119,31 @@ LampAssistant.prototype.updateLightList = function() {
 }
 
 LampAssistant.prototype.updateLampState = function() {
-    //Mojo.Log.info("*** updating LAMP state");
-    if (this.Lamp1.name != document.getElementById("divLampOne").innerText) {
-        document.getElementById("divLampOne").innerText = this.Lamp1.name;
-    }
-    if (this.Lamp1.on) {
-        document.getElementById("imgLampOne").src = "images/Lamp-On.png";
-    } else {
-        document.getElementById("imgLampOne").src = "images/Lamp-Off.png";
-    }
+    //Mojo.Log.info("*** updating LAMP state: " + this.iconSize);
+    if (this.Lamp1.name != document.getElementById("divLampOne").innerText)
+        $("divLampOne").innerText = this.Lamp1.name;
+    $("imgLampOne").src = this.getLampImageFromState(this.Lamp1);
 
-    if (this.Lamp2.name != document.getElementById("divLampTwo").innerText) {
-        document.getElementById("divLampTwo").innerText = this.Lamp2.name;
+    if (this.Lamp2.name != document.getElementById("divLampTwo").innerText)
+        $("divLampTwo").innerText = this.Lamp2.name;
+    $("imgLampTwo").src = this.getLampImageFromState(this.Lamp2);
+}
+
+LampAssistant.prototype.getLampImageFromState = function(lamp) {
+    var imgSrcBase = "images/Lamp-";
+    var imgSrc;
+    if (lamp.num == -1)
+        imgSrc = "Unknown-";
+    else {
+        if (lamp.on)
+            imgSrc = "On-";
+        else
+            imgSrc = "Off-";
+        if (!lamp.reachable)
+            imgSrc = "Offline-";
     }
-    if (this.Lamp2.on) {
-        document.getElementById("imgLampTwo").src = "images/Lamp-On.png";
-    } else {
-        document.getElementById("imgLampTwo").src = "images/Lamp-Off.png";
-    }
+    imgSrc = imgSrc + this.iconSize + ".png";
+    return imgSrcBase + imgSrc;
 }
 
 LampAssistant.prototype.handleLampTap = function(event) {
@@ -140,11 +166,11 @@ LampAssistant.prototype.handleLampTap = function(event) {
 
     if (!newLampStateOn) {
         Mojo.Log.info(event.srcElement.title + " should turn off");
-        document.getElementById(currLampImg).src = "images/Lamp-Off.png";
+        document.getElementById(currLampImg).src = "images/Lamp-Off-" + this.iconSize + ".png";
         hueModel.TurnLightOff(appModel.AppSettingsCurrent["hueBridgeIP"], appModel.AppSettingsCurrent["hueBridgeUsername"], lampNum);
     } else {
         Mojo.Log.info(event.srcElement.title + " should turn on");
-        document.getElementById(currLampImg).src = "images/Lamp-On.png";
+        document.getElementById(currLampImg).src = "images/Lamp-On-" + this.iconSize + ".png";
         hueModel.TurnLightOn(appModel.AppSettingsCurrent["hueBridgeIP"], appModel.AppSettingsCurrent["hueBridgeUsername"], lampNum);
     }
     event.stopPropagation();
@@ -158,14 +184,14 @@ LampAssistant.prototype.handleElementTap = function(event) {
     } else if (event.srcElement.id == "txtAllOn") {
         for (var l = 0; l < appModel.AppSettingsCurrent["hueSelectedLights"].length; l++) {
             hueModel.TurnLightOn(appModel.AppSettingsCurrent["hueBridgeIP"], appModel.AppSettingsCurrent["hueBridgeUsername"], appModel.AppSettingsCurrent["hueSelectedLights"][l]);
-            document.getElementById("imgLampOne").src = "images/Lamp-On.png";
-            document.getElementById("imgLampTwo").src = "images/Lamp-On.png";
+            document.getElementById("imgLampOne").src = "images/Lamp-On-" + this.iconSize + ".png";
+            document.getElementById("imgLampTwo").src = "images/Lamp-On-" + this.iconSize + ".png";
         }
     } else if (event.srcElement.id == "txtAllOff") {
         for (var l = 0; l < appModel.AppSettingsCurrent["hueSelectedLights"].length; l++) {
             hueModel.TurnLightOff(appModel.AppSettingsCurrent["hueBridgeIP"], appModel.AppSettingsCurrent["hueBridgeUsername"], appModel.AppSettingsCurrent["hueSelectedLights"][l]);
-            document.getElementById("imgLampOne").src = "images/Lamp-Off.png";
-            document.getElementById("imgLampTwo").src = "images/Lamp-Off.png";
+            document.getElementById("imgLampOne").src = "images/Lamp-Off-" + this.iconSize + ".png";
+            document.getElementById("imgLampTwo").src = "images/Lamp-Off-" + this.iconSize + ".png";
         }
     }
 }
@@ -228,11 +254,12 @@ LampAssistant.prototype.handleValueChange = function(event) {
 
 LampAssistant.prototype.setTimerToGoBack = function() {
     clearTimeout(goBackTimeout);
+    var useTimeout = (appModel.DisplayTimeout - 10) * 1000;
     goBackTimeout = setTimeout(function() {
-            var stageController = Mojo.Controller.stageController;
-            stageController.pushScene({ name: "main", disableSceneScroller: false });
-        }, 45000)
-        //TODO: Instead of hard-coding this timeout, we could use the system screen timeout
+        var stageController = Mojo.Controller.stageController;
+        Mojo.Log.info("Scene timer expired due to lack of activity, returning to clock scene.");
+        stageController.pushScene({ name: "main", disableSceneScroller: false });
+    }, useTimeout)
 }
 
 LampAssistant.prototype.deactivate = function(event) {
