@@ -247,7 +247,7 @@ LampAssistant.prototype.handleValueChange = function(event) {
     if (event.srcElement.title == "lightBright") {
         var newDimVal = Math.round(event.value);
         for (var l = 0; l < appModel.AppSettingsCurrent["hueSelectedLights"].length; l++) {
-            hueModel.SetLightBrightness(appModel.AppSettingsCurrent["hueBridgeIP"], appModel.AppSettingsCurrent["hueBridgeUsername"], appModel.AppSettingsCurrent["hueSelectedLights"][l], newDimVal, true);
+            hueModel.SetLightBrightness(appModel.AppSettingsCurrent["hueBridgeIP"], appModel.AppSettingsCurrent["hueBridgeUsername"], appModel.AppSettingsCurrent["hueSelectedLights"][l], newDimVal, false);
         }
     }
 };
