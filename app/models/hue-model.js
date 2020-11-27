@@ -248,7 +248,7 @@ HueModel.prototype.SetLightBrightness = function(bridgeip, userid, light, bright
         if (xmlhttp.readyState == XMLHttpRequest.DONE) {
             Mojo.Log.info("Hue responded: " + xmlhttp.responseText);
             if (xmlhttp.responseText == "" || xmlhttp.responseText.indexOf("error") != -1) {
-                Mojo.Log.error("Hue response indicated an error!");
+                Mojo.Log.warn("Hue response indicated an error, but this could be because a light being dimmed is already off");
                 this.retVal = false;
             } else {
                 this.retVal = true;
