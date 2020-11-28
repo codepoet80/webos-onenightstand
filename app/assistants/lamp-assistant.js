@@ -83,16 +83,34 @@ LampAssistant.prototype.activate = function(event) {
         this.Lamp2 = {
             num: appModel.AppSettingsCurrent["hueSelectedLights"][1],
         };
+        if (appModel.IsTouchPad)
+            $("textControlsDiv").style.paddingRight = "0px";
     } else {
         $("tdLampOne").style.paddingLeft = "8%";
         $("tdLampTwo").style.display = "none";
+        if (appModel.IsTouchPad)
+            $("textControlsDiv").style.paddingRight = "100px";
     }
+
+    //TouchPad tweaks
     this.iconSize = 64;
+    if (appModel.IsTouchPad) {
+        this.iconSize = 128;
+        $("lampsTable").style.marginTop = "180px";
+        $("lampsTable").style.paddingRight = "8px";
+        $("textControlsDiv").style.marginTop = "40px";
+        $("imgLampOne").src = $("imgLampOne").src.replace("64", this.iconSize);
+        $("imgLampTwo").src = $("imgLampTwo").src.replace("64", this.iconSize);
+        $("slideBright").style.marginLeft = "360px";
+    }
 
     document.body.style.backgroundColor = "black";
     var stageController = Mojo.Controller.stageController;
-    stageController.setWindowOrientation("left");
-    this.toggleDimmerSlider();
+    if (!appModel.IsTouchPad)
+        stageController.setWindowOrientation("left");
+    else
+        stageController.setWindowOrientation("right");
+    this.toggleDimmerSlider(false);
 
     if (appModel.AppSettingsCurrent["hueSelectedLights"] != undefined && appModel.AppSettingsCurrent["hueSelectedLights"].length > 0) {
         this.updateLightList();

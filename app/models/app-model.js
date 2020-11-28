@@ -12,6 +12,7 @@ var AppModel = function() {
     this.DefaultScene = "main";
     this.Lamps = [];
     this.DisplayTimeout = 45;
+    this.IsTouchPad = false;
 
     //Define your app-wide static settings here
 
@@ -19,8 +20,9 @@ var AppModel = function() {
     this.AppSettingsCurrent = null;
     this.AppSettingsDefaults = {
         showAlarmButton: false,
+        dimLevel: 1,
         clockColor: "dimgray",
-        clockSize: 120,
+        clockSize: 130,
         clockMargin: 12,
         darkTimeHour: 21,
         darkTimeMin: 30,

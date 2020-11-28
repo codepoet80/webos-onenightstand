@@ -1,12 +1,13 @@
-<div id="lampScene" class="palm-scene" style="height:100%; background-color: black;">
-    <div id="lamps">
-        <table border="0" width="100%" style="border: 0px solid dimgray;">
+<div id="lampSceneDiv" name="lampSceneDiv" class="palm-scene" style="padding-top: 50px; height:100%; background-color: black;">
+    <div id="lampsDiv" name="lampsDiv">
+        <table id="lampsTable" name="lampsTable" border="0" width="100%" style="border: 0px solid dimgray;">
             <tr>
-                <td valign="top" class="lampTD" id="tdLampOne" title="LampOne"><img src="images/Lamp-Unknown-64.png" id="imgLampOne" title="LampOne">
-                    <div class="lampLabel" id="divLampOne" title="LampOne">Lamp 1</div>
+                <td valign="top" class="lampTD" id="tdLampOne" title="LampOne" align="center" style="justify-content: center;">
+                    <img src="images/Lamp-Unknown-64.png" id="imgLampOne" title="LampOne">
+                    <div class="lampLabel" id="divLampOne" title="LampOne" style="width: 120px;justify-content: center;white-space: nowrap;overflow: hidden;text-overflow: ellipsis;">Lamp 1</div>
                 </td>
                 <td valign="top">
-                    <div>
+                    <div align="center" id="textControlsDiv">
                         <p id="txtAllOn" class="multiLampLabel">All On<br>
                             <img src="images/LineSeparatorInverted.png"></p>
                         <p id="txtAllOff" class="multiLampLabel">All Off<br>
@@ -14,11 +15,12 @@
                         <p id="txtDimmer" class="multiLampLabel">Dimmer</p>
                     </div>
                 </td>
-                <td valign="top" class="lampTD" id="tdLampTwo" title="LampTwo"><img src="images/Lamp-Unknown-64.png" id="imgLampTwo" title="LampTwo">
-                    <div class="lampLabel" id="divLampTwo" title="LampTwo">Lamp 2</div>
+                <td valign="top" class="lampTD" id="tdLampTwo" title="LampTwo" align="center" style="justify-content: center;">
+                    <img src="images/Lamp-Unknown-64.png" id="imgLampTwo" title="LampTwo">
+                    <div class="lampLabel" id="divLampTwo" title="LampTwo" style="width: 120px;justify-content: center;white-space: nowrap;overflow: hidden;text-overflow: ellipsis;">Lamp 2</div>
                 </td>
             </tr>
         </table>
-        <div x-mojo-element="Slider" id='slideBright' class="palm-slider" title="lightBright" style="margin-top: 36px; margin-left: 80px;"></div>
+        <div x-mojo-element="Slider" id='slideBright' class="palm-slider" title="lightBright" style="margin-top: 33px; margin-left: 90px;"></div>
     </div>
 </div>

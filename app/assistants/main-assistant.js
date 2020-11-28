@@ -32,9 +32,6 @@ MainAssistant.prototype.setup = function() {
         ]
     };
     //TODO: Copy this to activate and we won't have to re-launch app to apply this setting
-    if (appModel.AppSettingsCurrent["showAlarmButton"])
-        this.cmdMenuModel.items[1].items.push({ label: 'Alarms', iconPath: 'images/Alarm.png', command: 'do-alarms' });
-    this.cmdMenuModel.items[1].items.push({ label: 'Settings', iconPath: 'images/SettingsGear.png', command: 'do-settings' });
     this.controller.setupWidget(Mojo.Menu.commandMenu, this.cmdMenuAttributes, this.cmdMenuModel);
     this.menuOn = false;
 
@@ -68,7 +65,25 @@ MainAssistant.prototype.activate = function(event) {
        example, key handlers that are observing the document */
     document.body.style.backgroundColor = "black";
     var stageController = Mojo.Controller.stageController;
-    stageController.setWindowOrientation("left");
+    if (!appModel.IsTouchPad)
+        stageController.setWindowOrientation("left");
+    else
+        stageController.setWindowOrientation("right");
+
+    //Apply preferences to Command bar
+    var thisWidgetModel = this.controller.getWidgetSetup(Mojo.Menu.commandMenu).model;
+    thisWidgetModel.items[1].items = [];
+    if (appModel.AppSettingsCurrent["showAlarmButton"])
+        thisWidgetModel.items[1].items.push({ label: 'Alarms', iconPath: 'images/Alarm.png', command: 'do-alarms' });
+    thisWidgetModel.items[1].items.push({ label: 'Settings', iconPath: 'images/SettingsGear.png', command: 'do-settings' });
+    if (this.menuOn) {
+        thisWidgetModel.visible = false;
+        this.menuOn = false;
+    } else {
+        thisWidgetModel.visible = true;
+        this.menuOn = true;
+    }
+    this.controller.modelChanged(thisWidgetModel);
 
     // Setup the clock face
     this.controller.get("clock").style.color = appModel.AppSettingsCurrent["clockColor"];
@@ -76,9 +91,7 @@ MainAssistant.prototype.activate = function(event) {
     this.controller.get("clock").style.marginTop = this.calculateClockPosition(appModel.AppSettingsCurrent["clockSize"], true) + "px";
     this.updateClock(true);
     this.clockInt = setInterval(this.updateClock.bind(this), 6000);
-
-    //systemModel.PreventDisplaySleep();
-};
+}
 
 MainAssistant.prototype.calculateClockPosition = function(fontSize, isLandscape) {
     fontSize = Math.round(fontSize);
@@ -92,11 +105,14 @@ MainAssistant.prototype.calculateClockPosition = function(fontSize, isLandscape)
         screenWidth = window.screen.width;
         screenHeight = window.screen.height;
     }
-    //Mojo.Log.info("== height: " + screenHeight);
-    //Mojo.Log.info("== width:  " + screenWidth);
-    //Mojo.Log.info("== font: " + fontSize);
-    var useTop = (screenHeight / 2) - Math.round(fontSize / 1.15);
-    //Mojo.Log.info("=== useTop: " + useTop);
+    Mojo.Log.info("== height: " + screenHeight);
+    Mojo.Log.info("== width:  " + screenWidth);
+    Mojo.Log.info("== font: " + fontSize);
+    if (appModel.IsTouchPad)
+        var useTop = (screenHeight / 2) - 90 - fontSize;
+    else
+        var useTop = (screenHeight / 2) - Math.round(fontSize / 1.15);
+    Mojo.Log.info("=== useTop: " + useTop);
     return useTop;
 }
 
@@ -152,7 +168,7 @@ MainAssistant.prototype.confirmDimSetings = function(hour, min) {
             (hour == appModel.AppSettingsCurrent["darkTimeHour"] && min >= appModel.AppSettingsCurrent["darkTimeMin"]))) {
 
         //Mojo.Log.info("Time to dim the screen");
-        systemModel.SetSystemBrightness(1);
+        systemModel.SetSystemBrightness(appModel.AppSettingsCurrent["dimLevel"]);
         if (appModel.AppSettingsCurrent["muteWhileDark"]) {
             if (this.PreviousSystemVolume > 0)
                 systemModel.SetSystemVolume(0);

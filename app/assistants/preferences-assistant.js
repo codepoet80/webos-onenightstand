@@ -13,9 +13,14 @@ PreferencesAssistant.prototype.setup = function() {
         this.attributes = {
             label: "Color",
             choices: [
+                { label: "White", value: "white" },
+                { label: "Light Gray", value: "gray" },
                 { label: "Dark Gray", value: "dimgray" },
+                { label: "Bright Green", value: "green" },
                 { label: "Dark Green", value: "darkgreen" },
+                { label: "Bright Blue", value: "blue" },
                 { label: "Dark Blue", value: "midnightblue" },
+                { label: "Bright Red", value: "red" },
                 { label: "Dark Red", value: "darkred" }
             ]
         },
@@ -25,13 +30,37 @@ PreferencesAssistant.prototype.setup = function() {
         }
     );
     //Clock Size Slider
+    var minSize = 40;
+    var maxSize = 180;
+    if (appModel.IsTouchPad) {
+        minSize = 100;
+        maxSize = 300;
+    }
     this.controller.setupWidget("slideClockSize",
         this.attributes = {
-            minValue: 30,
-            maxValue: 180
+            minValue: minSize,
+            maxValue: maxSize
         },
         this.model = {
             value: appModel.AppSettingsCurrent["clockSize"],
+            disabled: false
+        }
+    );
+    //Dim Level Picker
+    this.controller.setupWidget("listDimLevel",
+        this.attributes = {
+            label: $L("Dim level when Dark"),
+            choices: [
+                { label: "0 %", value: 0 },
+                { label: "1 %", value: 1 },
+                { label: "5 %", value: 5 },
+                { label: "10 %", value: 10 },
+                { label: "15 %", value: 15 },
+                { label: "20 %", value: 20 },
+            ]
+        },
+        this.model = {
+            value: appModel.AppSettingsCurrent["dimLevel"],
             disabled: false
         }
     );
@@ -137,6 +166,7 @@ PreferencesAssistant.prototype.setup = function() {
     /* add event handlers to listen to events from widgets */
     Mojo.Event.listen(this.controller.get("lstClockColor"), Mojo.Event.propertyChange, this.handleValueChange.bind(this));
     Mojo.Event.listen(this.controller.get("slideClockSize"), Mojo.Event.propertyChange, this.handleValueChange.bind(this));
+    Mojo.Event.listen(this.controller.get("listDimLevel"), Mojo.Event.propertyChange, this.handleValueChange.bind(this));
     Mojo.Event.listen(this.controller.get("toggleAlarms"), Mojo.Event.propertyChange, this.handleValueChange.bind(this));
     Mojo.Event.listen(this.controller.get("timepickerDim"), Mojo.Event.propertyChange, this.handleValueChange.bind(this));
     Mojo.Event.listen(this.controller.get("timepickerBright"), Mojo.Event.propertyChange, this.handleValueChange.bind(this));
@@ -201,6 +231,7 @@ PreferencesAssistant.prototype.handleValueChange = function(event) {
         var timeType = event.srcElement.title.replace("Time", "");
         appModel.AppSettingsCurrent[timeType + "TimeHour"] = hour;
         appModel.AppSettingsCurrent[timeType + "TimeMin"] = min;
+
         //Developer mode key
         if (appModel.AppSettingsCurrent["darkTimeHour"] == 1 && appModel.AppSettingsCurrent["darkTimeMin"] == 10 &&
             appModel.AppSettingsCurrent["wakeTimeHour"] == 1 && appModel.AppSettingsCurrent["wakeTimeMin"] == 10) {
@@ -215,8 +246,13 @@ PreferencesAssistant.prototype.handleValueChange = function(event) {
         Mojo.Log.info(event.srcElement.title + " now: " + event.value);
         //We stashed the preference name in the title of the HTML element, so we don't have to use a case statement
         appModel.AppSettingsCurrent[event.srcElement.title] = event.value;
+
+        //Some preferences need some explanations...
         if (event.srcElement.title == "showAlarmButton" && event.value != false) {
             Mojo.Additions.ShowDialogBox("Show Alarms Button", "A button will be added to the clock scene's command bar that launches the system Clock app, allowing you to manage your alarms.<br>This setting takes effect on next app launch.");
+        }
+        if (event.srcElement.title == "dimLevel" && event.value == 0 && appModel.IsTouchPad) {
+            Mojo.Additions.ShowDialogBox("Dim Level", "It looks like you're on a Touchpad, so you should be aware that a Dim Level of zero turns the backlight off entirely, making the screen very difficult to see. This is different than on a Pre, where Dim Level zero still has the backlight on at its lowest setting.");
         }
     }
 };
@@ -229,7 +265,7 @@ PreferencesAssistant.prototype.handleCommand = function(event) {
                 Mojo.Controller.stageController.popScene();
                 break;
             case 'do-myAbout':
-                Mojo.Additions.ShowDialogBox("One Night Stand", "Bed-side clock and Hue light controller. Copyright 2020, Jonathan Wise. Available under an MIT License. Source code available at: https://github.com/codepoet80/webos-onenightstand");
+                Mojo.Additions.ShowDialogBox("One Night Stand", "Bed-side clock and Hue light controller. Copyright 2020, Jonathan Wise. Distributed under an MIT License. Source code available at: https://github.com/codepoet80/webos-onenightstand");
                 break;
             case 'do-resetSettings':
                 appModel.ResetSettings();
@@ -281,7 +317,6 @@ PreferencesAssistant.prototype.selectHueLight = function(event) {
 }
 
 PreferencesAssistant.prototype.linkHueClick = function(event) {
-    this.testVal = "jon was here";
     var stageController = Mojo.Controller.getAppController().getActiveStageController();
     if (stageController) {
         this.controller = stageController.activeScene();
@@ -298,16 +333,16 @@ PreferencesAssistant.prototype.linkHueClick = function(event) {
 //Handle when the Link Hue dialog comes back
 PreferencesAssistant.prototype.handleDialogDone = function(val) {
     this.repaintLightList();
-    Mojo.Log.info("response from dialog was: " + val + " and testVal = " + this.testVal);
+    //Mojo.Log.info("response from dialog was: " + val + " and testVal = " + this.testVal);
 }
 
 PreferencesAssistant.prototype.deactivate = function(event) {
     /* remove any event handlers you added in activate and do any other cleanup that should happen before
        this scene is popped or another scene is pushed on top */
-
     Mojo.Event.stopListening(this.controller.get("lstClockColor"), Mojo.Event.propertyChange, this.handleValueChange);
     Mojo.Event.stopListening(this.controller.get("slideClockSize"), Mojo.Event.propertyChange, this.handleValueChange);
-    //TODO: Unhandle time pickers
+    Mojo.Event.stopListening(this.controller.get("listDimLevel"), Mojo.Event.propertyChange, this.handleValueChange);
+    Mojo.Event.stopListening(this.controller.get("toggleAlarms"), Mojo.Event.propertyChange, this.handleValueChange);
     Mojo.Event.stopListening(this.controller.get("timepickerDim"), Mojo.Event.propertyChange, this.handleValueChange);
     Mojo.Event.stopListening(this.controller.get("timepickerBright"), Mojo.Event.propertyChange, this.handleValueChange);
     Mojo.Event.stopListening(this.controller.get("toggleMute"), Mojo.Event.propertyChange, this.handleValueChange);

@@ -17,6 +17,11 @@ AppAssistant.prototype.handleLaunch = function(params) {
     appModel.LoadSettings();
     Mojo.Log.info("** App Settings: " + JSON.stringify(appModel.AppSettingsCurrent));
 
+    //find out if this is a touchpad
+    appModel.IsTouchPad = Mojo.Environment.DeviceInfo.platformVersionMajor >= 3;
+    if (appModel.IsTouchPad)
+        Mojo.Log.warn("Launching on a TouchPad, some behaviors will to change!");
+
     //get the proxy for the stage in the event it already exists (eg: app is currently open)
     var mainStage = this.controller.getStageProxy("");
     Mojo.Log.info("One Night Stand is Launching! Launch params: " + JSON.stringify(params));
