@@ -1,22 +1,24 @@
 <div id="lampScene" class="palm-scene" style="height:100%; background-color: black;">
     <div id="lamps">
-        <table border="0" width="100%" style="border: 0px solid dimgray">
+        <table border="0" width="100%" style="border: 0px solid dimgray;">
             <tr>
-                <td style="margin-top: 10px" id="tdLampOne" title="LampOne"><img src="images/Lamp-Unknown-64.png" id="imgLampOne" title="LampOne">
+                <td valign="top" class="lampTD" id="tdLampOne" title="LampOne"><img src="images/Lamp-Unknown-64.png" id="imgLampOne" title="LampOne">
                     <div class="lampLabel" id="divLampOne" title="LampOne">Lamp 1</div>
                 </td>
-                <td valign="top" style="margin-top: -20px;">
+                <td valign="top">
                     <div>
-                        <p id="txtAllOn" class="lampLabel">All On</p>
-                        <p id="txtAllOff" class="lampLabel">All Off</p>
-                        <p id="txtDimmer" class="lampLabel">Dimmer</p>
+                        <p id="txtAllOn" class="multiLampLabel">All On<br>
+                            <img src="images/LineSeparatorInverted.png"></p>
+                        <p id="txtAllOff" class="multiLampLabel">All Off<br>
+                            <img src="images/LineSeparatorInverted.png"></p>
+                        <p id="txtDimmer" class="multiLampLabel">Dimmer</p>
                     </div>
                 </td>
-                <td style="margin-top: 10px" id="tdLampTwo" title="LampTwo"><img src="images/Lamp-Unknown-64.png" id="imgLampTwo" title="LampTwo">
+                <td valign="top" class="lampTD" id="tdLampTwo" title="LampTwo"><img src="images/Lamp-Unknown-64.png" id="imgLampTwo" title="LampTwo">
                     <div class="lampLabel" id="divLampTwo" title="LampTwo">Lamp 2</div>
                 </td>
             </tr>
         </table>
-        <div x-mojo-element="Slider" id='slideBright' class="palm-slider" title="lightBright" style="margin-top: 40px; margin-left: 80px;"></div>
+        <div x-mojo-element="Slider" id='slideBright' class="palm-slider" title="lightBright" style="margin-top: 36px; margin-left: 80px;"></div>
     </div>
 </div>

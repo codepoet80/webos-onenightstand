@@ -41,7 +41,6 @@ LampAssistant.prototype.setup = function() {
         ]
     };
     this.controller.setupWidget(Mojo.Menu.commandMenu, this.cmdMenuAttributes, this.cmdMenuModel);
-    //TODO: Text-based tap targets are too small
 
     //Non-Mojo lamp widgets will be setup in the activate function
 
@@ -201,10 +200,16 @@ LampAssistant.prototype.toggleDimmerSlider = function(show) {
 
     var dimmer = $("slideBright");
     if (dimmer.style.display == "none") {
+        var sliderPos = 126;
+        if (this.Lamp1.brightness != undefined)
+            sliderPos = this.Lamp1.brightness;
+        if (this.Lamp2.brightness != undefined)
+            sliderPos = (sliderPos + this.Lamp2.brightness) / 2;
         dimmer.style.display = "block";
         var thisWidgetSetup = this.controller.getWidgetSetup("slideBright");
         var thisWidgetModel = thisWidgetSetup.model;
         thisWidgetModel.disabled = false;
+        thisWidgetModel.value = sliderPos;
         this.controller.modelChanged(thisWidgetModel);
 
     } else {
