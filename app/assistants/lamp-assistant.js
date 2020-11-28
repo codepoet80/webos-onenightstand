@@ -96,6 +96,7 @@ LampAssistant.prototype.activate = function(event) {
     this.iconSize = 64;
     if (appModel.IsTouchPad) {
         this.iconSize = 128;
+        //TODO: We could give more room for lamp labels on TouchPad
         $("lampsTable").style.marginTop = "180px";
         $("lampsTable").style.paddingRight = "8px";
         $("textControlsDiv").style.marginTop = "40px";
