@@ -94,15 +94,18 @@ MainAssistant.prototype.activate = function(event) {
 
 MainAssistant.prototype.calculateClockPosition = function(fontSize, isLandscape) {
     fontSize = Math.round(fontSize);
+    var checkWidth = window.screen.width;
+    var checkHeight = window.screen.height;
     var screenWidth;
     var screenHeight;
-    if (isLandscape) {
-        //Since we're forcing landscape, screen width is actually our height
-        screenWidth = window.screen.height;
-        screenHeight = window.screen.width;
+    //  A race condition on the TouchPad can make these values wrong, so we double check
+    if (!isLandscape || (isLandscape && appModel.IsTouchPad && checkHeight > checkWidth)) {
+        screenWidth = checkWidth;
+        screenHeight = checkHeight;
     } else {
-        screenWidth = window.screen.width;
-        screenHeight = window.screen.height;
+        //Since we're forcing landscape, screen width should actually be our height
+        screenWidth = checkHeight;
+        screenHeight = checkWidth;
     }
     Mojo.Log.info("== height: " + screenHeight);
     Mojo.Log.info("== width:  " + screenWidth);

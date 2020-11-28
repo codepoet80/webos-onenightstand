@@ -21,7 +21,7 @@ var AppModel = function() {
     this.AppSettingsDefaults = {
         showAlarmButton: false,
         dimLevel: 1,
-        use24HourTime: true,
+        use24HourTime: false,
         clockColor: "dimgray",
         clockSize: 130,
         clockMargin: 12,
