@@ -18,6 +18,7 @@ var AppModel = function() {
     //Define your app preferences (to be saved by OS)
     this.AppSettingsCurrent = null;
     this.AppSettingsDefaults = {
+        showAlarmButton: false,
         clockColor: "dimgray",
         clockSize: 120,
         clockMargin: 12,

@@ -23,16 +23,18 @@ MainAssistant.prototype.setup = function() {
         visible: false,
         items: [{
                 items: [
-                    { label: $L('Settings'), iconPath: 'images/Lightbulb.png', command: 'do-lamps' }
+                    { label: 'Lamps', iconPath: 'images/Lightbulb.png', command: 'do-lamps' }
                 ]
             },
             {
-                items: [
-                    { label: $L('Lamp'), iconPath: 'images/SettingsGear.png', command: 'do-settings' }
-                ]
+                items: []
             }
         ]
     };
+    //TODO: Copy this to activate and we won't have to re-launch app to apply this setting
+    if (appModel.AppSettingsCurrent["showAlarmButton"])
+        this.cmdMenuModel.items[1].items.push({ label: 'Alarms', iconPath: 'images/Alarm.png', command: 'do-alarms' });
+    this.cmdMenuModel.items[1].items.push({ label: 'Settings', iconPath: 'images/SettingsGear.png', command: 'do-settings' });
     this.controller.setupWidget(Mojo.Menu.commandMenu, this.cmdMenuAttributes, this.cmdMenuModel);
     this.menuOn = false;
 
@@ -93,7 +95,7 @@ MainAssistant.prototype.calculateClockPosition = function(fontSize, isLandscape)
     //Mojo.Log.info("== height: " + screenHeight);
     //Mojo.Log.info("== width:  " + screenWidth);
     //Mojo.Log.info("== font: " + fontSize);
-    var useTop = (screenHeight / 2) - Math.round(fontSize / 1.2);
+    var useTop = (screenHeight / 2) - Math.round(fontSize / 1.15);
     //Mojo.Log.info("=== useTop: " + useTop);
     return useTop;
 }
@@ -193,6 +195,11 @@ MainAssistant.prototype.handleCommand = function(event) {
                     var stageController = Mojo.Controller.stageController;
                     stageController.pushScene({ name: "preferences", disableSceneScroller: false });
                     stageController.setWindowOrientation("free");
+                    break;
+                }
+            case 'do-alarms':
+                {
+                    systemModel.LaunchApp("com.palm.app.clock");
                     break;
                 }
             case 'do-lamps':

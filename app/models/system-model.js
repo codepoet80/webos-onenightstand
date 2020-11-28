@@ -164,6 +164,25 @@ SystemModel.prototype.Vibrate = function(vibrate) {
     return success;
 }
 
+//Launch an app
+SystemModel.prototype.LaunchApp = function(appName, params) {
+    if (!params)
+        params = {};
+    if (!params.id)
+        params.id = appName;
+    this.launchRequest = new Mojo.Service.Request("palm://com.palm.applicationManager", {
+        method: "open",
+        parameters: params,
+        onSuccess: function(response) {
+            Mojo.Log.info("App Launch Success", appName, JSON.stringify(response));
+        },
+        onFailure: function(response) {
+            Mojo.Log.error("Alarm Launch Failure", appName, JSON.stringify(response));
+        }
+    });
+    return true;
+}
+
 //Helper Functions
 var vibeInterval;
 var vibeCount = 0;

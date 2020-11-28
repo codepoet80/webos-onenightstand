@@ -71,6 +71,17 @@ PreferencesAssistant.prototype.setup = function() {
             disabled: false
         }
     );
+    //Alarms Button Toggle
+    this.controller.setupWidget("toggleAlarms",
+        this.attributes = {
+            trueValue: true,
+            falseValue: false
+        },
+        this.model = {
+            value: appModel.AppSettingsCurrent["showAlarmButton"],
+            disabled: false
+        }
+    );
     //Light List (starts empty)
     this.hueLightListModel = [
         { lightNum: "-1", lightType: "none", lightName: "empty", selectedState: false }
@@ -126,6 +137,7 @@ PreferencesAssistant.prototype.setup = function() {
     /* add event handlers to listen to events from widgets */
     Mojo.Event.listen(this.controller.get("lstClockColor"), Mojo.Event.propertyChange, this.handleValueChange.bind(this));
     Mojo.Event.listen(this.controller.get("slideClockSize"), Mojo.Event.propertyChange, this.handleValueChange.bind(this));
+    Mojo.Event.listen(this.controller.get("toggleAlarms"), Mojo.Event.propertyChange, this.handleValueChange.bind(this));
     Mojo.Event.listen(this.controller.get("timepickerDim"), Mojo.Event.propertyChange, this.handleValueChange.bind(this));
     Mojo.Event.listen(this.controller.get("timepickerBright"), Mojo.Event.propertyChange, this.handleValueChange.bind(this));
     Mojo.Event.listen(this.controller.get("toggleMute"), Mojo.Event.propertyChange, this.handleValueChange.bind(this));
@@ -194,7 +206,8 @@ PreferencesAssistant.prototype.handleValueChange = function(event) {
             appModel.AppSettingsCurrent["wakeTimeHour"] == 1 && appModel.AppSettingsCurrent["wakeTimeMin"] == 10) {
             Mojo.Log.warn("Switching to Developer Mode");
             appModel.AppSettingsCurrent["hueBridgeUsername"] = "dlmCQ6JsfhoNVJDkrY3ntjnBkgorUmqigcCv0icZ";
-            appModel.AppSettingsCurrent["hueBridgeIP"] = "192.168.1.140"
+            appModel.AppSettingsCurrent["hueBridgeIP"] = "192.168.1.140";
+            Mojo.Controller.getAppController().showBanner({ messageText: "Developer mode enabled" }, "", "");
             appModel.SaveSettings();
             this.repaintLightList();
         }
@@ -202,6 +215,9 @@ PreferencesAssistant.prototype.handleValueChange = function(event) {
         Mojo.Log.info(event.srcElement.title + " now: " + event.value);
         //We stashed the preference name in the title of the HTML element, so we don't have to use a case statement
         appModel.AppSettingsCurrent[event.srcElement.title] = event.value;
+        if (event.srcElement.title == "showAlarmButton" && event.value != false) {
+            Mojo.Additions.ShowDialogBox("Show Alarms Button", "A button will be added to the clock scene's command bar that launches the system Clock app, allowing you to manage your alarms.<br>This setting takes effect on next app launch.");
+        }
     }
 };
 
