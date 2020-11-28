@@ -31,7 +31,6 @@ MainAssistant.prototype.setup = function() {
             }
         ]
     };
-    //TODO: Copy this to activate and we won't have to re-launch app to apply this setting
     this.controller.setupWidget(Mojo.Menu.commandMenu, this.cmdMenuAttributes, this.cmdMenuModel);
     this.menuOn = false;
 
@@ -132,9 +131,7 @@ MainAssistant.prototype.updateClock = function(skipDim) {
 
     this.confirmDimSetings(hour, min);
 
-    //TODO: Add support for 24-hour time
-    hour = this.confirmTime(hour);
-    if (hour > 12)
+    if (hour > 12 && !appModel.AppSettingsCurrent["use24HourTime"])
         hour = hour - 12;
     min = this.confirmTime(min);
     sec = this.confirmTime(sec);

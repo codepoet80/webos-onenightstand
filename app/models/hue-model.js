@@ -151,7 +151,6 @@ HueModel.prototype.GetLight = function(bridgeip, userid, light, callback) {
 //Returns a boolean indicating success
 HueModel.prototype.TurnLightOff = function(bridgeip, userid, light, callback) {
     //Handle an object being passed in, instead of a light number
-    //TODO: for consistency we should also handle passing in a light uniqueid
     if (typeof light == Object)
         light = light.num;
 
@@ -187,7 +186,6 @@ HueModel.prototype.TurnLightOff = function(bridgeip, userid, light, callback) {
 //Returns a boolean indicating success
 HueModel.prototype.TurnLightOn = function(bridgeip, userid, light, callback) {
     //Handle an object being passed in, instead of a light number
-    //TODO: for consistency we should also handle passing in a light uniqueid
     if (typeof light == Object)
         light = light.num;
 
@@ -224,7 +222,6 @@ HueModel.prototype.TurnLightOn = function(bridgeip, userid, light, callback) {
 //Returns a boolean indicating success
 HueModel.prototype.SetLightBrightness = function(bridgeip, userid, light, brightLevel, forceOn, callback) {
     //Handle an object being passed in, instead of a light number
-    //TODO: for consistency we should also handle passing in a light uniqueid
     if (typeof light == Object)
         light = light.num;
 
