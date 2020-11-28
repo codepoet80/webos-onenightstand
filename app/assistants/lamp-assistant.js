@@ -78,11 +78,13 @@ LampAssistant.prototype.activate = function(event) {
         on: false
     };
     if (appModel.AppSettingsCurrent["hueSelectedLights"].length > 1) {
+        $("tdLampOne").style.paddingLeft = "0%";
         $("tdLampTwo").style.display = "block";
         this.Lamp2 = {
             num: appModel.AppSettingsCurrent["hueSelectedLights"][1],
         };
     } else {
+        $("tdLampOne").style.paddingLeft = "8%";
         $("tdLampTwo").style.display = "none";
     }
     this.iconSize = 64;
