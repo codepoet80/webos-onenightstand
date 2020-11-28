@@ -220,8 +220,6 @@ LampAssistant.prototype.toggleDimmerSlider = function(show) {
 
     var dimmer = $("slideBright");
     if (dimmer.style.display == "block" || !show) {
-
-        Mojo.Log.info("i should hide the dimmer");
         dimmer.style.display = "none";
         var thisWidgetSetup = this.controller.getWidgetSetup("slideBright");
         var thisWidgetModel = thisWidgetSetup.model;
@@ -229,8 +227,6 @@ LampAssistant.prototype.toggleDimmerSlider = function(show) {
         this.controller.modelChanged(thisWidgetModel);
 
     } else {
-
-        Mojo.Log.info("i should show the dimmer because show=" + show);
         var sliderPos = 126;
         if (this.Lamp1.brightness != undefined)
             sliderPos = this.Lamp1.brightness;
