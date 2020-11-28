@@ -219,7 +219,18 @@ LampAssistant.prototype.toggleDimmerSlider = function(show) {
     this.setTimerToGoBack();
 
     var dimmer = $("slideBright");
-    if (dimmer.style.display == "none") {
+    if (dimmer.style.display == "block" || !show) {
+
+        Mojo.Log.info("i should hide the dimmer");
+        dimmer.style.display = "none";
+        var thisWidgetSetup = this.controller.getWidgetSetup("slideBright");
+        var thisWidgetModel = thisWidgetSetup.model;
+        thisWidgetModel.disabled = true;
+        this.controller.modelChanged(thisWidgetModel);
+
+    } else {
+
+        Mojo.Log.info("i should show the dimmer because show=" + show);
         var sliderPos = 126;
         if (this.Lamp1.brightness != undefined)
             sliderPos = this.Lamp1.brightness;
@@ -230,13 +241,6 @@ LampAssistant.prototype.toggleDimmerSlider = function(show) {
         var thisWidgetModel = thisWidgetSetup.model;
         thisWidgetModel.disabled = false;
         thisWidgetModel.value = sliderPos;
-        this.controller.modelChanged(thisWidgetModel);
-
-    } else {
-        dimmer.style.display = "none";
-        var thisWidgetSetup = this.controller.getWidgetSetup("slideBright");
-        var thisWidgetModel = thisWidgetSetup.model;
-        thisWidgetModel.disabled = true;
         this.controller.modelChanged(thisWidgetModel);
     }
 }

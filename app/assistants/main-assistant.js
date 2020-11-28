@@ -107,14 +107,14 @@ MainAssistant.prototype.calculateClockPosition = function(fontSize, isLandscape)
         screenWidth = checkHeight;
         screenHeight = checkWidth;
     }
-    Mojo.Log.info("== height: " + screenHeight);
-    Mojo.Log.info("== width:  " + screenWidth);
-    Mojo.Log.info("== font: " + fontSize);
+    //Mojo.Log.info("== height: " + screenHeight);
+    //Mojo.Log.info("== width:  " + screenWidth);
+    //Mojo.Log.info("== font: " + fontSize);
     if (appModel.IsTouchPad)
         var useTop = (screenHeight / 2) - 90 - fontSize;
     else
         var useTop = (screenHeight / 2) - Math.round(fontSize / 1.15);
-    Mojo.Log.info("=== useTop: " + useTop);
+    //Mojo.Log.info("=== useTop: " + useTop);
     return useTop;
 }
 
