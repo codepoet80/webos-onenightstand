@@ -58,8 +58,6 @@ LampAssistant.prototype.setup = function() {
 var updateLightsInt;
 var goBackTimeout;
 LampAssistant.prototype.activate = function(event) {
-    /* put in event handlers here that should only be in effect when this scene is active. For
-       example, key handlers that are observing the document */
 
     //Non-Mojo widget data object
     this.Lamp1 = {
@@ -96,13 +94,16 @@ LampAssistant.prototype.activate = function(event) {
     this.iconSize = 64;
     if (appModel.IsTouchPad) {
         this.iconSize = 128;
-        //TODO: We could give more room for lamp labels on TouchPad
         $("lampsTable").style.marginTop = "180px";
         $("lampsTable").style.paddingRight = "8px";
         $("textControlsDiv").style.marginTop = "40px";
         $("imgLampOne").src = $("imgLampOne").src.replace("64", this.iconSize);
         $("imgLampTwo").src = $("imgLampTwo").src.replace("64", this.iconSize);
         $("slideBright").style.marginLeft = "360px";
+    } else {
+        //Constrain lamp label for tiny screens
+        $("divLampOne").addClassName("lampPre");
+        $("divLampTwo").addClassName("lampPre");
     }
 
     document.body.style.backgroundColor = "black";

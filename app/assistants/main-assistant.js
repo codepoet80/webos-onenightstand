@@ -83,6 +83,7 @@ MainAssistant.prototype.activate = function(event) {
         this.menuOn = true;
     }
     this.controller.modelChanged(thisWidgetModel);
+    this.toggleCommandMenu(false);
 
     // Setup the clock face
     this.controller.get("clock").style.color = appModel.AppSettingsCurrent["clockColor"];
@@ -179,19 +180,19 @@ MainAssistant.prototype.confirmDimSetings = function(hour, min) {
     }
 }
 
-MainAssistant.prototype.toggleCommandMenu = function() {
+MainAssistant.prototype.toggleCommandMenu = function(show) {
     var stageController = Mojo.Controller.getAppController().getActiveStageController();
     if (stageController) {
         this.controller = stageController.activeScene();
 
         var thisWidgetSetup = this.controller.getWidgetSetup(Mojo.Menu.commandMenu);
         var thisWidgetModel = thisWidgetSetup.model;
-        if (this.menuOn) {
-            thisWidgetModel.visible = false;
-            this.menuOn = false;
-        } else {
+        if (!this.menuOn || show == true) {
             thisWidgetModel.visible = true;
             this.menuOn = true;
+        } else {
+            thisWidgetModel.visible = false;
+            this.menuOn = false;
         }
         this.controller.modelChanged(thisWidgetModel);
     }
@@ -206,7 +207,7 @@ MainAssistant.prototype.handleCommand = function(event) {
         switch (event.command) {
             case 'do-settings':
                 {
-                    this.toggleCommandMenu();
+                    this.toggleCommandMenu(false);
                     clearTimeout(this.hideMenuTimeout);
                     var stageController = Mojo.Controller.stageController;
                     stageController.pushScene({ name: "preferences", disableSceneScroller: false });
@@ -215,12 +216,13 @@ MainAssistant.prototype.handleCommand = function(event) {
                 }
             case 'do-alarms':
                 {
+                    this.toggleCommandMenu(false);
                     systemModel.LaunchApp("com.palm.app.clock");
                     break;
                 }
             case 'do-lamps':
                 {
-                    this.toggleCommandMenu();
+                    this.toggleCommandMenu(false);
                     clearTimeout(this.hideMenuTimeout);
                     var stageController = Mojo.Controller.stageController;
                     stageController.pushScene({ name: "lamp", disableSceneScroller: true });

@@ -260,7 +260,7 @@ PreferencesAssistant.prototype.handleValueChange = function(event) {
 
         //Some preferences need some explanations...
         if (event.srcElement.title == "showAlarmButton" && event.value != false) {
-            Mojo.Additions.ShowDialogBox("Show Alarms Button", "A button will be added to the clock scene's command bar that launches the system Clock app, allowing you to manage your alarms.<br>This setting takes effect on next app launch.");
+            Mojo.Additions.ShowDialogBox("Show Alarms Button", "A button will be added to the clock scene's command bar that launches the system Clock app, allowing you to manage your alarms.");
         }
         if (event.srcElement.title == "dimLevel" && event.value == 0 && appModel.IsTouchPad) {
             Mojo.Additions.ShowDialogBox("Dim Level", "It looks like you're on a Touchpad, so you should be aware that a Dim Level of zero turns the backlight off entirely, making the screen very difficult to see. This is different than on a Pre, where Dim Level zero still has the backlight on at its lowest setting.");

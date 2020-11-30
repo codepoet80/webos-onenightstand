@@ -28,6 +28,13 @@
     margin-top: 0px;
 }
 
+.lampPre {
+    width: 120px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
 .multiLampLabel {
     font-size: 22px;
     line-height: 23px;
