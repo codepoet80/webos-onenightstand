@@ -41,13 +41,13 @@ var AppModel = function() {
 //  LoadSettings: call when your app starts, or you want to load previously persisted options.
 //  SaveSettings: call any time you want to persist an option.
 //  ResetSettings: call if you want to forget stored settings and return to defaults. Your default scene will be popped and re-pushed.
-AppModel.prototype.LoadSettings = function() {
+AppModel.prototype.LoadSettings = function(safe) {
     this.AppSettingsCurrent = this.AppSettingsDefaults;
     var loadSuccess = false;
     var settingsCookie = new Mojo.Model.Cookie("settings");
     try {
         appSettings = settingsCookie.get();
-        if (typeof appSettings == "undefined" || appSettings == null || !this.checkSettingsValid(appSettings)) {
+        if (safe && (typeof appSettings == "undefined" || appSettings == null || !this.checkSettingsValid(appSettings))) {
             Mojo.Log.error("** Using first run default settings");
         } else {
             Mojo.Log.info("** Using cookie settings!");
@@ -90,6 +90,7 @@ AppModel.prototype.checkSettingsValid = function(loadedSettings) {
 
 AppModel.prototype.SaveSettings = function() {
     var settingsCookie = new Mojo.Model.Cookie("settings");
+    //Mojo.Log.info("Savinng settings as: " + JSON.stringify(appModel.AppSettingsCurrent));
     settingsCookie.put(appModel.AppSettingsCurrent);
 }
 

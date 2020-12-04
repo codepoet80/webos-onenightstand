@@ -1,6 +1,6 @@
 {
     "id": "com.palm.webos.jonandnic.onenightstand",
-    "version": "1.0.2",
+    "version": "1.0.3",
     "vendor": "jonandnic.com",
     "type": "web",
     "main": "index.html",
