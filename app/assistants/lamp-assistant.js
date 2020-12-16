@@ -90,7 +90,7 @@ LampAssistant.prototype.activate = function(event) {
             $("textControlsDiv").style.paddingRight = "100px";
     }
 
-    //TouchPad tweaks
+    //Specific device tweaks
     this.iconSize = 64;
     if (appModel.DeviceType == "Touchpad") {
         this.iconSize = 128;
@@ -100,8 +100,13 @@ LampAssistant.prototype.activate = function(event) {
         $("imgLampOne").src = $("imgLampOne").src.replace("64", this.iconSize);
         $("imgLampTwo").src = $("imgLampTwo").src.replace("64", this.iconSize);
         $("slideBright").style.marginLeft = "360px";
+    } else if (appModel.DeviceType == "Tiny") {
+        //Pixi and Veer
+        $("divLampOne").addClassName("lampPre");
+        $("divLampTwo").addClassName("lampPre");
+        $("slideBright").style.marginLeft = "50px";
     } else {
-        //Constrain lamp label for tiny screens
+        //Pre-Pre3
         $("divLampOne").addClassName("lampPre");
         $("divLampTwo").addClassName("lampPre");
     }
