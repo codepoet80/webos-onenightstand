@@ -81,18 +81,18 @@ LampAssistant.prototype.activate = function(event) {
         this.Lamp2 = {
             num: appModel.AppSettingsCurrent["hueSelectedLights"][1],
         };
-        if (appModel.IsTouchPad)
+        if (appModel.DeviceType == "Touchpad")
             $("textControlsDiv").style.paddingRight = "0px";
     } else {
         $("tdLampOne").style.paddingLeft = "8%";
         $("tdLampTwo").style.display = "none";
-        if (appModel.IsTouchPad)
+        if (appModel.DeviceType == "Touchpad")
             $("textControlsDiv").style.paddingRight = "100px";
     }
 
     //TouchPad tweaks
     this.iconSize = 64;
-    if (appModel.IsTouchPad) {
+    if (appModel.DeviceType == "Touchpad") {
         this.iconSize = 128;
         $("lampsTable").style.marginTop = "180px";
         $("lampsTable").style.paddingRight = "8px";
@@ -108,7 +108,7 @@ LampAssistant.prototype.activate = function(event) {
 
     document.body.style.backgroundColor = "black";
     var stageController = Mojo.Controller.stageController;
-    if (!appModel.IsTouchPad)
+    if (!appModel.DeviceType == "Touchpad")
         stageController.setWindowOrientation("left");
     else
         stageController.setWindowOrientation("right");

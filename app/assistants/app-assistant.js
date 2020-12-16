@@ -14,13 +14,20 @@ function AppAssistant() {
 
 //This function will handle relaunching the app when an alarm goes off(see the device/alarm scene)
 AppAssistant.prototype.handleLaunch = function(params) {
-    appModel.LoadSettings();
+    appModel.LoadSettings(true);
     Mojo.Log.info("** App Settings: " + JSON.stringify(appModel.AppSettingsCurrent));
 
     //find out if this is a touchpad
-    appModel.IsTouchPad = Mojo.Environment.DeviceInfo.platformVersionMajor >= 3;
-    if (appModel.IsTouchPad)
-        Mojo.Log.warn("Launching on a TouchPad, some behaviors will to change!");
+    if (Mojo.Environment.DeviceInfo.platformVersionMajor >= 3)
+        appModel.DeviceType = "Touchpad";
+    else {
+        if (window.screen.width == 400 || window.screen.height == 400)
+            appModel.DeviceType = "Tiny"
+    }
+    if (appModel.DeviceType == "Touchpad")
+        Mojo.Log.warn("Launching on a TouchPad, some behaviors will change!");
+    else if (appModel.DeviceType == "Tiny")
+        Mojo.Log.warn("Launching on a Veer or Pixi, some beavhiors will change");
 
     //get the proxy for the stage in the event it already exists (eg: app is currently open)
     var mainStage = this.controller.getStageProxy("");

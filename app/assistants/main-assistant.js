@@ -64,7 +64,7 @@ MainAssistant.prototype.activate = function(event) {
        example, key handlers that are observing the document */
     document.body.style.backgroundColor = "black";
     var stageController = Mojo.Controller.stageController;
-    if (!appModel.IsTouchPad)
+    if (!appModel.DeviceType == "Touchpad")
         stageController.setWindowOrientation("left");
     else
         stageController.setWindowOrientation("right");
@@ -100,7 +100,7 @@ MainAssistant.prototype.calculateClockPosition = function(fontSize, isLandscape)
     var screenWidth;
     var screenHeight;
     //  A race condition on the TouchPad can make these values wrong, so we double check
-    if (!isLandscape || (isLandscape && appModel.IsTouchPad && checkHeight > checkWidth)) {
+    if (!isLandscape || (isLandscape && appModel.DeviceType == "Touchpad" && checkHeight > checkWidth)) {
         screenWidth = checkWidth;
         screenHeight = checkHeight;
     } else {
@@ -108,14 +108,16 @@ MainAssistant.prototype.calculateClockPosition = function(fontSize, isLandscape)
         screenWidth = checkHeight;
         screenHeight = checkWidth;
     }
-    //Mojo.Log.info("== height: " + screenHeight);
-    //Mojo.Log.info("== width:  " + screenWidth);
-    //Mojo.Log.info("== font: " + fontSize);
-    if (appModel.IsTouchPad)
+    Mojo.Log.info("== height: " + screenHeight);
+    Mojo.Log.info("== width:  " + screenWidth);
+    Mojo.Log.info("== font: " + fontSize);
+    var useTop = (screenHeight / 2) - Math.round(fontSize / 1.15);
+    if (appModel.DeviceType == "Touchpad")
         var useTop = (screenHeight / 2) - 90 - fontSize;
-    else
-        var useTop = (screenHeight / 2) - Math.round(fontSize / 1.15);
-    //Mojo.Log.info("=== useTop: " + useTop);
+    else if (appModel.DeviceType == "Tiny")
+        var useTop = fontSize / 2;
+
+    Mojo.Log.warn("=== useTop: " + useTop);
     return useTop;
 }
 

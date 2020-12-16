@@ -12,7 +12,7 @@ var AppModel = function() {
     this.DefaultScene = "main";
     this.Lamps = [];
     this.DisplayTimeout = 45;
-    this.IsTouchPad = false;
+    this.DeviceType = "Pre";
 
     //Define your app-wide static settings here
 

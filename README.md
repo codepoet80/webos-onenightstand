@@ -16,3 +16,5 @@ Optimized for Pre and TouchPad.
 1.0.2 - Resolve issue where command bar wouldn't auto-hide after visiting lamps scene. Give more room to lamp labels on TouchPad.
 
 1.0.3 - Resolve an issue where changing Dim Level setting causes preferences to be purged on next launch.
+
+1.0.4 - Suppor Veer/Pixi screen sizes
