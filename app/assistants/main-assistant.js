@@ -111,11 +111,15 @@ MainAssistant.prototype.calculateClockPosition = function(fontSize, isLandscape)
     Mojo.Log.info("== height: " + screenHeight);
     Mojo.Log.info("== width:  " + screenWidth);
     Mojo.Log.info("== font: " + fontSize);
+    //this.controller.get("clock").style.marginTop = "-55px";
     var useTop = (screenHeight / 2) - Math.round(fontSize / 1.15);
-    if (appModel.DeviceType == "Touchpad")
-        var useTop = (screenHeight / 2) - 90 - fontSize;
-    else if (appModel.DeviceType == "Tiny")
-        var useTop = fontSize / 2;
+    if (appModel.DeviceType == "Touchpad") {
+        screenHeight = screenHeight - 160;
+        useTop = (screenHeight / 2) - (fontSize / 1.05);
+    } else if (appModel.DeviceType == "Tiny") {
+        screenHeight = screenHeight - 15;
+        useTop = (screenHeight / 2) - (fontSize / 1.15);
+    }
 
     Mojo.Log.warn("=== useTop: " + useTop);
     return useTop;

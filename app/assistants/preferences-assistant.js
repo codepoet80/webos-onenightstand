@@ -34,7 +34,10 @@ PreferencesAssistant.prototype.setup = function() {
     var maxSize = 180;
     if (appModel.DeviceType == "Touchpad") {
         minSize = 100;
-        maxSize = 300;
+        maxSize = 320;
+    }
+    if (appModel.DeviceType == "Tiny") {
+        maxSize = 160;
     }
     this.controller.setupWidget("slideClockSize",
         this.attributes = {
