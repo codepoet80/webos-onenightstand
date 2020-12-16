@@ -14,7 +14,7 @@ function AppAssistant() {
 
 //This function will handle relaunching the app when an alarm goes off(see the device/alarm scene)
 AppAssistant.prototype.handleLaunch = function(params) {
-    appModel.LoadSettings(true);
+    appModel.LoadSettings();
     Mojo.Log.info("** App Settings: " + JSON.stringify(appModel.AppSettingsCurrent));
 
     //find out if this is a touchpad
