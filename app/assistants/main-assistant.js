@@ -72,8 +72,13 @@ MainAssistant.prototype.activate = function(event) {
     //Apply preferences to Command bar
     var thisWidgetModel = this.controller.getWidgetSetup(Mojo.Menu.commandMenu).model;
     thisWidgetModel.items[1].items = [];
-    if (appModel.AppSettingsCurrent["showAlarmButton"])
-        thisWidgetModel.items[1].items.push({ label: 'Alarms', iconPath: 'images/Alarm.png', command: 'do-alarms' });
+    try {
+        if (appModel.AppSettingsCurrent["showAlarmButton"])
+            thisWidgetModel.items[1].items.push({ label: 'Alarms', iconPath: 'images/Alarm.png', command: 'do-alarms' });
+    } catch (ex) {
+        Mojo.Log.error("A compatibility issue occured reading settings. Preferences will be reset.");
+        appModel.ResetSettings();
+    }
     thisWidgetModel.items[1].items.push({ label: 'Settings', iconPath: 'images/SettingsGear.png', command: 'do-settings' });
     if (this.menuOn) {
         thisWidgetModel.visible = false;
@@ -91,6 +96,9 @@ MainAssistant.prototype.activate = function(event) {
     this.controller.get("clock").style.marginTop = this.calculateClockPosition(appModel.AppSettingsCurrent["clockSize"], true) + "px";
     this.updateClock(true);
     this.clockInt = setInterval(this.updateClock.bind(this), 6000);
+
+    //Check for updates
+    updaterModel.CheckForUpdate(this.handleUpdateResponse);
 }
 
 MainAssistant.prototype.calculateClockPosition = function(fontSize, isLandscape) {
@@ -108,10 +116,9 @@ MainAssistant.prototype.calculateClockPosition = function(fontSize, isLandscape)
         screenWidth = checkHeight;
         screenHeight = checkWidth;
     }
-    Mojo.Log.info("== height: " + screenHeight);
-    Mojo.Log.info("== width:  " + screenWidth);
-    Mojo.Log.info("== font: " + fontSize);
-    //this.controller.get("clock").style.marginTop = "-55px";
+    //Mojo.Log.info("== height: " + screenHeight);
+    //Mojo.Log.info("== width:  " + screenWidth);
+    //Mojo.Log.info("== font: " + fontSize);
     var useTop = (screenHeight / 2) - Math.round(fontSize / 1.15);
     if (appModel.DeviceType == "Touchpad") {
         screenHeight = screenHeight - 160;
@@ -120,8 +127,7 @@ MainAssistant.prototype.calculateClockPosition = function(fontSize, isLandscape)
         screenHeight = screenHeight - 15;
         useTop = (screenHeight / 2) - (fontSize / 1.15);
     }
-
-    Mojo.Log.warn("=== useTop: " + useTop);
+    //Mojo.Log.warn("=== useTop: " + useTop);
     return useTop;
 }
 
@@ -238,6 +244,12 @@ MainAssistant.prototype.handleCommand = function(event) {
     }
     Mojo.Log.info("current scene: " + currentScene.sceneName);
 };
+
+MainAssistant.prototype.handleUpdateResponse = function(responseObj) {
+    if (responseObj && responseObj.updateFound) {
+        Mojo.Additions.ShowDialogBox("Update Available!", "There's an update for One Night Stand! <br>" + responseObj.versionNote + "<br>Visit App Museum II to download the new version!");
+    }
+}
 
 MainAssistant.prototype.deactivate = function(event) {
     /* remove any event handlers you added in activate and do any other cleanup that should happen before

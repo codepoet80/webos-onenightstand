@@ -19,5 +19,6 @@
     },
     { "source": "app/models/app-model.js" },
     { "source": "app/models/hue-model.js" },
+    { "source": "app/models/updater-model.js" },
     { "source": "app/models/system-model.js" }
 ]

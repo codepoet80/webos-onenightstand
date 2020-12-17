@@ -92,7 +92,7 @@ HueModel.prototype.GetLightList = function(bridgeip, userid, callback) {
                 };
                 this.retVal = lightArray;
             } else {
-                Mojo.Log.warn("Hue response did not appear to contain light states!");
+                Mojo.Log.info("Hue response did not appear to contain light states!");
                 this.retVal = xmlhttp.responseText;
             }
             if (this.callBack)
@@ -176,7 +176,7 @@ HueModel.prototype.TurnLightOff = function(bridgeip, userid, light, callback) {
                 this.retVal = true;
             }
             if (callback) {
-                Mojo.Log.warn("Executing Hue light state change callback");
+                Mojo.Log.info("Executing Hue light state change callback");
                 callback(this.retVal);
             }
         }
@@ -212,7 +212,7 @@ HueModel.prototype.TurnLightOn = function(bridgeip, userid, light, callback) {
                 this.retVal = true;
             }
             if (callback) {
-                Mojo.Log.warn("Executing Hue light state change callback");
+                Mojo.Log.info("Executing Hue light state change callback");
                 callback(this.retVal);
             }
         }
