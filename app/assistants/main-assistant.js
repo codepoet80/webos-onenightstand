@@ -98,7 +98,7 @@ MainAssistant.prototype.activate = function(event) {
     this.clockInt = setInterval(this.updateClock.bind(this), 6000);
 
     //Check for updates
-    updaterModel.CheckForUpdate(this.handleUpdateResponse);
+    updaterModel.CheckForUpdate("One Night Stand", this.handleUpdateResponse.bind(this));
 }
 
 MainAssistant.prototype.calculateClockPosition = function(fontSize, isLandscape) {
@@ -247,7 +247,10 @@ MainAssistant.prototype.handleCommand = function(event) {
 
 MainAssistant.prototype.handleUpdateResponse = function(responseObj) {
     if (responseObj && responseObj.updateFound) {
-        Mojo.Additions.ShowDialogBox("Update Available!", "There's an update for One Night Stand! <br>" + responseObj.versionNote + "<br>Visit App Museum II to download the new version!");
+        updaterModel.PromptUserForUpdate(function(response) {
+            if (response)
+                updaterModel.InstallUpdate();
+        }.bind(this));
     }
 }
 

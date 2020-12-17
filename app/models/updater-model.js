@@ -9,13 +9,19 @@ Updater Model
 */
 
 var UpdaterModel = function() {
-    this.updateURL = "http://appcatalog.webosarchive.com/WebService/getLatestVersionInfo.php?One+Night+Stand";
+    this.updateURL = "http://appcatalog.webosarchive.com/WebService/getLatestVersionInfo.php?";
+    this.lastUpdateResponse = null;
 };
 
-//Check App Museum II web service to see if there are any updates
-UpdaterModel.prototype.CheckForUpdate = function(callback) {
+/* "Public" Updater functions */
 
-    Mojo.Log.info("UpdaterModel identified current app as: " + Mojo.Controller.appInfo.id);
+//Check App Museum II web service to see if there are any updates
+UpdaterModel.prototype.CheckForUpdate = function(appName, callback) {
+
+    this.updateURL = this.updateURL + appName;
+    // TODO: It would be nice to use the AppID, instead of an arbitrary name, but the performance 
+    //      implications are overwhelming since the AppID is not a part of the masterData file.
+    //      We could get that from the app with: Mojo.Controller.appInfo.id
     var currVersion = this.getVersionObject(Mojo.Controller.appInfo.version);
     Mojo.Log.info("UpdaterModel identified current version: " + JSON.stringify(currVersion));
 
@@ -29,8 +35,8 @@ UpdaterModel.prototype.CheckForUpdate = function(callback) {
     xmlhttp.send();
     xmlhttp.onreadystatechange = function() {
         if (xmlhttp.readyState == XMLHttpRequest.DONE) {
-            if (xmlhttp.responseText != null) {
-                //Mojo.Log.info("Museum responded: " + xmlhttp.responseText);
+            Mojo.Log.info("Museum responded: " + xmlhttp.responseText);
+            if (xmlhttp.responseText != null && xmlhttp.responseText != "" && xmlhttp.responseText.indexOf("ERROR:") != 1) {
                 var updateResponse = JSON.parse(xmlhttp.responseText);
                 if (updateResponse.version != null) {
                     var museumVersion = this.getVersionObject(updateResponse.version);
@@ -43,16 +49,62 @@ UpdaterModel.prototype.CheckForUpdate = function(callback) {
                         updateResponse = false;
                     }
                 }
+                this.lastUpdateResponse = updateResponse;
                 //Mojo.Log.info("New update response object: " + JSON.stringify(updateResponse));
                 if (callback) {
-                    Mojo.Log.info("Executing update check callback");
                     callback(updateResponse);
                 }
+            } else {
+                Mojo.Log.info("UpdaterModel: No useable response from App Museum II update API");
             }
         }
     }.bind(this);
 }
 
+//You can optionally call this function if you don't want to handle the user interaction related to prompting for an update
+//  Pass the function to be called back with the user's response
+//  Optionally pass a message to the user if you don't like the automatically constructed one
+UpdaterModel.prototype.PromptUserForUpdate = function(callback, message) {
+    if (!this.lastUpdateResponse) {
+        Mojo.Log.warn("UpdaterModel: Not prompting user for update when no update has been discovered.");
+    } else {
+        if (!message)
+            message = "There's a new version of " + Mojo.Controller.appInfo.title + " available! <br>" + this.lastUpdateResponse.versionNote + "<br>Do you want to update now?";
+
+        var stageController = Mojo.Controller.getAppController().getActiveStageController();
+        if (stageController) {
+            this.controller = stageController.activeScene();
+
+            this.controller.showAlertDialog({
+                onChoose: function(value) {
+                    if (value) {
+                        Mojo.Log.info("User requested update now");
+                    } else {
+                        Mojo.Log.info("User deferred update.");
+                    }
+                    if (callback)
+                        callback(value);
+                },
+                allowHTMLMessage: true,
+                title: $L("Update Found!"),
+                message: $L(message),
+                choices: [
+                    { label: $L('Update Now'), value: true, type: 'affirmative' },
+                    { label: $L("Later"), value: false, type: 'negative' }
+                ]
+            });
+        }
+    }
+}
+
+//Call to ask Preware to install the update -- you should usually check with the user first!
+UpdaterModel.prototype.InstallUpdate = function() {
+    Mojo.Log.error("UpdaterModel: Calling PreWare to install an update is not implemented yet!");
+}
+
+/* "Private" helper functions */
+
+//Turn a version string into an object with three independent number values
 UpdaterModel.prototype.getVersionObject = function(versionNum) {
     versionNumParts = versionNum.split(".");
     if (versionNumParts.length <= 2 || versionNumParts > 3) {
@@ -68,6 +120,7 @@ UpdaterModel.prototype.getVersionObject = function(versionNum) {
     }
 }
 
+//Given a current version and a version to compare, return true or false if the compare version is newer
 UpdaterModel.prototype.isVersionHigher = function(currVersion, compareVersion) {
     if (!currVersion || !compareVersion) {
         Mojo.Log.error("UpdaterModel: Pass the versions to compare. If the second version is higher than the first, this function will return true");
@@ -80,9 +133,4 @@ UpdaterModel.prototype.isVersionHigher = function(currVersion, compareVersion) {
             return true;
         return false;
     }
-}
-
-//Ask PreWare
-UpdaterModel.prototype.InstallUpdate = function() {
-
 }
