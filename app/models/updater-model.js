@@ -27,7 +27,7 @@ UpdaterModel.prototype.CheckForUpdate = function(appName, callback) {
 
     // set scope for xmlhttp anonymous function callback
     if (callback)
-        callback = callback.bind(this);
+        callBack = callback.bind(this);
 
     var xmlhttp = new XMLHttpRequest();
     xmlhttp.open("GET", this.updateURL);
@@ -50,12 +50,12 @@ UpdaterModel.prototype.CheckForUpdate = function(appName, callback) {
                     }
                 }
                 this.lastUpdateResponse = updateResponse;
-                //Mojo.Log.info("New update response object: " + JSON.stringify(updateResponse));
-                if (callback) {
-                    callback(updateResponse);
-                }
             } else {
                 Mojo.Log.info("UpdaterModel: No useable response from App Museum II update API");
+            }
+            //Mojo.Log.info("New update response object: " + JSON.stringify(updateResponse));
+            if (callback) {
+                callBack(updateResponse);
             }
         }
     }.bind(this);

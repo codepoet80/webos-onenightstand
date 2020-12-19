@@ -20,7 +20,7 @@ HueModel.prototype.LinkWithHue = function(bridgeip, appid, callback) {
 
     // set scope for xmlhttp anonymous function callback
     if (callback)
-        this.callBack = callback.bind(this);
+        callBack = callback.bind(this);
 
     //Even though webOS has an Ajax.Request method, it does not support sending JSON in put parameters
     //	So we'll fall back to the good old browser method
@@ -42,8 +42,8 @@ HueModel.prototype.LinkWithHue = function(bridgeip, appid, callback) {
                 Mojo.Log.error("Hue responded with error: " + xmlhttp.responseText);
                 this.retVal = xmlhttp.responseText;
             }
-            if (this.callBack)
-                this.callBack(this.retVal);
+            if (callBack)
+                callBack(this.retVal);
         }
     }.bind(this);
 }
@@ -56,7 +56,7 @@ HueModel.prototype.GetLightList = function(bridgeip, userid, callback) {
 
     // set scope for xmlhttp anonymous function callback
     if (callback)
-        this.callBack = callback.bind(this);
+        callBack = callback.bind(this);
 
     var xmlhttp = new XMLHttpRequest();
     xmlhttp.open("GET", this.bridgeURL);
@@ -95,8 +95,8 @@ HueModel.prototype.GetLightList = function(bridgeip, userid, callback) {
                 Mojo.Log.info("Hue response did not appear to contain light states!");
                 this.retVal = xmlhttp.responseText;
             }
-            if (this.callBack)
-                this.callBack(this.retVal);
+            if (callBack)
+                callBack(this.retVal);
         }
     }.bind(this);
 }
@@ -109,7 +109,7 @@ HueModel.prototype.GetLight = function(bridgeip, userid, light, callback) {
 
     // set scope for xmlhttp anonymous function callback
     if (callback)
-        this.callBack = callback.bind(this);
+        callBack = callback.bind(this);
 
     var xmlhttp = new XMLHttpRequest();
     xmlhttp.open("GET", this.bridgeURL);
@@ -142,8 +142,8 @@ HueModel.prototype.GetLight = function(bridgeip, userid, light, callback) {
                 Mojo.Log.warn("Hue response did not appear to contain light states!");
                 this.retVal = xmlhttp.responseText;
             }
-            if (this.callBack)
-                this.callBack(this.retVal);
+            if (callBack)
+                callBack(this.retVal);
         }
     }.bind(this);
 }
@@ -231,7 +231,7 @@ HueModel.prototype.SetLightBrightness = function(bridgeip, userid, light, bright
 
     // set scope for xmlhttp anonymous function callback
     if (callback)
-        this.callBack = callback.bind(this);
+        callBack = callback.bind(this);
 
     var xmlhttp = new XMLHttpRequest();
     xmlhttp.open("PUT", this.bridgeURL);
@@ -250,8 +250,8 @@ HueModel.prototype.SetLightBrightness = function(bridgeip, userid, light, bright
             } else {
                 this.retVal = true;
             }
-            if (this.callBack)
-                this.callBack(this.retVal);
+            if (callBack)
+                callBack(this.retVal);
         }
     }.bind(this);
 }
