@@ -18,3 +18,5 @@ Optimized for Pre and TouchPad.
 1.0.3 - Resolve an issue where changing Dim Level setting causes preferences to be purged on next launch.
 
 1.0.4 - Suppor Veer/Pixi screen sizes
+
+1.0.5 - Touchpad sleep changes, self-updater implemented

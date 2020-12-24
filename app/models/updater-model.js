@@ -1,6 +1,6 @@
 /*
 Updater Model
- Version 0.1
+ Version 0.2
  Created: 2020
  Author: Jonathan Wise
  License: MIT
@@ -97,9 +97,31 @@ UpdaterModel.prototype.PromptUserForUpdate = function(callback, message) {
     }
 }
 
-//Call to ask Preware to install the update -- you should usually check with the user first!
-UpdaterModel.prototype.InstallUpdate = function() {
-    Mojo.Log.error("UpdaterModel: Calling PreWare to install an update is not implemented yet!");
+//Ask Preware to actually install the update...
+UpdaterModel.prototype.InstallUpdate = function(callBack) {
+    if (!this.lastUpdateResponse) {
+        Mojo.Log.warn("UpdaterModel: Not prompting user for update when no update has been discovered.");
+    } else {
+        var app = this.lastUpdateResponse.downloadURI;
+        Mojo.Log.info("Asking PreWare to perform update to " + app);
+
+        //Ask webOS to launch the video player with the new url
+        this.prewareRequest = new Mojo.Service.Request("palm://com.palm.applicationManager", {
+            method: "open",
+            parameters: {
+                "id": "org.webosinternals.preware",
+                params: { type: "install", file: app }
+            },
+            onSuccess: function(response) {
+                Mojo.Log.info("Preware launch success", JSON.stringify(response));
+            },
+            onFailure: function(response) {
+                Mojo.Log.error("Preware launch failure, " + videoURL + ":",
+                    JSON.stringify(response), response.errorText);
+            }
+        });
+        return true;
+    }
 }
 
 /* "Private" helper functions */
