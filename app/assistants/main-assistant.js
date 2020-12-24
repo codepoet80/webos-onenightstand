@@ -59,6 +59,10 @@ MainAssistant.prototype.setup = function() {
 
     /* add event handlers to listen to events from widgets */
     this.controller.listen("clock", Mojo.Event.tap, this.handleClockTap.bind(this));
+
+    //Check for updates
+    updaterModel.CheckForUpdate("One Night Stand", this.handleUpdateResponse.bind(this));
+
 };
 
 MainAssistant.prototype.activate = function(event) {
@@ -98,9 +102,6 @@ MainAssistant.prototype.activate = function(event) {
     this.controller.get("clock").style.marginTop = this.calculateClockPosition(appModel.AppSettingsCurrent["clockSize"], true) + "px";
     this.updateClock(true);
     this.clockInt = setInterval(this.updateClock.bind(this), 6000);
-
-    //Check for updates
-    updaterModel.CheckForUpdate("One Night Stand", this.handleUpdateResponse.bind(this));
 }
 
 MainAssistant.prototype.calculateClockPosition = function(fontSize, isLandscape) {

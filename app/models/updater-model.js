@@ -18,12 +18,13 @@ var UpdaterModel = function() {
 //Check App Museum II web service to see if there are any updates
 UpdaterModel.prototype.CheckForUpdate = function(appName, callback) {
 
-    this.updateURL = this.updateURL + appName;
+    var currVersion = this.getVersionObject(Mojo.Controller.appInfo.version);
+    Mojo.Log.info("UpdaterModel identified current app " + appName + " version: " + JSON.stringify(currVersion));
+
     // TODO: It would be nice to use the AppID, instead of an arbitrary name, but the performance 
     //      implications are overwhelming since the AppID is not a part of the masterData file.
     //      We could get that from the app with: Mojo.Controller.appInfo.id
-    var currVersion = this.getVersionObject(Mojo.Controller.appInfo.version);
-    Mojo.Log.info("UpdaterModel identified current version: " + JSON.stringify(currVersion));
+    this.updateURL = this.updateURL + encodeURI(appName);
 
     // set scope for xmlhttp anonymous function callback
     if (callback)
@@ -31,6 +32,7 @@ UpdaterModel.prototype.CheckForUpdate = function(appName, callback) {
 
     var xmlhttp = new XMLHttpRequest();
     xmlhttp.open("GET", this.updateURL);
+    Mojo.Log.info("Updater calling: " + this.updateURL);
     xmlhttp.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
     xmlhttp.send();
     xmlhttp.onreadystatechange = function() {
