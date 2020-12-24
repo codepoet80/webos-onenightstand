@@ -42,6 +42,8 @@ MainAssistant.prototype.setup = function() {
             appModel.DisplayTimeout = response.timeout;
     });
     systemModel.PreventDisplaySleep();
+    if (!appModel.DeviceType == "Touchpad")
+        systemModel.SetDisplayState("unlock"); //Unlock the screen
 
     // Remember volume settings
     systemModel.GetSystemVolume(function(response) {

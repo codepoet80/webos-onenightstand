@@ -125,7 +125,7 @@ PreferencesAssistant.prototype.setup = function() {
             disabled: false
         }
     );
-    //Light List (starts empty)
+    //Light List (starts with an 'empty' item to help Mojo setuup)
     this.hueLightListModel = [
         { lightNum: "-1", lightType: "none", lightName: "empty", selectedState: false }
     ]
@@ -221,7 +221,7 @@ PreferencesAssistant.prototype.updateLightList = function() {
         $("fakeLightList").style.display = "none";
         $("showHueLights").style.display = "block";
         var thisWidgetSetup = this.controller.getWidgetSetup("hueLightList");
-        thisWidgetSetup.model.items.pop();
+        thisWidgetSetup.model.items.pop(); //remove the 'empty' item from the list
         for (var i = 0; i < lights.length; i++) {
             var thisLight = lights[i];
             var isSelected = false;
