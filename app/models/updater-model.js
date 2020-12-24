@@ -1,15 +1,17 @@
 /*
-Updater Model
+Updater Model - Mojo
  Version 0.2
  Created: 2020
  Author: Jonathan Wise
  License: MIT
  Description: A model to check for and get updates from App Museum II web service.
     Does not require App Museum to be installed, but does require internet access, and Preware to do the actual install.
+ Source: Find the latest version of this library and clean samples of how to use it on GitHub:
+    https://github.com/codepoet80/webos-catalog-frontend/tree/main/Examples
 */
 
 var UpdaterModel = function() {
-    this.updateURL = "http://appcatalog.webosarchive.com/WebService/getLatestVersionInfo.php?";
+    this.updateURL = "http://appcatalog.webosarchive.com/WebService/getLatestVersionInfo.php?app=";
     this.lastUpdateResponse = null;
 };
 
@@ -102,7 +104,7 @@ UpdaterModel.prototype.PromptUserForUpdate = function(callback, message) {
 //Ask Preware to actually install the update...
 UpdaterModel.prototype.InstallUpdate = function(callBack) {
     if (!this.lastUpdateResponse) {
-        Mojo.Log.warn("UpdaterModel: Not prompting user for update when no update has been discovered.");
+        Mojo.Log.warn("UpdaterModel: Not performing update when no update has been discovered.");
     } else {
         var app = this.lastUpdateResponse.downloadURI;
         Mojo.Log.info("Asking PreWare to perform update to " + app);
