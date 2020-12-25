@@ -124,10 +124,10 @@ MainAssistant.prototype.calculateClockPosition = function(fontSize, isLandscape)
     //Mojo.Log.info("== font: " + fontSize);
     var useTop = (screenHeight / 2) - Math.round(fontSize / 1.15);
     if (appModel.DeviceType == "Touchpad") {
-        screenHeight = screenHeight - 160;
+        screenHeight = screenHeight - 170;
         useTop = (screenHeight / 2) - (fontSize / 1.05);
     } else if (appModel.DeviceType == "Tiny") {
-        screenHeight = screenHeight - 15;
+        screenHeight = screenHeight - 12;
         useTop = (screenHeight / 2) - (fontSize / 1.15);
     }
     //Mojo.Log.warn("=== useTop: " + useTop);
