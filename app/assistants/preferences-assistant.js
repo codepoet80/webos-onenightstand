@@ -34,7 +34,7 @@ PreferencesAssistant.prototype.setup = function() {
     var maxSize = 180;
     if (appModel.DeviceType == "Touchpad") {
         minSize = 100;
-        maxSize = 330;
+        maxSize = 390;
     }
     if (appModel.DeviceType == "Tiny") {
         maxSize = 155;

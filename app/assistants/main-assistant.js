@@ -152,6 +152,8 @@ MainAssistant.prototype.updateClock = function(skipDim) {
 
     if (hour > 12 && !appModel.AppSettingsCurrent["use24HourTime"])
         hour = hour - 12;
+    if (hour == 0 && !appModel.AppSettingsCurrent["use24HourTime"])
+        hour = 12;
     min = this.confirmTime(min);
     sec = this.confirmTime(sec);
     this.controller.get("clock").innerHTML = hour + ":" + min;
