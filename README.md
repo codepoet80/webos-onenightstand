@@ -20,3 +20,5 @@ Optimized for Pre and TouchPad.
 1.0.4 - Support Veer/Pixi screen sizes
 
 1.0.5 - Touchpad layout and sleep changes, 12-hour time fix, self-updater implemented
+
+1.0.6 - Layout improvements for Pre3

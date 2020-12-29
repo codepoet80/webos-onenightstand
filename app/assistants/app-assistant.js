@@ -20,16 +20,21 @@ AppAssistant.prototype.handleLaunch = function(params) {
     Mojo.Log.info("** App Settings: " + JSON.stringify(appModel.AppSettingsCurrent));
 
     //find out if this is a touchpad
+    Mojo.Log.info("screen width " + window.screen.width + ", height " + window.screen.height);
     if (Mojo.Environment.DeviceInfo.platformVersionMajor >= 3)
         appModel.DeviceType = "Touchpad";
     else {
-        if (window.screen.width == 400 || window.screen.height == 400)
-            appModel.DeviceType = "Tiny"
+        if (window.screen.width == 800 || window.screen.height == 800)
+            appModel.DeviceType = "Pre3";
+        else
+            appModel.DeviceType = "Tiny";
     }
     if (appModel.DeviceType == "Touchpad")
         Mojo.Log.warn("Launching on a TouchPad, some behaviors will change!");
     else if (appModel.DeviceType == "Tiny")
-        Mojo.Log.warn("Launching on a Veer or Pixi, some beavhiors will change");
+        Mojo.Log.warn("Launching on a Pre2 or smaller");
+    else
+        Mojo.Log.warn("Launching on a Pre3");
 
     //get the proxy for the stage in the event it already exists (eg: app is currently open)
     var mainStage = this.controller.getStageProxy("");

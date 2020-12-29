@@ -119,9 +119,10 @@ MainAssistant.prototype.calculateClockPosition = function(fontSize, isLandscape)
         screenWidth = checkHeight;
         screenHeight = checkWidth;
     }
-    //Mojo.Log.info("== height: " + screenHeight);
-    //Mojo.Log.info("== width:  " + screenWidth);
-    //Mojo.Log.info("== font: " + fontSize);
+    Mojo.Log.info("== height: " + screenHeight);
+    Mojo.Log.info("== width:  " + screenWidth);
+    Mojo.Log.info("== font: " + fontSize);
+
     var useTop = (screenHeight / 2) - Math.round(fontSize / 1.15);
     if (appModel.DeviceType == "Touchpad") {
         screenHeight = screenHeight - 170;
@@ -129,8 +130,11 @@ MainAssistant.prototype.calculateClockPosition = function(fontSize, isLandscape)
     } else if (appModel.DeviceType == "Tiny") {
         screenHeight = screenHeight - 12;
         useTop = (screenHeight / 2) - (fontSize / 1.15);
+    } else {
+        //screenHeight = screenHeight - 120;
+        useTop = 110 - (fontSize / 2);
     }
-    //Mojo.Log.warn("=== useTop: " + useTop);
+    Mojo.Log.warn("=== useTop for " + appModel.DeviceType + ": " + useTop);
     return useTop;
 }
 
