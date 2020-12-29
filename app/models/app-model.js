@@ -47,7 +47,7 @@ AppModel.prototype.LoadSettings = function(safe) {
     var settingsCookie = new Mojo.Model.Cookie("settings");
     try {
         appSettings = settingsCookie.get();
-        if (safe && (typeof appSettings == "undefined" || appSettings == null || !this.checkSettingsValid(appSettings))) {
+        if ((typeof appSettings == "undefined" || appSettings == null) || (safe || !this.checkSettingsValid(appSettings))) {
             Mojo.Log.error("** Using first run default settings");
         } else {
             Mojo.Log.info("** Using cookie settings!");
