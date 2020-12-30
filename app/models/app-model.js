@@ -1,6 +1,6 @@
 /*
 App Model
- Version 0.3c
+ Version 0.4
  Created: 2018
  Author: Jonathan Wise
  License: MIT
@@ -48,11 +48,11 @@ AppModel.prototype.LoadSettings = function(safe) {
     try {
         appSettings = settingsCookie.get();
         if ((typeof appSettings == "undefined" || appSettings == null) || (safe && !this.checkSettingsValid(appSettings))) {
-            Mojo.Log.error("** Using first run default settings");
+            Mojo.Log.warn("** Using first run default settings");
         } else {
             Mojo.Log.info("** Using cookie settings!");
-            Mojo.Log.info(JSON.stringify(appSettings))
-            this.AppSettingsCurrent = appSettings;
+            Mojo.Log.info("Cookie: " + JSON.stringify(appSettings))
+            this.loadCookieIntoCurrent(appSettings);
             loadSuccess = true;
         }
     } catch (ex) {
@@ -61,6 +61,12 @@ AppModel.prototype.LoadSettings = function(safe) {
         Mojo.Log.error(ex);
     }
     return loadSuccess;
+}
+
+AppModel.prototype.loadCookieIntoCurrent = function(cookieSettings) {
+    for (var key in this.AppSettingsDefaults) {
+        this.AppSettingsCurrent[key] = cookieSettings[key] || this.AppSettingsDefaults[key];
+    }
 }
 
 AppModel.prototype.checkSettingsValid = function(loadedSettings) {
