@@ -54,7 +54,7 @@ LampAssistant.prototype.setup = function() {
     $("txtDimmer").addEventListener("click", this.toggleDimmerSlider.bind(this));
 };
 
-//Actually more fool-proof to make these global
+//Actually more fool-proof to make these global for the scene
 var updateLightsInt;
 var goBackTimeout;
 LampAssistant.prototype.activate = function(event) {
@@ -290,7 +290,7 @@ LampAssistant.prototype.setTimerToGoBack = function() {
     goBackTimeout = setTimeout(function() {
         var stageController = Mojo.Controller.stageController;
         Mojo.Log.info("Scene timer expired due to lack of activity, returning to clock scene.");
-        stageController.pushScene({ name: "main", disableSceneScroller: false });
+        stageController.pushScene({ name: "main", disableSceneScroller: true });
     }, useTimeout)
 }
 

@@ -61,8 +61,10 @@ MainAssistant.prototype.setup = function() {
     this.controller.listen("clock", Mojo.Event.tap, this.handleClockTap.bind(this));
 
     //Check for updates
-    updaterModel.CheckForUpdate("One Night Stand", this.handleUpdateResponse.bind(this));
-
+    if (!appModel.UpdateCheckDone) {
+        appModel.UpdateCheckDone = true;
+        updaterModel.CheckForUpdate("One Night Stand", this.handleUpdateResponse.bind(this));
+    }
 };
 
 MainAssistant.prototype.activate = function(event) {

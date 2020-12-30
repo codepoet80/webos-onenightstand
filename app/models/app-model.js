@@ -11,10 +11,11 @@ var AppModel = function() {
     //Define your default scene (needed for settings management)
     this.DefaultScene = "main";
 
-    //Define your app-wide static settings here
+    //Define your app-wide, non-persisted settings here
     this.Lamps = [];
-    this.DisplayTimeout = 45;
+    this.DisplayTimeout = 25;
     this.DeviceType = "Pre";
+    this.UpdateCheckDone = false;
 
     //Define your app preferences (to be saved by OS)
     this.AppSettingsCurrent = null;
