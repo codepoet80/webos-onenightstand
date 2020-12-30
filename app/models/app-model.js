@@ -52,7 +52,6 @@ AppModel.prototype.LoadSettings = function(safe) {
             Mojo.Log.warn("** Using first run default settings");
         } else {
             Mojo.Log.info("** Using cookie settings!");
-            Mojo.Log.info("Cookie: " + JSON.stringify(appSettings))
             this.loadCookieIntoCurrent(appSettings);
             loadSuccess = true;
         }

@@ -154,7 +154,7 @@ MainAssistant.prototype.updateClock = function(skipDim) {
     min = time.getMinutes();
     sec = time.getSeconds();
 
-    this.confirmDimSetings(hour, min);
+    this.confirmDimSettings(hour, min);
 
     if (hour > 12 && !appModel.AppSettingsCurrent["use24HourTime"])
         hour = hour - 12;
@@ -173,7 +173,7 @@ MainAssistant.prototype.confirmTime = function(str) {
     }
 };
 
-MainAssistant.prototype.confirmDimSetings = function(hour, min) {
+MainAssistant.prototype.confirmDimSettings = function(hour, min) {
     //Change brightness and volume if necessary
     if (this.clockDimmed && ((hour > appModel.AppSettingsCurrent["wakeTimeHour"] && hour < appModel.AppSettingsCurrent["darkTimeHour"]) ||
             (hour == appModel.AppSettingsCurrent["wakeTimeHour"] && min >= appModel.AppSettingsCurrent["wakeTimeMin"]))) {
@@ -187,19 +187,20 @@ MainAssistant.prototype.confirmDimSetings = function(hour, min) {
                 systemModel.SetRingtoneVolume(this.PreviousRingtoneVolume);
         }
         this.clockDimmed = false;
-    }
-    if (!this.clockDimmed && (hour > appModel.AppSettingsCurrent["darkTimeHour"] ||
-            (hour == appModel.AppSettingsCurrent["darkTimeHour"] && min >= appModel.AppSettingsCurrent["darkTimeMin"]))) {
+    } else {
+        if (!this.clockDimmed && (hour > appModel.AppSettingsCurrent["darkTimeHour"] ||
+                (hour == appModel.AppSettingsCurrent["darkTimeHour"] && min >= appModel.AppSettingsCurrent["darkTimeMin"]))) {
 
-        //Mojo.Log.info("Time to dim the screen");
-        systemModel.SetSystemBrightness(appModel.AppSettingsCurrent["dimLevel"]);
-        if (appModel.AppSettingsCurrent["muteWhileDark"]) {
-            if (this.PreviousSystemVolume > 0)
-                systemModel.SetSystemVolume(0);
-            if (this.PreviousRingtoneVolume > 0)
-                systemModel.SetRingtoneVolume(0);
+            //Mojo.Log.info("Time to dim the screen");
+            systemModel.SetSystemBrightness(appModel.AppSettingsCurrent["dimLevel"]);
+            if (appModel.AppSettingsCurrent["muteWhileDark"]) {
+                if (this.PreviousSystemVolume > 0)
+                    systemModel.SetSystemVolume(0);
+                if (this.PreviousRingtoneVolume > 0)
+                    systemModel.SetRingtoneVolume(0);
+            }
+            this.clockDimmed = true;
         }
-        this.clockDimmed = true;
     }
 }
 
