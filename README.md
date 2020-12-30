@@ -6,7 +6,7 @@ Night table companion app for webOS, with clock and light control features.
 Requires Philips Hue bridge and lights for light control feature.
 Optimized for Pre and TouchPad.
 
-![Palm Pre with Light Control](http://packages.webosarchive.com/AppImages/1005771/LampsPrePhoto.png)
+![Palm Pre with Hue Light Control](http://packages.webosarchive.com/AppImages/1005771/LampsPrePhoto.png)
 
 ## Release History
 1.0.0 - Functional beta, pretty refined on a Pre
@@ -22,3 +22,5 @@ Optimized for Pre and TouchPad.
 1.0.5 - Touchpad layout and sleep changes, 12-hour time fix, self-updater implemented
 
 1.0.6 - Layout improvements for Pre3
+
+1.0.7 - Fix scrolling bug, improve dark/dim logic
