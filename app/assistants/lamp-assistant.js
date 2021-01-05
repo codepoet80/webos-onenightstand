@@ -93,22 +93,29 @@ LampAssistant.prototype.activate = function(event) {
     //Specific device tweaks
     this.iconSize = 64;
     if (appModel.DeviceType == "Touchpad") {
+        //TouchPad
         this.iconSize = 128;
         $("lampsTable").style.marginTop = "180px";
         $("lampsTable").style.paddingRight = "8px";
         $("textControlsDiv").style.marginTop = "40px";
         $("imgLampOne").src = $("imgLampOne").src.replace("64", this.iconSize);
         $("imgLampTwo").src = $("imgLampTwo").src.replace("64", this.iconSize);
+        $("slideBright").style.marginTop = "60px";
         $("slideBright").style.marginLeft = "360px";
     } else if (appModel.DeviceType == "Tiny") {
         //Pixi and Veer
+        Mojo.Log.error("found a Tiny");
         $("divLampOne").addClassName("lampPre");
         $("divLampTwo").addClassName("lampPre");
-        $("slideBright").style.marginLeft = "50px";
+        $("slideBright").style.marginLeft = "55px";
+    } else if (appModel.DeviceType == "Pre") {
+        //Pre or Pre2
+        $("slideBright").style.marginLeft = "95px";
+        $("divLampOne").addClassName("lampPre");
+        $("divLampTwo").addClassName("lampPre");
     } else {
-        //Pre-Pre3
-        $("divLampOne").addClassName("lampPre");
-        $("divLampTwo").addClassName("lampPre");
+        //Pre3
+        $("slideBright").style.marginLeft = "115px";
     }
 
     document.body.style.backgroundColor = "black";

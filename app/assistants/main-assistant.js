@@ -42,8 +42,8 @@ MainAssistant.prototype.setup = function() {
             appModel.DisplayTimeout = response.timeout;
     });
     systemModel.PreventDisplaySleep();
-    if (!appModel.DeviceType == "Touchpad")
-        systemModel.SetDisplayState("unlock"); //Unlock the screen
+    //if (!appModel.DeviceType == "Touchpad")
+    systemModel.SetDisplayState("unlock"); //Unlock the screen
 
     // Remember volume settings
     systemModel.GetSystemVolume(function(response) {
@@ -136,7 +136,7 @@ MainAssistant.prototype.calculateClockPosition = function(fontSize, isLandscape)
         //screenHeight = screenHeight - 120;
         useTop = 110 - (fontSize / 2);
     }
-    Mojo.Log.warn("=== useTop for " + appModel.DeviceType + ": " + useTop);
+    Mojo.Log.info("=== useTop for " + appModel.DeviceType + ": " + useTop);
     return useTop;
 }
 

@@ -26,13 +26,18 @@ AppAssistant.prototype.handleLaunch = function(params) {
     else {
         if (window.screen.width == 800 || window.screen.height == 800)
             appModel.DeviceType = "Pre3";
+        else if ((window.screen.width == 480 || window.screen.height == 480) && (window.screen.width == 320 || window.screen.height == 320))
+            appModel.DeviceType = "Pre";
         else
             appModel.DeviceType = "Tiny";
     }
+
     if (appModel.DeviceType == "Touchpad")
         Mojo.Log.warn("Launching on a TouchPad, some behaviors will change!");
+    else if (appModel.DeviceType == "Pre")
+        Mojo.Log.info("Launching on a Pre or Pre 2")
     else if (appModel.DeviceType == "Tiny")
-        Mojo.Log.warn("Launching on a Pre2 or smaller");
+        Mojo.Log.info("Launching on a Pixi or Veer");
     else
         Mojo.Log.warn("Launching on a Pre3");
 

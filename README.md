@@ -24,3 +24,5 @@ Optimized for Pre and TouchPad.
 1.0.6 - Layout improvements for Pre3
 
 1.0.7 - Fix scrolling bug, improve dark/dim logic
+
+1.0.8 - Layout improvements on all devices
