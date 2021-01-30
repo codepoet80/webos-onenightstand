@@ -51,7 +51,7 @@ HueModel.prototype.LinkWithHue = function(bridgeip, appid, callback) {
 //Returns an array of Simple Light objects
 HueModel.prototype.GetLightList = function(bridgeip, userid, callback) {
     this.bridgeURL = "http://" + bridgeip + "/api/" + userid + "/lights/";
-    //Mojo.Log.info("Getting Hue Lights with URL " + this.bridgeURL);
+    Mojo.Log.info("Getting Hue Lights with URL " + this.bridgeURL);
     this.retVal = "";
 
     // set scope for xmlhttp anonymous function callback
@@ -64,7 +64,7 @@ HueModel.prototype.GetLightList = function(bridgeip, userid, callback) {
     xmlhttp.send();
     xmlhttp.onreadystatechange = function() {
         if (xmlhttp.readyState == XMLHttpRequest.DONE) {
-            //Mojo.Log.info("Hue responded: " + xmlhttp.responseText);
+            Mojo.Log.info("Hue responded: " + xmlhttp.responseText);
             //crude check to make sure we got a usable response
             if (xmlhttp.responseText.indexOf("state") != -1) {
                 var lightArray = [];
@@ -79,20 +79,23 @@ HueModel.prototype.GetLightList = function(bridgeip, userid, callback) {
                             on: thisLight.state.on,
                             brightness: thisLight.state.bri,
                             reachable: thisLight.state.reachable,
-                            bulbtype: thisLight.config.archetype,
+                            bulbtype: "classicbulb",
                             colorcapable: false,
                             name: thisLight.name,
                             uniqueid: thisLight.uniqueid
                         };
+                        //FRED UPDATE: Turns out the config section isn't always there
+                        if (thisLight.config && thisLight.config.archetype)
+                            simpleLight.bulbtype = thisLight.config.archetype;
                         //HACK: This is a crude approach to check if the light seems to support color
-                        if (thisLight.type.toLowerCase().indexOf("color") != -1)
+                        if (thisLight.type && thisLight.type.toLowerCase().indexOf("color") != -1)
                             simpleLight.colorcapable = true;
                         lightArray.push(simpleLight);
                     }
                 };
                 this.retVal = lightArray;
             } else {
-                Mojo.Log.info("Hue response did not appear to contain light states!");
+                Mojo.Log.error("Hue response did not appear to contain light states!");
                 this.retVal = xmlhttp.responseText;
             }
             if (callBack)

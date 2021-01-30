@@ -1,11 +1,12 @@
 {
     "id": "com.palm.webos.jonandnic.onenightstand",
-    "version": "1.0.8",
-    "vendor": "jonandnic.com",
+    "version": "1.0.9",
+    "vendor": "Jon Wise",
     "type": "web",
     "main": "index.html",
     "title": "One Night Stand",
     "icon": "icon.png",
+    "uiRevision": "2",
     "theme": "dark",
-    "uiRevision": "2"
+    "dockmode": true
 }

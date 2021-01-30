@@ -197,6 +197,7 @@ PreferencesAssistant.prototype.activate = function(event) {
 };
 
 PreferencesAssistant.prototype.repaintLightList = function() {
+    //Mojo.Log.info("Painting light list...");
     if (appModel.AppSettingsCurrent["hueBridgeIP"] != "" && appModel.AppSettingsCurrent["hueBridgeUsername"] != "") {
         //We have previously linked with a Hue bridge and can load lights
         $("fakeLightList").style.display = "block";
@@ -205,7 +206,7 @@ PreferencesAssistant.prototype.repaintLightList = function() {
         this.updateLightsTimeout = setTimeout(
             function() {
                 this.updateLightList();
-            }.bind(this), 500); //Short delay for scene to paint "loading" widget, in case the HTTP response takes awhile
+            }.bind(this), 800); //Short delay for scene to paint "loading" widget, in case the HTTP response takes awhile
     } else {
         //No previous Hue bridge link, offer button to allow user to do the link
         $("fakeLightList").style.display = "none";
@@ -215,24 +216,32 @@ PreferencesAssistant.prototype.repaintLightList = function() {
 }
 
 PreferencesAssistant.prototype.updateLightList = function() {
-    Mojo.Log.info("Updating light list now!");
+    //Mojo.Log.info("Updating light list now!");
     hueModel.GetLightList(appModel.AppSettingsCurrent["hueBridgeIP"], appModel.AppSettingsCurrent["hueBridgeUsername"], function(lights) {
-        Mojo.Log.info("Got some lights from the Hue!");
-        $("fakeLightList").style.display = "none";
-        $("showHueLights").style.display = "block";
-        var thisWidgetSetup = this.controller.getWidgetSetup("hueLightList");
-        thisWidgetSetup.model.items.pop(); //remove the 'empty' item from the list
-        for (var i = 0; i < lights.length; i++) {
-            var thisLight = lights[i];
-            var isSelected = false;
-            if (appModel.AppSettingsCurrent["hueSelectedLights"] != undefined && Array.isArray(appModel.AppSettingsCurrent["hueSelectedLights"])) {
-                if (appModel.AppSettingsCurrent["hueSelectedLights"].indexOf(thisLight.num) != -1)
-                    isSelected = true;
+        if (typeof(lights) == "object") {
+            if (lights.length > 0) {
+                Mojo.Log.info("Got some lights from the Hue!");
+                $("fakeLightList").style.display = "none";
+                $("showHueLights").style.display = "block";
+                var thisWidgetSetup = this.controller.getWidgetSetup("hueLightList");
+                thisWidgetSetup.model.items.pop(); //remove the 'empty' item from the list
+                for (var i = 0; i < lights.length; i++) {
+                    var thisLight = lights[i];
+                    var isSelected = false;
+                    if (appModel.AppSettingsCurrent["hueSelectedLights"] != undefined && Array.isArray(appModel.AppSettingsCurrent["hueSelectedLights"])) {
+                        if (appModel.AppSettingsCurrent["hueSelectedLights"].indexOf(thisLight.num) != -1)
+                            isSelected = true;
+                    }
+                    thisWidgetSetup.model.items.push({ lightNum: thisLight.num, lightType: thisLight.bulbtype, lightName: thisLight.name, lightId: thisLight.uniqueid, selectedState: isSelected, colorcapable: thisLight.colorcapable });
+                }
+                Mojo.Log.info("Updating light list widget with " + lights.length + " lights!");
+                this.controller.modelChanged(thisWidgetSetup.model);
+            } else {
+                Mojo.Additions.ShowDialogBox("No Lights Found", "Although communication was established with the Hue bridge, it did not indicate that there are any registered lights.");
             }
-            thisWidgetSetup.model.items.push({ lightNum: thisLight.num, lightType: thisLight.bulbtype, lightName: thisLight.name, lightId: thisLight.uniqueid, selectedState: isSelected, colorcapable: thisLight.colorcapable });
+        } else {
+            Mojo.Additions.ShowDialogBox("Hue Response Error", "The Lights response from the Hue bridge was unexpected:<br>" + lights);
         }
-        Mojo.Log.info("Updating light list widget with " + lights.length + " lights!");
-        this.controller.modelChanged(thisWidgetSetup.model);
     }.bind(this))
 }
 
