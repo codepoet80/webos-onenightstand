@@ -346,7 +346,7 @@ PreferencesAssistant.prototype.linkHueClick = function(event) {
         this.controller.showDialog({
             template: 'hue/hue-scene',
             assistant: new HueAssistant(this, function(val) {
-                    Mojo.Log.error("got value from dialog: " + val);
+                    Mojo.Log.info("got value from dialog: " + val);
                     this.handleDialogDone(val);
                 }.bind(this)) //since this will be a dialog, not a scene, it must be defined in sources.json without a 'scenes' member
         });
