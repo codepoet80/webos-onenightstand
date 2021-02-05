@@ -17,7 +17,7 @@ HueAssistant.prototype.setup = function(widget) {
     /* setup widgets here */
     this.sceneAssistant.controller.setupWidget("txtHueBridgeIP",
         this.attributes = {
-            textFieldName: "ssid",
+            textFieldName: "ip",
             hintText: "IP address for Hue bridge...",
             property: 'value',
             multi: false,
