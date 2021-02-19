@@ -251,7 +251,7 @@ MainAssistant.prototype.handleCommand = function(event) {
                     this.toggleCommandMenu(false);
                     clearTimeout(this.hideMenuTimeout);
                     var stageController = Mojo.Controller.stageController;
-                    stageController.pushScene({ name: "lamp", disableSceneScroller: true });
+                    stageController.pushScene({ transition: Mojo.Transition.crossFade, name: "lamp", disableSceneScroller: true });
                     break;
                 }
         }

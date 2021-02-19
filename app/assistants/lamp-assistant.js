@@ -59,6 +59,13 @@ var updateLightsInt;
 var goBackTimeout;
 LampAssistant.prototype.activate = function(event) {
 
+    document.body.style.backgroundColor = "black";
+    var stageController = Mojo.Controller.stageController;
+    if (!appModel.DeviceType == "Touchpad")
+        stageController.setWindowOrientation("left");
+    else
+        stageController.setWindowOrientation("right");
+
     //Non-Mojo widget data object
     this.Lamp1 = {
         num: -1,
@@ -75,20 +82,6 @@ LampAssistant.prototype.activate = function(event) {
         name: "Lamp 2",
         on: false
     };
-    if (appModel.AppSettingsCurrent["hueSelectedLights"].length > 1) {
-        $("tdLampOne").style.paddingLeft = "0%";
-        $("tdLampTwo").style.display = "block";
-        this.Lamp2 = {
-            num: appModel.AppSettingsCurrent["hueSelectedLights"][1],
-        };
-        if (appModel.DeviceType == "Touchpad")
-            $("textControlsDiv").style.paddingRight = "0px";
-    } else {
-        $("tdLampOne").style.paddingLeft = "8%";
-        $("tdLampTwo").style.display = "none";
-        if (appModel.DeviceType == "Touchpad")
-            $("textControlsDiv").style.paddingRight = "100px";
-    }
 
     //Specific device tweaks
     this.iconSize = 64;
@@ -118,12 +111,24 @@ LampAssistant.prototype.activate = function(event) {
         $("slideBright").style.marginLeft = "115px";
     }
 
-    document.body.style.backgroundColor = "black";
-    var stageController = Mojo.Controller.stageController;
-    if (!appModel.DeviceType == "Touchpad")
-        stageController.setWindowOrientation("left");
-    else
-        stageController.setWindowOrientation("right");
+    //Item visibility
+    if (appModel.AppSettingsCurrent["hueSelectedLights"].length > 1) {
+        $("tdLampOne").style.paddingLeft = "0%";
+        $("tdLampTwo").style.display = "block";
+        this.Lamp2 = {
+            num: appModel.AppSettingsCurrent["hueSelectedLights"][1],
+        };
+        if (appModel.DeviceType == "Touchpad")
+            $("textControlsDiv").style.paddingRight = "0px";
+    } else {
+        $("tdLampOne").style.paddingLeft = "8%";
+        $("tdLampTwo").style.display = "none";
+        if (appModel.DeviceType == "Touchpad")
+            $("textControlsDiv").style.paddingRight = "100px";
+    }
+    $("tdLampOne").style.opacity = "1";
+    $("tdLampTwo").style.opacity = "1";
+    $("tdLampControls").style.opacity = "1";
     this.toggleDimmerSlider(false);
 
     if (appModel.AppSettingsCurrent["hueSelectedLights"] != undefined && appModel.AppSettingsCurrent["hueSelectedLights"].length > 0) {
@@ -137,7 +142,6 @@ LampAssistant.prototype.activate = function(event) {
 
 LampAssistant.prototype.updateLightList = function() {
     hueModel.GetLightList(appModel.AppSettingsCurrent["hueBridgeIP"], appModel.AppSettingsCurrent["hueBridgeUsername"], function(lights) {
-        //Mojo.Log.info("** updating LIGHT state")
         for (var i = 0; i < lights.length; i++) {
             var thisLight = lights[i];
             if (thisLight.num == appModel.AppSettingsCurrent["hueSelectedLights"][0]) {
@@ -271,7 +275,7 @@ LampAssistant.prototype.handleCommand = function(event) {
             case 'do-clock':
                 {
                     var stageController = Mojo.Controller.stageController;
-                    stageController.pushScene({ name: "main", disableSceneScroller: true });
+                    stageController.pushScene({ transition: Mojo.Transition.crossFade, name: "main", disableSceneScroller: true });
                     break;
                 }
         }
@@ -297,7 +301,7 @@ LampAssistant.prototype.setTimerToGoBack = function() {
     goBackTimeout = setTimeout(function() {
         var stageController = Mojo.Controller.stageController;
         Mojo.Log.info("Scene timer expired due to lack of activity, returning to clock scene.");
-        stageController.pushScene({ name: "main", disableSceneScroller: true });
+        stageController.pushScene({ transition: Mojo.Transition.crossFade, name: "main", disableSceneScroller: true });
     }, useTimeout)
 }
 
