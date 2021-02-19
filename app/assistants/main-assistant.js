@@ -104,6 +104,8 @@ MainAssistant.prototype.activate = function(event) {
     this.controller.get("clock").style.marginTop = this.calculateClockPosition(appModel.AppSettingsCurrent["clockSize"], true) + "px";
     this.updateClock(true);
     this.clockInt = setInterval(this.updateClock.bind(this), 6000);
+    // Dim light bar
+    systemModel.DimLightBar(true);
 }
 
 MainAssistant.prototype.calculateClockPosition = function(fontSize, isLandscape) {
@@ -121,9 +123,9 @@ MainAssistant.prototype.calculateClockPosition = function(fontSize, isLandscape)
         screenWidth = checkHeight;
         screenHeight = checkWidth;
     }
-    Mojo.Log.info("== height: " + screenHeight);
-    Mojo.Log.info("== width:  " + screenWidth);
-    Mojo.Log.info("== font: " + fontSize);
+    //Mojo.Log.info("== height: " + screenHeight);
+    //Mojo.Log.info("== width:  " + screenWidth);
+    //Mojo.Log.info("== font: " + fontSize);
 
     var useTop = (screenHeight / 2) - Math.round(fontSize / 1.15);
     if (appModel.DeviceType == "Touchpad") {
@@ -136,7 +138,7 @@ MainAssistant.prototype.calculateClockPosition = function(fontSize, isLandscape)
         //screenHeight = screenHeight - 120;
         useTop = 110 - (fontSize / 2);
     }
-    Mojo.Log.info("=== useTop for " + appModel.DeviceType + ": " + useTop);
+    //Mojo.Log.info("=== useTop for " + appModel.DeviceType + ": " + useTop);
     return useTop;
 }
 
@@ -281,6 +283,8 @@ MainAssistant.prototype.deactivate = function(event) {
             systemModel.SetRingtoneVolume(this.PreviousRingtoneVolume);
         systemModel.AllowDisplaySleep(); //This one fails on exit, but that's ok cause the OS takes care of it
     }
+    // Dim light bar
+    systemModel.DimLightBar(false);
 };
 
 MainAssistant.prototype.cleanup = function(event) {

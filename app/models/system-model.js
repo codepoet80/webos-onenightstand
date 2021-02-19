@@ -120,6 +120,18 @@ SystemModel.prototype.PreventDisplaySleep = function(stageController) {
     });
 }
 
+SystemModel.prototype.DimLightBar = function(lightbarOn, stageController) {
+    if (!stageController)
+        stageController = Mojo.Controller.getAppController().getActiveStageController();
+
+    //Ask the System to set light bar
+    Mojo.Log.info("Setting dimmed lightbar to: " + lightbarOn);
+
+    stageController.setWindowProperties({
+        setSubtleLightbar: true
+    });
+}
+
 //Show a notification window in its own small stage
 //	Launches with sound: pass true for default, false for no sound, or pass the path to a specific sound file
 SystemModel.prototype.ShowNotificationStage = function(stageName, sceneName, heightToUse, sound, vibrate) {
