@@ -1,6 +1,6 @@
 /*
 Updater Model - Mojo
- Version 0.2
+ Version 0.3
  Created: 2020
  Author: Jonathan Wise
  License: MIT
