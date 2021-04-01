@@ -26,15 +26,15 @@ UpdaterModel.prototype.CheckForUpdate = function(appName, callback) {
     // TODO: It would be nice to use the AppID, instead of an arbitrary name, but the performance 
     //      implications are overwhelming since the AppID is not a part of the masterData file.
     //      We could get that from the app with: Mojo.Controller.appInfo.id
-    this.updateURL = this.updateURL + encodeURI(appName);
+    var updateURL = this.updateURL + encodeURI(appName);
 
     // set scope for xmlhttp anonymous function callback
     if (callback)
         callBack = callback.bind(this);
 
     var xmlhttp = new XMLHttpRequest();
-    xmlhttp.open("GET", this.updateURL);
-    Mojo.Log.info("Updater calling: " + this.updateURL);
+    xmlhttp.open("GET", updateURL);
+    Mojo.Log.info("Updater calling: " + updateURL);
     xmlhttp.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
     xmlhttp.send();
     xmlhttp.onreadystatechange = function() {
@@ -50,7 +50,7 @@ UpdaterModel.prototype.CheckForUpdate = function(appName, callback) {
                         updateResponse.updateFound = true;
                     } else {
                         Mojo.Log.info("UpdaterModel did not find an update in webOS App Museum II!");
-                        updateResponse = false;
+                        updateResponse.updateFound = false;
                     }
                 }
                 this.lastUpdateResponse = updateResponse;

@@ -41,9 +41,10 @@ MainAssistant.prototype.setup = function() {
         if (response.timeout != null)
             appModel.DisplayTimeout = response.timeout;
     });
-    systemModel.PreventDisplaySleep();
-    //if (!appModel.DeviceType == "Touchpad")
-    systemModel.SetDisplayState("unlock"); //Unlock the screen
+    if (!appModel.dockMode) {
+        systemModel.PreventDisplaySleep();
+        systemModel.SetDisplayState("unlock"); //Unlock the screen
+    }
 
     // Remember volume settings
     systemModel.GetSystemVolume(function(response) {
@@ -281,7 +282,11 @@ MainAssistant.prototype.deactivate = function(event) {
             systemModel.SetSystemVolume(this.PreviousSystemVolume);
         if (this.PreviousRingtoneVolume > 0)
             systemModel.SetRingtoneVolume(this.PreviousRingtoneVolume);
-        systemModel.AllowDisplaySleep(); //This one fails on exit, but that's ok cause the OS takes care of it
+        try {
+            systemModel.AllowDisplaySleep(); //This one fails on exit, but that's ok cause the OS takes care of it
+        } catch (ex) {
+            //oh well
+        }
     }
     // Dim light bar
     systemModel.DimLightBar(false);

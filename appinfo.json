@@ -8,5 +8,5 @@
     "icon": "icon.png",
     "uiRevision": "2",
     "theme": "dark",
-    "dockmode": true
+    "dockMode": true
 }

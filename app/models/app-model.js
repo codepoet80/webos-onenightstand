@@ -16,6 +16,7 @@ var AppModel = function() {
     this.DisplayTimeout = 25;
     this.DeviceType = "Pre";
     this.UpdateCheckDone = false;
+    this.dockMode = false;
 
     //Define your app preferences (to be saved by OS)
     this.AppSettingsCurrent = null;
