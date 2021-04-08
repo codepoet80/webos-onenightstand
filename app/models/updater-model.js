@@ -109,7 +109,6 @@ UpdaterModel.prototype.InstallUpdate = function(callBack) {
         var app = this.lastUpdateResponse.downloadURI;
         Mojo.Log.info("Asking PreWare to perform update to " + app);
 
-        //Ask webOS to launch the video player with the new url
         this.prewareRequest = new Mojo.Service.Request("palm://com.palm.applicationManager", {
             method: "open",
             parameters: {
@@ -120,7 +119,7 @@ UpdaterModel.prototype.InstallUpdate = function(callBack) {
                 Mojo.Log.info("Preware launch success", JSON.stringify(response));
             },
             onFailure: function(response) {
-                Mojo.Log.error("Preware launch failure, " + videoURL + ":",
+                Mojo.Log.error("Preware launch failure, " + app + ":",
                     JSON.stringify(response), response.errorText);
             }
         });
