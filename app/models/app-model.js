@@ -66,7 +66,7 @@ AppModel.prototype.LoadSettings = function(safe) {
 
 AppModel.prototype.loadCookieIntoCurrent = function(cookieSettings) {
     for (var key in this.AppSettingsDefaults) {
-        this.AppSettingsCurrent[key] = cookieSettings[key] || this.AppSettingsDefaults[key];
+        appModel.AppSettingsCurrent[key] = cookieSettings[key] || appModel.AppSettingsDefaults[key];
     }
 }
 
@@ -97,22 +97,16 @@ AppModel.prototype.checkSettingsValid = function(loadedSettings) {
 
 AppModel.prototype.SaveSettings = function() {
     var settingsCookie = new Mojo.Model.Cookie("settings");
-    //Mojo.Log.info("Savinng settings as: " + JSON.stringify(appModel.AppSettingsCurrent));
+    Mojo.Log.warn("Saving settings as: " + JSON.stringify(appModel.AppSettingsCurrent));
     settingsCookie.put(appModel.AppSettingsCurrent);
 }
 
 AppModel.prototype.ResetSettings = function() {
-    Mojo.Log.info("resetting settings");
-    //Tell main scene to drop settings
+    Mojo.Log.warn("Trying to reset settings!");
+    var settingsCookie = new Mojo.Model.Cookie("settings");
+    settingsCookie.put(null);
     this.AppSettingsCurrent = this.AppSettingsDefaults;
-    this.SaveSettings();
-    Mojo.Log.info("settings have been reset");
-
+    Mojo.Log.info("Settings have been reset");
     var stageController = Mojo.Controller.getAppController().getActiveStageController();
-    stageController.popScene(this.DefaultScene);
-    Mojo.Log.info("closed default scene");
-
-    //Restart main scene
-    stageController.pushScene(this.DefaultScene);
-    Mojo.Log.info("re-opened default scene");
+    stageController.swapScene(this.DefaultScene);
 }

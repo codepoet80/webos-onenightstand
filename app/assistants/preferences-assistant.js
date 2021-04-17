@@ -259,12 +259,14 @@ PreferencesAssistant.prototype.handleValueChange = function(event) {
         //Developer mode key
         if (appModel.AppSettingsCurrent["darkTimeHour"] == 1 && appModel.AppSettingsCurrent["darkTimeMin"] == 10 &&
             appModel.AppSettingsCurrent["wakeTimeHour"] == 1 && appModel.AppSettingsCurrent["wakeTimeMin"] == 10) {
-            Mojo.Log.warn("Switching to Developer Mode");
-            appModel.AppSettingsCurrent["hueBridgeUsername"] = "dlmCQ6JsfhoNVJDkrY3ntjnBkgorUmqigcCv0icZ";
-            appModel.AppSettingsCurrent["hueBridgeIP"] = "192.168.1.140";
-            Mojo.Controller.getAppController().showBanner({ messageText: "Developer mode enabled" }, "", "");
-            appModel.SaveSettings();
-            this.repaintLightList();
+            if (secrets && secrets.huebridgeuser && secrets.huebridgeip) {
+                Mojo.Log.warn("Switching to Developer Mode!");
+                appModel.AppSettingsCurrent["hueBridgeUsername"] = secrets.huebridgeuser;
+                appModel.AppSettingsCurrent["hueBridgeIP"] = secrets.huebridgeip;
+                Mojo.Controller.getAppController().showBanner({ messageText: "Developer mode enabled" }, "", "");
+                appModel.SaveSettings();
+                this.repaintLightList();
+            }
         }
     } else {
         Mojo.Log.info(event.srcElement.title + " now: " + event.value);

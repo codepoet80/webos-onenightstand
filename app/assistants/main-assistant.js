@@ -7,6 +7,7 @@ function MainAssistant() {
     this.PreviousBrightness = 20;
     this.PreviousSystemVolume = 20;
     this.PreviousRingtoneVolume = 20;
+    this.lastActivity = false;
     this.Lamps = [];
 }
 
@@ -61,6 +62,7 @@ MainAssistant.prototype.setup = function() {
     /* add event handlers to listen to events from widgets */
     this.controller.listen("clock", Mojo.Event.tap, this.handleClockTap.bind(this));
     this.controller.window.onresize = this.calculateClockPosition.bind(this);
+    document.addEventListener(Mojo.Event.tap, this.noticeActivity.bind(this));
     document.addEventListener(Mojo.Event.stageDeactivate, this.stageDeactivated);
 
     //Check for updates
@@ -69,11 +71,6 @@ MainAssistant.prototype.setup = function() {
         updaterModel.CheckForUpdate("One Night Stand", this.handleUpdateResponse.bind(this));
     }
 };
-
-MainAssistant.prototype.stageDeactivated = function() {
-    if (appModel.dockMode)
-        appModel.ExhibitionStart = true;
-}
 
 MainAssistant.prototype.activate = function(event) {
     /* put in event handlers here that should only be in effect when this scene is active. For
@@ -144,6 +141,7 @@ MainAssistant.prototype.handleClockTap = function() {
 }
 
 MainAssistant.prototype.updateClock = function(skipDim) {
+
     var time = new Date();
     hour = time.getHours();
     min = time.getMinutes();
@@ -158,6 +156,14 @@ MainAssistant.prototype.updateClock = function(skipDim) {
     min = this.confirmTime(min);
     sec = this.confirmTime(sec);
     this.controller.get("clock").innerHTML = hour + ":" + min;
+
+    if (this.menuOn && this.lastActivity) {
+        if ((Date.now() - this.lastActivity) > 120000) {
+            Mojo.Log.warn("Forcing command menu off");
+            this.toggleCommandMenu(false);
+        }
+    }
+
 };
 
 MainAssistant.prototype.confirmTime = function(str) {
@@ -200,7 +206,6 @@ MainAssistant.prototype.confirmDimSettings = function(hour, min) {
 }
 
 MainAssistant.prototype.toggleCommandMenu = function(show) {
-    this.calculateClockPosition();
     var stageController = Mojo.Controller.getAppController().getActiveStageController();
     if (stageController) {
         this.controller = stageController.activeScene();
@@ -260,6 +265,15 @@ MainAssistant.prototype.handleUpdateResponse = function(responseObj) {
                 updaterModel.InstallUpdate();
         }.bind(this));
     }
+}
+
+MainAssistant.prototype.noticeActivity = function() {
+    this.lastActivity = Date.now();
+}
+
+MainAssistant.prototype.stageDeactivated = function() {
+    if (appModel.dockMode)
+        appModel.ExhibitionStart = true;
 }
 
 MainAssistant.prototype.deactivate = function(event) {

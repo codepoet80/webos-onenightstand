@@ -89,7 +89,7 @@ LampAssistant.prototype.activate = function(event) {
     this.iconSize = 64;
     if (appModel.DeviceType == "Touchpad") {
         //TouchPad
-        Mojo.Log.warn("** TouchPad Screen");
+        Mojo.Log.info("** TouchPad Screen");
         this.iconSize = 128;
         $("imgLampOne").src = $("imgLampOne").src.replace("64", this.iconSize);
         $("tdLampOne").style.minWidth = "200px";
@@ -97,17 +97,17 @@ LampAssistant.prototype.activate = function(event) {
         $("tdLampTwo").style.minWidth = "200px";
     } else if (appModel.DeviceType == "Tiny") {
         //Pixi and Veer
-        Mojo.Log.warn("** Tiny Screen");
+        Mojo.Log.info("** Tiny Screen");
         $("divLampOne").addClassName("lampPre");
         $("divLampTwo").addClassName("lampPre");
     } else if (appModel.DeviceType == "Pre") {
         //Pre or Pre2
-        Mojo.Log.warn("** Pre Screen");
+        Mojo.Log.info("** Pre Screen");
         $("divLampOne").addClassName("lampPre");
         $("divLampTwo").addClassName("lampPre");
     } else {
         //Pre3
-        Mojo.Log.warn("** Pre3 Screen");
+        Mojo.Log.info("** Pre3 Screen");
     }
 
     //Item visibility
@@ -192,7 +192,7 @@ LampAssistant.prototype.calculateControlsPosition = function() {
             topMargin = 15;
             useTop = 15;
         } else if (appModel.DeviceType == "Tiny") {
-            Mojo.Log.warn("scaling for tiny");
+            Mojo.Log.info("scaling for tiny");
             $("lampsDiv").style.webkitTransform = "scale(0.9)";
             topMargin = 10;
             useTop = -30;

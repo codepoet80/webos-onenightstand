@@ -24,28 +24,27 @@ AppAssistant.prototype.handleLaunch = function(params) {
         Mojo.Log.info("** Launch Params: " + JSON.stringify(params));
         if (params.dockMode || params.touchstoneMode) {
             appModel.dockMode = true;
-            Mojo.Log.warn("** Exhibition mode! **");
+            Mojo.Log.warn("** Exhibition mode Launch! **");
         }
     }
     var mainStage = this.controller.getStageProxy("");
     if (mainStage) { //if the stage already exists then just bring it into focus
-        Mojo.Log.warn("Existing stage was found!");
+        Mojo.Log.info("Existing stage was found!");
         var stageController = this.controller.getStageController("");
         if (stageController.isActiveAndHasScenes()) {
-            Mojo.Log.warn("Stage active and has scenes");
+            Mojo.Log.info("Stage active and has scenes");
             stageController.activate();
         } else {
-            Mojo.Log.error("*** Handling the bad state!");
+            Mojo.Log.warn("*** Handling problematic lifecycle state!");
             if (appModel.ExhibitionStart || !stageController.activeScene()) {
-                Mojo.Log.warn("Found Exhibition mode running, activating");
+                Mojo.Log.info("Found Exhibition mode running, activating");
                 this.RestartExhibition();
             } else {
-                Mojo.Log.warn("Found App mode running, activating");
+                Mojo.Log.info("Found App mode running, activating");
                 stageController.activate();
             }
         }
     }
-
 }
 
 //Play a pre-defined system sound
