@@ -23,8 +23,9 @@ LampAssistant.prototype.setup = function() {
     );
 
     // Setup command buttons (menu)
+    //black-command-menu
     this.cmdMenuAttributes = {
-        menuClass: 'black-command-menu'
+        menuClass: 'fade-bottom'
     }
     this.cmdMenuModel = {
         visible: true,
@@ -88,20 +89,25 @@ LampAssistant.prototype.activate = function(event) {
     this.iconSize = 64;
     if (appModel.DeviceType == "Touchpad") {
         //TouchPad
+        Mojo.Log.warn("** TouchPad Screen");
         this.iconSize = 128;
         $("imgLampOne").src = $("imgLampOne").src.replace("64", this.iconSize);
+        $("tdLampOne").style.minWidth = "200px";
         $("imgLampTwo").src = $("imgLampTwo").src.replace("64", this.iconSize);
+        $("tdLampTwo").style.minWidth = "200px";
     } else if (appModel.DeviceType == "Tiny") {
         //Pixi and Veer
-        Mojo.Log.error("found a Tiny");
+        Mojo.Log.warn("** Tiny Screen");
         $("divLampOne").addClassName("lampPre");
         $("divLampTwo").addClassName("lampPre");
     } else if (appModel.DeviceType == "Pre") {
         //Pre or Pre2
+        Mojo.Log.warn("** Pre Screen");
         $("divLampOne").addClassName("lampPre");
         $("divLampTwo").addClassName("lampPre");
     } else {
         //Pre3
+        Mojo.Log.warn("** Pre3 Screen");
     }
 
     //Item visibility
@@ -114,6 +120,7 @@ LampAssistant.prototype.activate = function(event) {
         $("tdLampTwo").style.display = "none";
     }
 
+    this.controller.enableFullScreenMode(true);
     this.calculateControlsPosition();
     this.toggleDimmerSlider(false);
 
@@ -132,14 +139,22 @@ LampAssistant.prototype.calculateControlsPosition = function() {
     var lampControl = $("tdLampControls");
     var lampTwo = $("tdLampTwo");
     var slideBright = $("slideBright");
+    lampOne.style.visibility = "hidden";
+    lampTwo.style.visibility = "hidden";
 
     if (appModel.AppSettingsCurrent["hueSelectedLights"].length < 2) {
         lampTwo.style.display = "none";
         singleLight = true;
     }
     if (window.innerWidth > window.innerHeight) { //landscape
+        $("lampsDiv").style.webkitTransform = "none";
         var sideMargin = 30;
         var lampTop = (window.innerHeight / 2 - (lampControl.clientHeight) / 2) - sideMargin;
+        if (appModel.DeviceType == "Touchpad") {
+            sideMargin = 100;
+            lampTop = lampTop - 100;
+            $("lampsDiv").style.webkitTransform = "scale(1.1)";
+        }
         //First light
         var useLeft = sideMargin;
         if (singleLight)
@@ -151,7 +166,7 @@ LampAssistant.prototype.calculateControlsPosition = function() {
         //Controls
         useLeft = (window.innerWidth / 2 - (lampControl.clientWidth / 2));
         if (singleLight)
-            useLeft = (window.innerWidth / 2 + (lampControl.clientWidth / 2));
+            useLeft = (window.innerWidth / 2 + (lampControl.clientWidth / 2)) - sideMargin;
         lampControl.style.left = useLeft;
         lampControl.style.top = lampTop;
         //Second Light
@@ -165,10 +180,25 @@ LampAssistant.prototype.calculateControlsPosition = function() {
         slideBright.style.top = lampTop + lampControl.clientHeight + sideMargin;
         slideBright.style.left = (window.innerWidth / 2) - 145;
     } else { //portrait
-        var topMargin = 20;
-        //First Lamp
+        var topMargin = 25;
         var useTop = topMargin;
-        if (!singleLight) { useTop = useTop - 10; } else { useTop = useTop + 20; }
+        if (appModel.DeviceType == "Touchpad") {
+            topMargin = 40;
+            useTop = 60;
+            $("lampsDiv").style.webkitTransform = "scale(1.1)";
+        }
+        if (appModel.DeviceType == "Pre") {
+            $("lampsDiv").style.webkitTransform = "translateY(-20)";
+            topMargin = 15;
+            useTop = 15;
+        } else if (appModel.DeviceType == "Tiny") {
+            Mojo.Log.warn("scaling for tiny");
+            $("lampsDiv").style.webkitTransform = "scale(0.9)";
+            topMargin = 10;
+            useTop = -30;
+        }
+        //First Lamp
+        if (!singleLight) { useTop = useTop - 5; } else { useTop = useTop + 20; }
         lampOne.style.left = (window.innerWidth / 2 - (lampOne.clientWidth) / 2);
         lampOne.style.top = useTop;
         lampOne.style.maxWidth = "";
@@ -178,16 +208,24 @@ LampAssistant.prototype.calculateControlsPosition = function() {
         lampControl.style.top = useTop;
         lampControl.style.left = (window.innerWidth / 2 - (lampControl.clientWidth) / 2);
         //Second Lamp
-        useTop = useTop + lampControl.clientHeight + topMargin + 5;
-        lampTwo.style.top = useTop;
+        useTop = useTop + lampControl.clientHeight + topMargin + 4;
+        lampTwo.style.top = useTop + 3;
         lampTwo.style.left = (window.innerWidth / 2 - (lampTwo.clientWidth / 2));
         lampTwo.style.maxWidth = "";
         lampTwo.style.wordWrap = "normal";
         //Slider
-        useTop = useTop + lampTwo.clientHeight + topMargin;
-        slideBright.style.top = useTop;
+        useTop = useTop + lampTwo.clientHeight + topMargin + 15;
         slideBright.style.left = 10;
+        if (appModel.DeviceType == "Touchpad") {
+            slideBright.style.left = (window.innerWidth / 2) - 145;
+            useTop += 25;
+        }
+        slideBright.style.top = useTop;
     }
+    setTimeout(function() {
+        document.getElementById("tdLampOne").style.visibility = "visible";
+        document.getElementById("tdLampTwo").style.visibility = "visible";
+    }, 500);
 }
 
 LampAssistant.prototype.updateLightList = function() {

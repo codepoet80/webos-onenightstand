@@ -165,6 +165,7 @@ PreferencesAssistant.prototype.setup = function() {
         label: "Settings",
         items: [
             { label: "Go Back", command: 'do-goBack' },
+            { label: "Exhibition Prefs", command: 'do-exhibitionSettings' },
             { label: "Reset Settings", command: 'do-resetSettings' },
             { label: "About...", command: 'do-myAbout' }
         ]
@@ -287,6 +288,9 @@ PreferencesAssistant.prototype.handleCommand = function(event) {
             case 'do-goBack':
                 Mojo.Controller.stageController.popScene();
                 break;
+            case 'do-exhibitionSettings':
+                this.startExhibitionSettings();
+                break;
             case 'do-myAbout':
                 Mojo.Additions.ShowDialogBox("One Night Stand - " + Mojo.Controller.appInfo.version, "Bed-side clock and Hue light controller. Copyright 2020, Jonathan Wise. Distributed under an MIT License. Source code available at: https://github.com/codepoet80/webos-onenightstand");
                 break;
@@ -357,6 +361,16 @@ PreferencesAssistant.prototype.linkHueClick = function(event) {
 PreferencesAssistant.prototype.handleDialogDone = function(val) {
     this.repaintLightList();
     //Mojo.Log.info("response from dialog was: " + val + " and testVal = " + this.testVal);
+}
+
+PreferencesAssistant.prototype.startExhibitionSettings = function(event) {
+    var exR = new Mojo.Service.Request("palm://com.palm.applicationManager", {
+        method: "open",
+        parameters: {
+            id: "com.palm.app.exhibitionpreferences",
+            params: {}
+        }
+    });
 }
 
 PreferencesAssistant.prototype.deactivate = function(event) {

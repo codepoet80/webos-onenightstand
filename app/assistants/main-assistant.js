@@ -61,6 +61,7 @@ MainAssistant.prototype.setup = function() {
     /* add event handlers to listen to events from widgets */
     this.controller.listen("clock", Mojo.Event.tap, this.handleClockTap.bind(this));
     this.controller.window.onresize = this.calculateClockPosition.bind(this);
+    document.addEventListener(Mojo.Event.stageDeactivate, this.stageDeactivated);
 
     //Check for updates
     if (!appModel.UpdateCheckDone) {
@@ -68,6 +69,11 @@ MainAssistant.prototype.setup = function() {
         updaterModel.CheckForUpdate("One Night Stand", this.handleUpdateResponse.bind(this));
     }
 };
+
+MainAssistant.prototype.stageDeactivated = function() {
+    if (appModel.dockMode)
+        appModel.ExhibitionStart = true;
+}
 
 MainAssistant.prototype.activate = function(event) {
     /* put in event handlers here that should only be in effect when this scene is active. For
@@ -99,7 +105,6 @@ MainAssistant.prototype.activate = function(event) {
     }
     this.controller.modelChanged(thisWidgetModel);
     this.toggleCommandMenu(false);
-
     // Setup the clock face
     this.controller.enableFullScreenMode(true);
     this.controller.get("clock").style.visibility = "hidden";
@@ -113,76 +118,20 @@ MainAssistant.prototype.activate = function(event) {
 }
 
 MainAssistant.prototype.calculateClockPosition = function() {
-    Mojo.Log.info("Trying new clock positioning...");
+    Mojo.Log.info("Positioning clock...");
 
+    var div = document.getElementById("clock");
     var screenHeight = window.innerHeight;
     var screenWidth = window.innerWidth;
-
-    //Centered unrotated
-    var div = document.getElementById("clock");
+    if (screenWidth < screenHeight) {
+        div.style.webkitTransform = "scale(0.9)";
+    } else {
+        div.style.webkitTransform = "scale(1.0)";
+    }
     div.style.top = (screenHeight / 2) - (div.clientHeight / 2);
     div.style.left = (screenWidth / 2) - (div.clientWidth / 2);
     Mojo.Log.info("Clock Top", div.style.top);
     Mojo.Log.info("Clock Left", div.style.left);
-    this.controller.get("clock").style.visibility = "visible";
-}
-
-MainAssistant.prototype.calculateClockPositionOld = function() {
-    Mojo.Log.warn("Figuring out clock position!");
-    fontSize = appModel.AppSettingsCurrent["clockSize"];
-    fontSize = Math.round(fontSize);
-    var checkWidth = window.screen.width;
-    var checkHeight = window.screen.height;
-    var screenWidth;
-    var screenHeight;
-    //  A race condition on the TouchPad can make these values wrong, so we double check
-    if (appModel.DeviceType == "Touchpad" && checkHeight > checkWidth) {
-        screenWidth = checkWidth;
-        screenHeight = checkHeight;
-    } else {
-        //Since we're forcing landscape, screen width should actually be our height
-        screenWidth = checkHeight;
-        screenHeight = checkWidth;
-    }
-    Mojo.Log.warn("== height: " + screenHeight);
-    Mojo.Log.warn("== width:  " + screenWidth);
-    //Mojo.Log.info("== font: " + fontSize);
-
-    var useTop = (screenHeight / 2) - Math.round(fontSize / 1.15);
-    if (appModel.DeviceType == "Touchpad") {
-        screenHeight = screenHeight - 170;
-        useTop = (screenHeight / 2) - (fontSize / 1.05);
-    } else {
-        if (appModel.DeviceType == "Tiny") {
-            screenHeight = screenHeight - 12;
-            useTop = (screenHeight / 2) - (fontSize / 1.15);
-        } else {
-            //screenHeight = screenHeight - 120;
-            useTop = 110 - (fontSize / 2);
-        }
-        //Force landscape hacks - TODO: Make this standard
-        var div = this.controller.get("clock");
-        Mojo.Log.warn("offsetWidth: " + div.offsetWidth);
-        if (appModel.dockMode) {
-            var deg = -90;
-            div.style.webkitTransform = 'rotate(' + deg + 'deg)';
-            useTop = (screenHeight / 2) - ((screenHeight - div.offsetWidth) / 2); //center left/right when held landscape
-            div.style.marginLeft = "-10px"; //"-300px" //middle top/bottom when held landscape
-        } else {
-            useTop = 10;
-            //divi.style.margin = "auto";
-            //useTop = screenWidth - (screenWidth / 2) //- ((screenWidth - div.offsetWidth) / 2);
-            useTop = (screenHeight / 9);
-            //useTop = screenHeight - (screenheight / 2);
-            div.style.textAlign = "center";
-            div.style.marginTop = "15%";
-            div.style.padding = "20px";
-            div.style.height = "100%";
-        }
-        //div.style.border = "1px solid green";
-    }
-    Mojo.Log.warn("=== useTop for " + appModel.DeviceType + ": " + useTop);
-    this.controller.get("clock").style.marginTop = useTop + "px";
     this.controller.get("clock").style.visibility = "visible";
 }
 

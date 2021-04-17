@@ -6,27 +6,62 @@ var appModel = null;
 var hueModel = null;
 var updaterModel = null;
 
-function AppAssistant() {
+function AppAssistant(appController) {
     appModel = new AppModel();
     systemModel = new SystemModel();
     hueModel = new HueModel();
     updaterModel = new UpdaterModel();
     Mojo.Additions = Additions;
+    this.appController = appController;
+    appModel.ExhibitionStart = false;
 }
 
-//This function will handle relaunching the app when an alarm goes off(see the device/alarm scene)
 AppAssistant.prototype.handleLaunch = function(params) {
     appModel.LoadSettings();
+    this.getDeviceInfo();
+
     if (params) {
         Mojo.Log.info("** Launch Params: " + JSON.stringify(params));
-        if (params.dockMode) {
+        if (params.dockMode || params.touchstoneMode) {
             appModel.dockMode = true;
-            Mojo.Log.info("** Exhibition mode! **");
+            Mojo.Log.warn("** Exhibition mode! **");
         }
     }
-    Mojo.Log.info("** App Settings: " + JSON.stringify(appModel.AppSettingsCurrent));
+    var mainStage = this.controller.getStageProxy("");
+    if (mainStage) { //if the stage already exists then just bring it into focus
+        Mojo.Log.warn("Existing stage was found!");
+        var stageController = this.controller.getStageController("");
+        if (stageController.isActiveAndHasScenes()) {
+            Mojo.Log.warn("Stage active and has scenes");
+            stageController.activate();
+        } else {
+            Mojo.Log.error("*** Handling the bad state!");
+            if (appModel.ExhibitionStart || !stageController.activeScene()) {
+                Mojo.Log.warn("Found Exhibition mode running, activating");
+                this.RestartExhibition();
+            } else {
+                Mojo.Log.warn("Found App mode running, activating");
+                stageController.activate();
+            }
+        }
+    }
 
-    //find out if this is a touchpad
+}
+
+//Play a pre-defined system sound
+AppAssistant.prototype.RestartExhibition = function(soundName) {
+    Mojo.Log.info("Restarting exhibition");
+    this.soundRequest = new Mojo.Service.Request("palm://com.palm.display/control", {
+        method: "setState",
+        parameters: {
+            state: "dock"
+        },
+        onSuccess: function() { success = true; },
+        onFailure: function(e) { Mojo.Log.error(e); }
+    });
+}
+
+AppAssistant.prototype.getDeviceInfo = function() {
     Mojo.Log.info("screen width " + window.screen.width + ", height " + window.screen.height);
     if (Mojo.Environment.DeviceInfo.platformVersionMajor >= 3)
         appModel.DeviceType = "Touchpad";
@@ -38,7 +73,6 @@ AppAssistant.prototype.handleLaunch = function(params) {
         else
             appModel.DeviceType = "Tiny";
     }
-
     if (appModel.DeviceType == "Touchpad")
         Mojo.Log.warn("Launching on a TouchPad, some behaviors will change!");
     else if (appModel.DeviceType == "Pre")
@@ -47,15 +81,4 @@ AppAssistant.prototype.handleLaunch = function(params) {
         Mojo.Log.info("Launching on a Pixi or Veer");
     else
         Mojo.Log.warn("Launching on a Pre3");
-
-    Mojo.Log.info("One Night Stand is Launching! Launch params: " + JSON.stringify(params));
-
-    //get the proxy for the stage in the event it already exists (eg: app is currently open)
-    var mainStage = this.controller.getStageProxy("");
-    if (mainStage) { //if the stage already exists then just bring it into focus
-        var stageController = this.controller.getStageController("");
-        stageController.activate();
-    } else {
-        return;
-    }
-};
+}
