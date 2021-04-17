@@ -19,8 +19,10 @@ AppAssistant.prototype.handleLaunch = function(params) {
     appModel.LoadSettings();
     if (params) {
         Mojo.Log.info("** Launch Params: " + JSON.stringify(params));
-        if (params.dockMode)
+        if (params.dockMode) {
             appModel.dockMode = true;
+            Mojo.Log.info("** Exhibition mode! **");
+        }
     }
     Mojo.Log.info("** App Settings: " + JSON.stringify(appModel.AppSettingsCurrent));
 
@@ -46,17 +48,14 @@ AppAssistant.prototype.handleLaunch = function(params) {
     else
         Mojo.Log.warn("Launching on a Pre3");
 
-    //get the proxy for the stage in the event it already exists (eg: app is currently open)
-    var mainStage = this.controller.getStageProxy("");
     Mojo.Log.info("One Night Stand is Launching! Launch params: " + JSON.stringify(params));
 
-    if (!params || params["action"] == undefined) //If no parameters were passed, this is a normal launch
-    {
-        if (mainStage) //if the stage already exists then just bring it into focus
-        {
-            var stageController = this.controller.getStageController("");
-            stageController.activate();
-        }
+    //get the proxy for the stage in the event it already exists (eg: app is currently open)
+    var mainStage = this.controller.getStageProxy("");
+    if (mainStage) { //if the stage already exists then just bring it into focus
+        var stageController = this.controller.getStageController("");
+        stageController.activate();
+    } else {
         return;
     }
 };

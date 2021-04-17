@@ -1,10 +1,10 @@
 #clock {
-    height: 100%;
-    font-size: 84px;
-    text-align: center;
-    margin: auto;
-    margin-top: 15%;
-    padding: 20px;
+    color: white;
+    width: auto;
+    position: absolute;
+    top: 10;
+    left: 10;
+    margin-top: -15px;
 }
 
 #lamps {

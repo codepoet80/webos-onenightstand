@@ -60,6 +60,7 @@ MainAssistant.prototype.setup = function() {
 
     /* add event handlers to listen to events from widgets */
     this.controller.listen("clock", Mojo.Event.tap, this.handleClockTap.bind(this));
+    this.controller.window.onresize = this.calculateClockPosition.bind(this);
 
     //Check for updates
     if (!appModel.UpdateCheckDone) {
@@ -75,9 +76,9 @@ MainAssistant.prototype.activate = function(event) {
     var stageController = Mojo.Controller.stageController;
     if (!appModel.DeviceType == "Touchpad")
         stageController.setWindowOrientation("left");
-    else
-        stageController.setWindowOrientation("right");
-
+    else {
+        stageController.setWindowOrientation("free");
+    }
     //Apply preferences to Command bar
     var thisWidgetModel = this.controller.getWidgetSetup(Mojo.Menu.commandMenu).model;
     thisWidgetModel.items[1].items = [];
@@ -100,23 +101,42 @@ MainAssistant.prototype.activate = function(event) {
     this.toggleCommandMenu(false);
 
     // Setup the clock face
+    this.controller.enableFullScreenMode(true);
+    this.controller.get("clock").style.visibility = "hidden";
     this.controller.get("clock").style.color = appModel.AppSettingsCurrent["clockColor"];
     this.controller.get("clock").style.fontSize = (appModel.AppSettingsCurrent["clockSize"] + "px");
-    this.controller.get("clock").style.marginTop = this.calculateClockPosition(appModel.AppSettingsCurrent["clockSize"], true) + "px";
     this.updateClock(true);
+    setTimeout(this.calculateClockPosition.bind(this), 500);
     this.clockInt = setInterval(this.updateClock.bind(this), 6000);
     // Dim light bar
     systemModel.DimLightBar(true);
 }
 
-MainAssistant.prototype.calculateClockPosition = function(fontSize, isLandscape) {
+MainAssistant.prototype.calculateClockPosition = function() {
+    Mojo.Log.warn("Trying new clock positioning...");
+
+    var screenHeight = window.innerHeight;
+    var screenWidth = window.innerWidth;
+
+    //Centered unrotated
+    var div = document.getElementById("clock");
+    div.style.top = (screenHeight / 2) - (div.clientHeight / 2);
+    div.style.left = (screenWidth / 2) - (div.clientWidth / 2);
+    Mojo.Log.warn("Top", div.style.top);
+    Mojo.Log.warn("Left", div.style.left);
+    this.controller.get("clock").style.visibility = "visible";
+}
+
+MainAssistant.prototype.calculateClockPositionOld = function() {
+    Mojo.Log.warn("Figuring out clock position!");
+    fontSize = appModel.AppSettingsCurrent["clockSize"];
     fontSize = Math.round(fontSize);
     var checkWidth = window.screen.width;
     var checkHeight = window.screen.height;
     var screenWidth;
     var screenHeight;
     //  A race condition on the TouchPad can make these values wrong, so we double check
-    if (!isLandscape || (isLandscape && appModel.DeviceType == "Touchpad" && checkHeight > checkWidth)) {
+    if (appModel.DeviceType == "Touchpad" && checkHeight > checkWidth) {
         screenWidth = checkWidth;
         screenHeight = checkHeight;
     } else {
@@ -124,23 +144,46 @@ MainAssistant.prototype.calculateClockPosition = function(fontSize, isLandscape)
         screenWidth = checkHeight;
         screenHeight = checkWidth;
     }
-    //Mojo.Log.info("== height: " + screenHeight);
-    //Mojo.Log.info("== width:  " + screenWidth);
+    Mojo.Log.warn("== height: " + screenHeight);
+    Mojo.Log.warn("== width:  " + screenWidth);
     //Mojo.Log.info("== font: " + fontSize);
 
     var useTop = (screenHeight / 2) - Math.round(fontSize / 1.15);
     if (appModel.DeviceType == "Touchpad") {
         screenHeight = screenHeight - 170;
         useTop = (screenHeight / 2) - (fontSize / 1.05);
-    } else if (appModel.DeviceType == "Tiny") {
-        screenHeight = screenHeight - 12;
-        useTop = (screenHeight / 2) - (fontSize / 1.15);
     } else {
-        //screenHeight = screenHeight - 120;
-        useTop = 110 - (fontSize / 2);
+        if (appModel.DeviceType == "Tiny") {
+            screenHeight = screenHeight - 12;
+            useTop = (screenHeight / 2) - (fontSize / 1.15);
+        } else {
+            //screenHeight = screenHeight - 120;
+            useTop = 110 - (fontSize / 2);
+        }
+        //Force landscape hacks - TODO: Make this standard
+        var div = this.controller.get("clock");
+        Mojo.Log.warn("offsetWidth: " + div.offsetWidth);
+        if (appModel.dockMode) {
+            var deg = -90;
+            div.style.webkitTransform = 'rotate(' + deg + 'deg)';
+            useTop = (screenHeight / 2) - ((screenHeight - div.offsetWidth) / 2); //center left/right when held landscape
+            div.style.marginLeft = "-10px"; //"-300px" //middle top/bottom when held landscape
+        } else {
+            useTop = 10;
+            //divi.style.margin = "auto";
+            //useTop = screenWidth - (screenWidth / 2) //- ((screenWidth - div.offsetWidth) / 2);
+            useTop = (screenHeight / 9);
+            //useTop = screenHeight - (screenheight / 2);
+            div.style.textAlign = "center";
+            div.style.marginTop = "15%";
+            div.style.padding = "20px";
+            div.style.height = "100%";
+        }
+        //div.style.border = "1px solid green";
     }
-    //Mojo.Log.info("=== useTop for " + appModel.DeviceType + ": " + useTop);
-    return useTop;
+    Mojo.Log.warn("=== useTop for " + appModel.DeviceType + ": " + useTop);
+    this.controller.get("clock").style.marginTop = useTop + "px";
+    this.controller.get("clock").style.visibility = "visible";
 }
 
 MainAssistant.prototype.handleClockTap = function() {
@@ -208,6 +251,7 @@ MainAssistant.prototype.confirmDimSettings = function(hour, min) {
 }
 
 MainAssistant.prototype.toggleCommandMenu = function(show) {
+    this.calculateClockPosition();
     var stageController = Mojo.Controller.getAppController().getActiveStageController();
     if (stageController) {
         this.controller = stageController.activeScene();
