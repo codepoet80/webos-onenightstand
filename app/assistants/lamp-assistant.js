@@ -46,6 +46,7 @@ LampAssistant.prototype.setup = function() {
 
     /* add event handlers to listen to events from widgets */
     Mojo.Event.listen(this.controller.get("slideBright"), Mojo.Event.propertyChange, this.handleValueChange.bind(this));
+    this.controller.window.onresize = this.calculateControlsPosition.bind(this);
     //Event handler registration for non-Mojo widgets
     $("tdLampOne").addEventListener("click", this.handleLampTap.bind(this));
     $("tdLampTwo").addEventListener("click", this.handleLampTap.bind(this));
@@ -64,7 +65,7 @@ LampAssistant.prototype.activate = function(event) {
     if (!appModel.DeviceType == "Touchpad")
         stageController.setWindowOrientation("left");
     else
-        stageController.setWindowOrientation("right");
+        stageController.setWindowOrientation("free");
 
     //Non-Mojo widget data object
     this.Lamp1 = {
@@ -88,47 +89,32 @@ LampAssistant.prototype.activate = function(event) {
     if (appModel.DeviceType == "Touchpad") {
         //TouchPad
         this.iconSize = 128;
-        $("lampsTable").style.marginTop = "180px";
-        $("lampsTable").style.paddingRight = "8px";
-        $("textControlsDiv").style.marginTop = "40px";
         $("imgLampOne").src = $("imgLampOne").src.replace("64", this.iconSize);
         $("imgLampTwo").src = $("imgLampTwo").src.replace("64", this.iconSize);
-        $("slideBright").style.marginTop = "60px";
-        $("slideBright").style.marginLeft = "360px";
     } else if (appModel.DeviceType == "Tiny") {
         //Pixi and Veer
         Mojo.Log.error("found a Tiny");
         $("divLampOne").addClassName("lampPre");
         $("divLampTwo").addClassName("lampPre");
-        $("slideBright").style.marginLeft = "55px";
     } else if (appModel.DeviceType == "Pre") {
         //Pre or Pre2
-        $("slideBright").style.marginLeft = "95px";
         $("divLampOne").addClassName("lampPre");
         $("divLampTwo").addClassName("lampPre");
     } else {
         //Pre3
-        $("slideBright").style.marginLeft = "115px";
     }
 
     //Item visibility
     if (appModel.AppSettingsCurrent["hueSelectedLights"].length > 1) {
-        $("tdLampOne").style.paddingLeft = "0%";
         $("tdLampTwo").style.display = "block";
         this.Lamp2 = {
             num: appModel.AppSettingsCurrent["hueSelectedLights"][1],
         };
-        if (appModel.DeviceType == "Touchpad")
-            $("textControlsDiv").style.paddingRight = "0px";
     } else {
-        $("tdLampOne").style.paddingLeft = "8%";
         $("tdLampTwo").style.display = "none";
-        if (appModel.DeviceType == "Touchpad")
-            $("textControlsDiv").style.paddingRight = "100px";
     }
-    $("tdLampOne").style.opacity = "1";
-    $("tdLampTwo").style.opacity = "1";
-    $("tdLampControls").style.opacity = "1";
+
+    this.calculateControlsPosition();
     this.toggleDimmerSlider(false);
 
     if (appModel.AppSettingsCurrent["hueSelectedLights"] != undefined && appModel.AppSettingsCurrent["hueSelectedLights"].length > 0) {
@@ -139,6 +125,70 @@ LampAssistant.prototype.activate = function(event) {
         Mojo.Additions.ShowDialogBox("No Lights Configured", "You don't have any lights selected, so this scene can't do anything. Visit Settings to pair with your Hue bridge and select some lights.")
     }
 };
+
+LampAssistant.prototype.calculateControlsPosition = function() {
+    var singleLight = false;
+    var lampOne = $("tdLampOne");
+    var lampControl = $("tdLampControls");
+    var lampTwo = $("tdLampTwo");
+    var slideBright = $("slideBright");
+
+    if (appModel.AppSettingsCurrent["hueSelectedLights"].length < 2) {
+        lampTwo.style.display = "none";
+        singleLight = true;
+    }
+    if (window.innerWidth > window.innerHeight) { //landscape
+        var sideMargin = 30;
+        var lampTop = (window.innerHeight / 2 - (lampControl.clientHeight) / 2) - sideMargin;
+        //First light
+        var useLeft = sideMargin;
+        if (singleLight)
+            useLeft += 20;
+        lampOne.style.left = useLeft;
+        lampOne.style.top = lampTop + 15;
+        lampOne.style.maxWidth = "130px";
+        lampOne.style.wordWrap = "break-word";
+        //Controls
+        useLeft = (window.innerWidth / 2 - (lampControl.clientWidth / 2));
+        if (singleLight)
+            useLeft = (window.innerWidth / 2 + (lampControl.clientWidth / 2));
+        lampControl.style.left = useLeft;
+        lampControl.style.top = lampTop;
+        //Second Light
+        if (!singleLight) {
+            lampTwo.style.top = lampTop + 15;
+            lampTwo.style.left = (window.innerWidth - (lampTwo.clientWidth)) - sideMargin;
+            lampTwo.style.maxWidth = "130px";
+            lampTwo.style.wordWrap = "break-word";
+        }
+        //Slider
+        slideBright.style.top = lampTop + lampControl.clientHeight + sideMargin;
+        slideBright.style.left = (window.innerWidth / 2) - 145;
+    } else { //portrait
+        var topMargin = 20;
+        //First Lamp
+        var useTop = topMargin;
+        if (!singleLight) { useTop = useTop - 10; } else { useTop = useTop + 20; }
+        lampOne.style.left = (window.innerWidth / 2 - (lampOne.clientWidth) / 2);
+        lampOne.style.top = useTop;
+        lampOne.style.maxWidth = "";
+        lampOne.style.wordWrap = "normal";
+        //Controls
+        useTop = topMargin + lampOne.clientHeight + useTop;
+        lampControl.style.top = useTop;
+        lampControl.style.left = (window.innerWidth / 2 - (lampControl.clientWidth) / 2);
+        //Second Lamp
+        useTop = useTop + lampControl.clientHeight + topMargin + 5;
+        lampTwo.style.top = useTop;
+        lampTwo.style.left = (window.innerWidth / 2 - (lampTwo.clientWidth / 2));
+        lampTwo.style.maxWidth = "";
+        lampTwo.style.wordWrap = "normal";
+        //Slider
+        useTop = useTop + lampTwo.clientHeight + topMargin;
+        slideBright.style.top = useTop;
+        slideBright.style.left = 10;
+    }
+}
 
 LampAssistant.prototype.updateLightList = function() {
     hueModel.GetLightList(appModel.AppSettingsCurrent["hueBridgeIP"], appModel.AppSettingsCurrent["hueBridgeUsername"], function(lights) {

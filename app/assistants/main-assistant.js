@@ -113,7 +113,7 @@ MainAssistant.prototype.activate = function(event) {
 }
 
 MainAssistant.prototype.calculateClockPosition = function() {
-    Mojo.Log.warn("Trying new clock positioning...");
+    Mojo.Log.info("Trying new clock positioning...");
 
     var screenHeight = window.innerHeight;
     var screenWidth = window.innerWidth;
@@ -122,8 +122,8 @@ MainAssistant.prototype.calculateClockPosition = function() {
     var div = document.getElementById("clock");
     div.style.top = (screenHeight / 2) - (div.clientHeight / 2);
     div.style.left = (screenWidth / 2) - (div.clientWidth / 2);
-    Mojo.Log.warn("Top", div.style.top);
-    Mojo.Log.warn("Left", div.style.left);
+    Mojo.Log.info("Clock Top", div.style.top);
+    Mojo.Log.info("Clock Left", div.style.left);
     this.controller.get("clock").style.visibility = "visible";
 }
 
