@@ -166,7 +166,7 @@ PreferencesAssistant.prototype.setup = function() {
         items: [
             { label: "Go Back", command: 'do-goBack' },
             { label: "Exhibition Prefs", command: 'do-exhibitionSettings' },
-            { label: "Reset Settings", command: 'do-resetSettings' },
+            { label: "Forget Hue Bridge", command: 'do-resetSettings' },
             { label: "About...", command: 'do-myAbout' }
         ]
     };
