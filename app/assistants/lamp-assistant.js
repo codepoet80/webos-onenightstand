@@ -154,13 +154,14 @@ LampAssistant.prototype.calculateControlsPosition = function() {
             sideMargin = 100;
             lampTop = lampTop - 100;
             $("lampsDiv").style.webkitTransform = "scale(1.1)";
-        }
+        } else if (appModel.DeviceType == "Pre3")
+            sideMargin = 45;
         //First light
         var useLeft = sideMargin;
         if (singleLight)
             useLeft += 20;
         lampOne.style.left = useLeft;
-        lampOne.style.top = lampTop + 15;
+        lampOne.style.top = lampTop + 28;
         lampOne.style.maxWidth = "130px";
         lampOne.style.wordWrap = "break-word";
         //Controls
@@ -171,9 +172,9 @@ LampAssistant.prototype.calculateControlsPosition = function() {
         lampControl.style.top = lampTop;
         //Second Light
         if (!singleLight) {
-            lampTwo.style.top = lampTop + 15;
-            lampTwo.style.left = (window.innerWidth - (lampTwo.clientWidth)) - sideMargin;
+            lampTwo.style.top = lampTop + 28;
             lampTwo.style.maxWidth = "130px";
+            lampTwo.style.left = (window.innerWidth - (lampTwo.clientWidth)) - sideMargin;
             lampTwo.style.wordWrap = "break-word";
         }
         //Slider

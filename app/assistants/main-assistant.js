@@ -108,6 +108,7 @@ MainAssistant.prototype.activate = function(event) {
     this.controller.get("clock").style.color = appModel.AppSettingsCurrent["clockColor"];
     this.controller.get("clock").style.fontSize = (appModel.AppSettingsCurrent["clockSize"] + "px");
     this.updateClock(true);
+    this.calculateClockPosition();
     setTimeout(this.calculateClockPosition.bind(this), 500);
     this.clockInt = setInterval(this.updateClock.bind(this), 6000);
     // Dim light bar
@@ -141,6 +142,8 @@ MainAssistant.prototype.handleClockTap = function() {
 }
 
 MainAssistant.prototype.updateClock = function(skipDim) {
+
+    this.calculateClockPosition();
 
     var time = new Date();
     hour = time.getHours();

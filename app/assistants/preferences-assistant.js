@@ -297,7 +297,11 @@ PreferencesAssistant.prototype.handleCommand = function(event) {
                 Mojo.Additions.ShowDialogBox("One Night Stand - " + Mojo.Controller.appInfo.version, "Bed-side clock and Hue light controller. Copyright 2020, Jonathan Wise. Distributed under an MIT License. Source code available at: https://github.com/codepoet80/webos-onenightstand");
                 break;
             case 'do-resetSettings':
-                appModel.ResetSettings();
+                appModel.AppSettingsCurrent["hueBridgeIP"] = "";
+                appModel.AppSettingsCurrent["hueSelectedLights"] = [];
+                appModel.AppSettingsCurrent = appModel.AppSettingsDefaults;
+                appModel.SaveSettings();
+                this.repaintLightList();
                 break;
         }
     }
