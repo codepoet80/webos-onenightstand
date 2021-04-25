@@ -122,6 +122,7 @@ LampAssistant.prototype.activate = function(event) {
 
     this.controller.enableFullScreenMode(true);
     this.calculateControlsPosition();
+    setTimeout(this.calculateControlsPosition.bind(this), 500);
     this.toggleDimmerSlider(false);
 
     if (appModel.AppSettingsCurrent["hueSelectedLights"] != undefined && appModel.AppSettingsCurrent["hueSelectedLights"].length > 0) {
