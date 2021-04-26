@@ -121,6 +121,7 @@ LampAssistant.prototype.activate = function(event) {
     }
 
     this.controller.enableFullScreenMode(true);
+
     this.calculateControlsPosition();
     setTimeout(this.calculateControlsPosition.bind(this), 500);
     this.toggleDimmerSlider(false);
@@ -140,8 +141,6 @@ LampAssistant.prototype.calculateControlsPosition = function() {
     var lampControl = $("tdLampControls");
     var lampTwo = $("tdLampTwo");
     var slideBright = $("slideBright");
-    lampOne.style.visibility = "hidden";
-    lampTwo.style.visibility = "hidden";
 
     if (appModel.AppSettingsCurrent["hueSelectedLights"].length < 2) {
         lampTwo.style.display = "none";
@@ -254,6 +253,7 @@ LampAssistant.prototype.updateLampState = function() {
     if (this.Lamp2.name != document.getElementById("divLampTwo").innerText)
         $("divLampTwo").innerText = this.Lamp2.name;
     $("imgLampTwo").src = this.getLampImageFromState(this.Lamp2);
+    this.calculateControlsPosition();
 }
 
 LampAssistant.prototype.getLampImageFromState = function(lamp) {
