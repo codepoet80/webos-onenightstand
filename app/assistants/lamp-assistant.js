@@ -181,7 +181,7 @@ LampAssistant.prototype.calculateControlsPosition = function() {
         slideBright.style.top = lampTop + lampControl.clientHeight + sideMargin;
         slideBright.style.left = (window.innerWidth / 2) - 145;
     } else { //portrait
-        var topMargin = 25;
+        var topMargin = 28;
         var useTop = topMargin;
         if (appModel.DeviceType == "Touchpad") {
             topMargin = 40;
