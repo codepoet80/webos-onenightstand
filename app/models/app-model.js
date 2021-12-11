@@ -32,6 +32,7 @@ var AppModel = function() {
         wakeTimeHour: 6,
         wakeTimeMin: 30,
         muteWhileDark: true,
+        loopSleepSound: 1,
         hueBridgeIP: "",
         hueBridgeUsername: "",
         hueSelectedLights: [],

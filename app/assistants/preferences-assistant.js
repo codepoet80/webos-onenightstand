@@ -125,6 +125,19 @@ PreferencesAssistant.prototype.setup = function() {
             disabled: false
         }
     );
+    this.controller.setupWidget("lstSoundLoop",
+        this.attributes = {
+            label: "Sleep Sounds",
+            choices: [
+                { label: "Play Once", value: 1 },
+                { label: "Play Until Stopped", value: "infinite" }
+            ]
+        },
+        this.model = {
+            value: appModel.AppSettingsCurrent["loopSleepSound"] || 1,
+            disabled: false
+        }
+    );
     //Light List (starts with an 'empty' item to help Mojo setuup)
     this.hueLightListModel = [
         { lightNum: "-1", lightType: "none", lightName: "empty", selectedState: false }
@@ -187,6 +200,7 @@ PreferencesAssistant.prototype.setup = function() {
     Mojo.Event.listen(this.controller.get("toggleMute"), Mojo.Event.propertyChange, this.handleValueChange.bind(this));
     Mojo.Event.listen(this.controller.get("toggleAlarms"), Mojo.Event.propertyChange, this.handleValueChange.bind(this));
     Mojo.Event.listen(this.controller.get("toggle24HourTime"), Mojo.Event.propertyChange, this.handleValueChange.bind(this));
+    Mojo.Event.listen(this.controller.get("lstSoundLoop"), Mojo.Event.propertyChange, this.handleValueChange.bind(this));
     Mojo.Event.listen(this.controller.get("btnLinkHue"), Mojo.Event.tap, this.linkHueClick.bind(this));
     Mojo.Event.listen(this.controller.get("hueLightList"), Mojo.Event.listTap, this.selectHueLight.bind(this));
 };
@@ -390,6 +404,7 @@ PreferencesAssistant.prototype.deactivate = function(event) {
     Mojo.Event.stopListening(this.controller.get("toggle24HourTime"), Mojo.Event.propertyChange, this.handleValueChange);
     Mojo.Event.stopListening(this.controller.get("toggleAlarms"), Mojo.Event.propertyChange, this.handleValueChange);
     Mojo.Event.stopListening(this.controller.get("toggleMute"), Mojo.Event.propertyChange, this.handleValueChange);
+    Mojo.Event.stopListening(this.controller.get("lstSoundLoop"), Mojo.Event.propertyChange, this.handleValueChange.bind);
     Mojo.Event.stopListening(this.controller.get("btnLinkHue"), Mojo.Event.tap, this.linkHueClick);
     Mojo.Event.stopListening(this.controller.get("hueLightList"), Mojo.Event.listTap, this.selectHueLight);
 

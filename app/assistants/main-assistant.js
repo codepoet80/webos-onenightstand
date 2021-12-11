@@ -85,6 +85,7 @@ MainAssistant.prototype.activate = function(event) {
     //Apply preferences to Command bar
     var thisWidgetModel = this.controller.getWidgetSetup(Mojo.Menu.commandMenu).model;
     thisWidgetModel.items[1].items = [];
+    thisWidgetModel.items[1].items.push({ label: 'Sleep Sound', iconPath: 'images/SleepSound.png', command: 'do-soundmenu' });
     try {
         if (appModel.AppSettingsCurrent["showAlarmButton"])
             thisWidgetModel.items[1].items.push({ label: 'Alarms', iconPath: 'images/Alarm.png', command: 'do-alarms' });
@@ -233,6 +234,22 @@ MainAssistant.prototype.handleCommand = function(event) {
     var appController = Mojo.Controller.getAppController();
     if (event.type == Mojo.Event.command) {
         switch (event.command) {
+            case 'do-soundmenu':
+                {
+                    Mojo.Log.warn("target " + event.target + ", srcElement " + event.srcElement + ", original target " + event.originalEvent.target);
+                    var source = event.target || event.srcElement || event.originalEvent.target;
+                    var popupMenuItems = [];
+                    popupMenuItems.push({ label: 'Rain Storm', command: 'do-playsound-rainstorm' });
+                    popupMenuItems.push({ label: 'Ocean Waves', command: 'do-playsound-oceanwaves' });
+                    popupMenuItems.push({ label: 'White Noise', command: 'do-playsound-whitenoise' });
+                    popupMenuItems.push({ label: 'Stop All Sound', command: 'do-stopsound' });
+                    this.controller.popupSubmenu({
+                        onChoose: this.handlePopupChoose.bind(this),
+                        placeNear: source,
+                        items: popupMenuItems
+                    });
+                    break;
+                }
             case 'do-settings':
                 {
                     this.toggleCommandMenu(false);
@@ -261,6 +278,19 @@ MainAssistant.prototype.handleCommand = function(event) {
     Mojo.Log.info("current scene: " + currentScene.sceneName);
 };
 
+MainAssistant.prototype.handlePopupChoose = function(command) {
+    this.stopAudio();
+    if (command) {
+        Mojo.Log.info("Popup choice was: " + command);
+        if (command.indexOf("do-playsound-") != -1) {
+            var sound = command.replace("do-playsound-", "");
+            sound = "sounds/" + sound + ".mp3";
+            Mojo.Log.warn("Requested sleep sound is: " + sound);
+            this.playAudio(sound);
+        }
+    }
+}
+
 MainAssistant.prototype.handleUpdateResponse = function(responseObj) {
     if (responseObj && responseObj.updateFound) {
         updaterModel.PromptUserForUpdate(function(response) {
@@ -272,6 +302,29 @@ MainAssistant.prototype.handleUpdateResponse = function(responseObj) {
 
 MainAssistant.prototype.noticeActivity = function() {
     this.lastActivity = Date.now();
+}
+
+MainAssistant.prototype.playAudio = function(soundPath) {
+    var audioPlayer = this.controller.get("audioPlayer");
+    if (soundPath) {
+        Mojo.Log.info("Trying to play audio: " + soundPath);
+        audioPlayer.src = soundPath;
+        audioPlayer.load();
+        //TODO: It would be nice to have a choice in how long something loops
+        if (appModel.AppSettingsCurrent["loopSleepSound"] && appModel.AppSettingsCurrent["loopSleepSound"] == "infinite") {
+            Mojo.Log.info("Looping sleep sound infinitely");
+            audioPlayer.loop = true;
+        } else {
+            Mojo.Log.info("Not looping sleep sound");
+            audioPlayer.loop = false;
+        }
+    }
+    audioPlayer.play();
+}
+
+MainAssistant.prototype.stopAudio = function() {
+    var audioPlayer = this.controller.get("audioPlayer");
+    audioPlayer.pause();
 }
 
 MainAssistant.prototype.stageDeactivated = function() {
