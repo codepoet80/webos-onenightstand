@@ -125,6 +125,18 @@ PreferencesAssistant.prototype.setup = function() {
             disabled: false
         }
     );
+    //Alarms Button Toggle
+    this.controller.setupWidget("toggleSounds",
+        this.attributes = {
+            trueValue: true,
+            falseValue: false
+        },
+        this.model = {
+            value: appModel.AppSettingsCurrent["showSoundsButton"],
+            disabled: false
+        }
+    );
+    //Sleep Sounds List
     this.controller.setupWidget("lstSoundLoop",
         this.attributes = {
             label: "Sleep Sounds",
@@ -200,6 +212,7 @@ PreferencesAssistant.prototype.setup = function() {
     Mojo.Event.listen(this.controller.get("toggleMute"), Mojo.Event.propertyChange, this.handleValueChange.bind(this));
     Mojo.Event.listen(this.controller.get("toggleAlarms"), Mojo.Event.propertyChange, this.handleValueChange.bind(this));
     Mojo.Event.listen(this.controller.get("toggle24HourTime"), Mojo.Event.propertyChange, this.handleValueChange.bind(this));
+    Mojo.Event.listen(this.controller.get("toggleSounds"), Mojo.Event.propertyChange, this.handleValueChange.bind(this));
     Mojo.Event.listen(this.controller.get("lstSoundLoop"), Mojo.Event.propertyChange, this.handleValueChange.bind(this));
     Mojo.Event.listen(this.controller.get("btnLinkHue"), Mojo.Event.tap, this.linkHueClick.bind(this));
     Mojo.Event.listen(this.controller.get("hueLightList"), Mojo.Event.listTap, this.selectHueLight.bind(this));
@@ -283,7 +296,7 @@ PreferencesAssistant.prototype.handleValueChange = function(event) {
             }
         }
     } else {
-        Mojo.Log.info(event.srcElement.title + " now: " + event.value);
+        Mojo.Log.warn(event.srcElement.title + " now: " + event.value);
         //We stashed the preference name in the title of the HTML element, so we don't have to use a case statement
         appModel.AppSettingsCurrent[event.srcElement.title] = event.value;
 
@@ -294,6 +307,8 @@ PreferencesAssistant.prototype.handleValueChange = function(event) {
         if (event.srcElement.title == "dimLevel" && event.value == 0 && appModel.DeviceType == "Touchpad") {
             Mojo.Additions.ShowDialogBox("Dim Level", "It looks like you're on a Touchpad, so you should be aware that a Dim Level of zero turns the backlight off entirely, making the screen very difficult to see. This is different than on a Pre, where Dim Level zero still has the backlight on at its lowest setting.");
         }
+        
+        appModel.SaveSettings();
     }
 };
 
@@ -404,6 +419,7 @@ PreferencesAssistant.prototype.deactivate = function(event) {
     Mojo.Event.stopListening(this.controller.get("toggle24HourTime"), Mojo.Event.propertyChange, this.handleValueChange);
     Mojo.Event.stopListening(this.controller.get("toggleAlarms"), Mojo.Event.propertyChange, this.handleValueChange);
     Mojo.Event.stopListening(this.controller.get("toggleMute"), Mojo.Event.propertyChange, this.handleValueChange);
+    Mojo.Event.stopListening(this.controller.get("toggleSounds"), Mojo.Event.propertyChange, this.handleValueChange.bind);
     Mojo.Event.stopListening(this.controller.get("lstSoundLoop"), Mojo.Event.propertyChange, this.handleValueChange.bind);
     Mojo.Event.stopListening(this.controller.get("btnLinkHue"), Mojo.Event.tap, this.linkHueClick);
     Mojo.Event.stopListening(this.controller.get("hueLightList"), Mojo.Event.listTap, this.selectHueLight);

@@ -32,6 +32,7 @@ var AppModel = function() {
         wakeTimeHour: 6,
         wakeTimeMin: 30,
         muteWhileDark: true,
+        showSoundsButton: true,
         loopSleepSound: 1,
         hueBridgeIP: "",
         hueBridgeUsername: "",
@@ -67,7 +68,10 @@ AppModel.prototype.LoadSettings = function(safe) {
 
 AppModel.prototype.loadCookieIntoCurrent = function(cookieSettings) {
     for (var key in this.AppSettingsDefaults) {
-        appModel.AppSettingsCurrent[key] = cookieSettings[key] || appModel.AppSettingsDefaults[key];
+        if (typeof cookieSettings[key] !== 'undefined')
+            appModel.AppSettingsCurrent[key] = cookieSettings[key]
+        else 
+            appModel.AppSettingsCurrent[key] = appModel.AppSettingsDefaults[key];
     }
 }
 

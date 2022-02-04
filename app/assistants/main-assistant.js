@@ -85,13 +85,19 @@ MainAssistant.prototype.activate = function(event) {
     //Apply preferences to Command bar
     var thisWidgetModel = this.controller.getWidgetSetup(Mojo.Menu.commandMenu).model;
     thisWidgetModel.items[1].items = [];
-    thisWidgetModel.items[1].items.push({ label: 'Sleep Sound', iconPath: 'images/SleepSound.png', command: 'do-soundmenu' });
+    try {
+        if (appModel.AppSettingsCurrent["showSoundsButton"])
+            thisWidgetModel.items[1].items.push({ label: 'Sleep Sound', iconPath: 'images/SleepSound.png', command: 'do-soundmenu' });
+    } catch (ex) {
+        Mojo.Log.error("A compatibility issue occured reading sound button preference.");
+        appModel.AppSettingsCurrent["showSoundsButton"] = true;
+    }
     try {
         if (appModel.AppSettingsCurrent["showAlarmButton"])
             thisWidgetModel.items[1].items.push({ label: 'Alarms', iconPath: 'images/Alarm.png', command: 'do-alarms' });
     } catch (ex) {
-        Mojo.Log.error("A compatibility issue occured reading settings. Preferences will be reset.");
-        appModel.ResetSettings();
+        Mojo.Log.error("A compatibility issue occured reading alarm button preference.");
+        appModel.AppSettingsCurrent["showAlarmButton"] = false;
     }
     thisWidgetModel.items[1].items.push({ label: 'Settings', iconPath: 'images/SettingsGear.png', command: 'do-settings' });
     if (this.menuOn) {
