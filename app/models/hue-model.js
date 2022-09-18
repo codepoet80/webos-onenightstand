@@ -2,7 +2,7 @@
 Hue Model
  Version 1.0
  Created: 2020
- Author: Jonathan Wise
+ Author: Jon W
  License: MIT
  Description: A generic and re-usable model for accessing Philips Hue bridge capabilities
 */
