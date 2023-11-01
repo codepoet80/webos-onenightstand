@@ -140,7 +140,6 @@ AppModel.prototype.manageAlarm = function (alarmName, alarmTime, alarmEnabled, f
 
 	//If the alarm is on, set it again
 	var alarmType = "absolute";
-    Mojo.Log.error("alarmEnabled is " + alarmEnabled);
 	if (alarmEnabled == "true" || alarmEnabled == true)
 	{
 		//now is the current datetime plus/minutes a minute, since alarms aren't precise

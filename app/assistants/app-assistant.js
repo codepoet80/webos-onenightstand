@@ -41,6 +41,7 @@ AppAssistant.prototype.handleLaunch = function(params) {
                 this.RestartExhibition();
             } else {
                 Mojo.Log.info("Found App mode running, activating");
+                systemModel.SetDisplayState("on");
                 stageController.activate();
             }
         }
