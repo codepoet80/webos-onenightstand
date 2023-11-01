@@ -142,10 +142,10 @@ AppModel.prototype.manageAlarm = function (alarmName, alarmTime, alarmEnabled, f
 	var alarmType = "absolute";
 	if (alarmEnabled == "true" || alarmEnabled == true)
 	{
-		//now is the current datetime plus/minutes a minute, since alarms aren't precise
+		//now is the current datetime plus/minus a minute, since alarms aren't precise
 		var now = new Date();
-		var nowMax = new Date(now.setSeconds(now.getSeconds() + 60));
-		var nowMin = new Date(now.setSeconds(now.getSeconds() - 60));
+		var nowMax = new Date(now.setSeconds(now.getSeconds() + 90));
+		var nowMin = new Date(now.setSeconds(now.getSeconds() - 90));
 
 		//alarmTime: adjust theoretical alarm time to today
 		alarmTime = new Date(adjustAlarmTimeToToday(alarmTime));
@@ -193,6 +193,7 @@ AppModel.prototype.manageAlarm = function (alarmName, alarmTime, alarmEnabled, f
 		{
 			var utcAlarm = constructUTCAlarm(alarmTime);
 			Mojo.Log.warn("Setting Absolute " + alarmName + " Alarm for Today: " + alarmTime.getHours() + ":" + padZeroes(alarmTime.getMinutes()) + " (UTC: " + utcAlarm + ")");
+            Mojo.Log.warn("Because " + alarmTime.getTime() + "!>=" + nowMax.getTime());
 			alarmSetResult = systemModel.SetSystemAlarmAbsolute(alarmName, utcAlarm);
 			if (alarmSetResult && !bulk)
 				Mojo.Controller.getAppController().showBanner("Next trigger: later today.", {source: 'notification'});

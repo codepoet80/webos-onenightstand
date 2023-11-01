@@ -477,14 +477,15 @@ PreferencesAssistant.prototype.deactivate = function(event) {
     var setTime = thisWidgetSetup.model.time.getHours() + ":" + thisWidgetSetup.model.time.getMinutes();
 	setTime = appModel.BaseDateString + setTime;
 	appModel.AppSettingsCurrent["launchTime"] = setTime;
+    // Apply Alarms
+    if (appModel.AppSettingsCurrent["dailyLaunchEnabled"] == true) {
+        Mojo.Log.warn("Re/establishing launch alarm: " + appModel.AppSettingsCurrent["launchTime"]);
+        appModel.manageAlarm("AlarmLaunch", appModel.AppSettingsCurrent["launchTime"], true, true, false);
+    } else {
+        appModel.manageAlarm("AlarmLaunch", appModel.AppSettingsCurrent["launchTime"], false, false, false);
+    }
     //Save settings
     appModel.SaveSettings();
-    //Apply timer
-    if (appModel.AppSettingsCurrent["dailyLaunchEnabled"] == true) {
-        appModel.manageAlarm("Relaunch", appModel.AppSettingsCurrent["launchTime"], true, "Relaunch", true);
-    } else {
-        appModel.manageAlarm("Relaunch", appModel.AppSettingsCurrent["launchTime"], false, "Relaunch", true);
-    }
 };
 
 PreferencesAssistant.prototype.cleanup = function(event) {

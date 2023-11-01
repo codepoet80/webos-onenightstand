@@ -19,14 +19,28 @@ function AppAssistant(appController) {
 AppAssistant.prototype.handleLaunch = function(params) {
     appModel.LoadSettings();
     this.getDeviceInfo();
-
+    var exhibitionLaunch = false;
     if (params) {
         Mojo.Log.info("** Launch Params: " + JSON.stringify(params));
         if (params.dockMode || params.touchstoneMode) {
             appModel.dockMode = true;
             Mojo.Log.warn("** Exhibition mode Launch! **");
+            exhibitionLaunch = true;
+        }
+        if (params.action && params.action == "AlarmLaunch") {
+            Mojo.Log.warn("Launched by re-launch alarm timer!");
         }
     }
+    if (!exhibitionLaunch) {
+        // Apply Alarms
+        if (appModel.AppSettingsCurrent["dailyLaunchEnabled"] == true) {
+            Mojo.Log.warn("Re/establishing launch alarm: " + appModel.AppSettingsCurrent["launchTime"]);
+            appModel.manageAlarm("AlarmLaunch", appModel.AppSettingsCurrent["launchTime"], true, false, false);
+        } else {
+            appModel.manageAlarm("AlarmLaunch", appModel.AppSettingsCurrent["launchTime"], false, false, false);
+        }
+    }
+    // Find and focus existing stages
     var mainStage = this.controller.getStageProxy("");
     if (mainStage) { //if the stage already exists then just bring it into focus
         Mojo.Log.info("Existing stage was found!");
