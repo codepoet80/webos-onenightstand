@@ -35,7 +35,7 @@ AppAssistant.prototype.handleLaunch = function(params) {
             Mojo.Log.info("Stage active and has scenes");
             stageController.activate();
         } else {
-            Mojo.Log.warn("*** Handling problematic lifecycle state!");
+            Mojo.Log.warn("*** Handling problematic lifecycle state");
             if (appModel.ExhibitionStart || !stageController.activeScene()) {
                 Mojo.Log.info("Found Exhibition mode running, activating");
                 this.RestartExhibition();
@@ -47,7 +47,7 @@ AppAssistant.prototype.handleLaunch = function(params) {
     }
 }
 
-//Play a pre-defined system sound
+//Restart Exhibition
 AppAssistant.prototype.RestartExhibition = function(soundName) {
     Mojo.Log.info("Restarting exhibition");
     this.soundRequest = new Mojo.Service.Request("palm://com.palm.display/control", {

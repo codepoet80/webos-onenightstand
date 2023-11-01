@@ -32,6 +32,16 @@
             </div>
         </div>
 
+        <div class="palm-row">
+            <div class="palm-row-wrapper">
+                <div x-mojo-element="ToggleButton" id="toggleLaunch" title="dailyLaunchEnabled"></div>
+                <div class="title"><span x-mojo-loc=''>Re-Launch Daily</span></div>
+            </div>
+        </div>
+
+        <div x-mojo-element="Drawer" id="drawerLaunchTime" class="drawerClass" name="drawerLaunchTime">
+            <div x-mojo-element="TimePicker" id="timepickerLaunch" class="timepickerClass" name="timepickerLaunch" title="launchTime"></div>
+        </div> 
         <div x-mojo-element="TimePicker" id="timepickerBright" class="timepickerClass" name="timepickerBright" title="wakeTime"></div>
         <div x-mojo-element="TimePicker" id="timepickerDim" class="timepickerClass" name="timepickerDim" title="darkTime"></div>
 

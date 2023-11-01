@@ -67,13 +67,54 @@ PreferencesAssistant.prototype.setup = function() {
             disabled: false
         }
     );
+    //Daily Launch Toggle
+    this.controller.setupWidget("toggleLaunch",
+        this.attributes = {
+            trueValue: true,
+            falseValue: false
+        },
+        this.model = {
+            value: appModel.AppSettingsCurrent["dailyLaunchEnabled"],
+            disabled: false
+        }
+    );
     //Time Pickers
+    this.controller.setupWidget("drawerLaunchTime",
+        this.attributes = {
+            modelProperty: 'open',
+            unstyled: false
+        },
+        this.model = {
+            open: appModel.AppSettingsCurrent["dailyLaunchEnabled"]
+        }
+    );
+    
+    try {
+        var dateString = appModel.AppSettingsCurrent["launchTime"];
+        Mojo.Log.warn("setting launch time picker with setting " + dateString);
+        var launchTime = new Date(dateString);
+    } catch (ex) {
+        var launchTime = new Date();
+        launchTime.setHours(9);
+        launchTime.setMinutes(0);
+        Mojo.Log.warn("setting launch time picker with fallback");
+    }
+    this.controller.setupWidget("timepickerLaunch",
+        this.attributes = {
+            label: 'Launch',
+            modelProperty: 'time'
+        },
+        this.model = {
+            time: launchTime,
+            disabled: true
+        }
+    );
     var darkTime = new Date();
     darkTime.setHours(appModel.AppSettingsCurrent["darkTimeHour"]);
     darkTime.setMinutes(appModel.AppSettingsCurrent["darkTimeMin"]);
     this.controller.setupWidget("timepickerDim",
         this.attributes = {
-            label: 'Dark',
+            label: 'Darken',
             modelProperty: 'time'
         },
         this.model = {
@@ -85,7 +126,7 @@ PreferencesAssistant.prototype.setup = function() {
     lightTime.setMinutes(appModel.AppSettingsCurrent["wakeTimeMin"]);
     this.controller.setupWidget("timepickerBright",
         this.attributes = {
-            label: 'Wake',
+            label: 'Bright',
             modelProperty: 'time'
         },
         this.model = {
@@ -207,8 +248,10 @@ PreferencesAssistant.prototype.setup = function() {
     Mojo.Event.listen(this.controller.get("lstClockColor"), Mojo.Event.propertyChange, this.handleValueChange.bind(this));
     Mojo.Event.listen(this.controller.get("slideClockSize"), Mojo.Event.propertyChange, this.handleValueChange.bind(this));
     Mojo.Event.listen(this.controller.get("listDimLevel"), Mojo.Event.propertyChange, this.handleValueChange.bind(this));
+    Mojo.Event.listen(this.controller.get("timepickerLaunch"), Mojo.Event.propertyChange, this.handleValueChange.bind(this));
     Mojo.Event.listen(this.controller.get("timepickerDim"), Mojo.Event.propertyChange, this.handleValueChange.bind(this));
     Mojo.Event.listen(this.controller.get("timepickerBright"), Mojo.Event.propertyChange, this.handleValueChange.bind(this));
+    Mojo.Event.listen(this.controller.get("toggleLaunch"), Mojo.Event.propertyChange, this.handleValueChange.bind(this));
     Mojo.Event.listen(this.controller.get("toggleMute"), Mojo.Event.propertyChange, this.handleValueChange.bind(this));
     Mojo.Event.listen(this.controller.get("toggleAlarms"), Mojo.Event.propertyChange, this.handleValueChange.bind(this));
     Mojo.Event.listen(this.controller.get("toggle24HourTime"), Mojo.Event.propertyChange, this.handleValueChange.bind(this));
@@ -274,7 +317,11 @@ PreferencesAssistant.prototype.updateLightList = function() {
 }
 
 PreferencesAssistant.prototype.handleValueChange = function(event) {
-    //Time pickers need special handling
+    //Toggle the launch time drawer as needed
+    if (event.srcElement.title == "dailyLaunchEnabled") {
+        this.controller.get("drawerLaunchTime").mojo.setOpenState(event.value);
+    }
+    //Clock-face time pickers need special handling
     if (event.srcElement.title == "wakeTime" || event.srcElement.title == "darkTime") {
         Mojo.Log.info(event.srcElement.title + " now: " + event.value);
         var hour = event.value.getHours();
@@ -296,7 +343,7 @@ PreferencesAssistant.prototype.handleValueChange = function(event) {
             }
         }
     } else {
-        Mojo.Log.warn(event.srcElement.title + " now: " + event.value);
+        Mojo.Log.info(event.srcElement.title + " now: " + event.value);
         //We stashed the preference name in the title of the HTML element, so we don't have to use a case statement
         appModel.AppSettingsCurrent[event.srcElement.title] = event.value;
 
@@ -414,8 +461,10 @@ PreferencesAssistant.prototype.deactivate = function(event) {
     Mojo.Event.stopListening(this.controller.get("lstClockColor"), Mojo.Event.propertyChange, this.handleValueChange);
     Mojo.Event.stopListening(this.controller.get("slideClockSize"), Mojo.Event.propertyChange, this.handleValueChange);
     Mojo.Event.stopListening(this.controller.get("listDimLevel"), Mojo.Event.propertyChange, this.handleValueChange);
+    Mojo.Event.stopListening(this.controller.get("timepickerLaunch"), Mojo.Event.propertyChange, this.handleValueChange);
     Mojo.Event.stopListening(this.controller.get("timepickerDim"), Mojo.Event.propertyChange, this.handleValueChange);
     Mojo.Event.stopListening(this.controller.get("timepickerBright"), Mojo.Event.propertyChange, this.handleValueChange);
+    Mojo.Event.stopListening(this.controller.get("toggleLaunch"), Mojo.Event.propertyChange, this.handleValueChange);
     Mojo.Event.stopListening(this.controller.get("toggle24HourTime"), Mojo.Event.propertyChange, this.handleValueChange);
     Mojo.Event.stopListening(this.controller.get("toggleAlarms"), Mojo.Event.propertyChange, this.handleValueChange);
     Mojo.Event.stopListening(this.controller.get("toggleMute"), Mojo.Event.propertyChange, this.handleValueChange);
@@ -423,8 +472,19 @@ PreferencesAssistant.prototype.deactivate = function(event) {
     Mojo.Event.stopListening(this.controller.get("lstSoundLoop"), Mojo.Event.propertyChange, this.handleValueChange.bind);
     Mojo.Event.stopListening(this.controller.get("btnLinkHue"), Mojo.Event.tap, this.linkHueClick);
     Mojo.Event.stopListening(this.controller.get("hueLightList"), Mojo.Event.listTap, this.selectHueLight);
-
+    //Set launch time
+    thisWidgetSetup = this.controller.getWidgetSetup("timepickerLaunch");
+    var setTime = thisWidgetSetup.model.time.getHours() + ":" + thisWidgetSetup.model.time.getMinutes();
+	setTime = appModel.BaseDateString + setTime;
+	appModel.AppSettingsCurrent["launchTime"] = setTime;
+    //Save settings
     appModel.SaveSettings();
+    //Apply timer
+    if (appModel.AppSettingsCurrent["dailyLaunchEnabled"] == true) {
+        appModel.manageAlarm("Relaunch", appModel.AppSettingsCurrent["launchTime"], true, "Relaunch", true);
+    } else {
+        appModel.manageAlarm("Relaunch", appModel.AppSettingsCurrent["launchTime"], false, "Relaunch", true);
+    }
 };
 
 PreferencesAssistant.prototype.cleanup = function(event) {
